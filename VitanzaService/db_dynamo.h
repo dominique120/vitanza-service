@@ -20,7 +20,6 @@
 class DynamoDB {
 public:
 
-	// basic crud methods
 	std::map<std::string, std::string> getItemDynamo(const Aws::String& tableName, const Aws::String& keyName, const Aws::String& keyValue);
 	
 	bool updateItemDynamo(const Aws::String& tableName, const Aws::String& keyName, const Aws::String& keyValue, const nlohmann::json& json_req);
