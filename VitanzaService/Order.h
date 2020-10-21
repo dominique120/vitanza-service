@@ -13,23 +13,23 @@
 
 class Districts {
 public:
-	int16_t DistrictId;
-	std::string DistrictName;
+	int16_t district_id;
+	std::string district_name;
 };
 
 class Order {
 public:
 
 	//Base members mapped to db table
-	int32_t OrderId;
-	int32_t ClientId;
-	time_t DatePlaced;
-	std::string Notes;
-	bool Delivered;
-	bool Paid;
-	time_t DateDelivered;
+	int32_t order_id;
+	int32_t client_id;
+	time_t date_placed;
+	std::string notes;
+	bool delivered;
+	bool paid;
+	time_t date_delivered;
 
-	std::string OrderId_uuid;
+	std::string order_id_uuid;
 
 	using OrderList = std::list<Order>;
 
@@ -42,29 +42,29 @@ public:
 	//db access
 
 	// select all Orders
-	OrderList selectOrders();
+	static OrderList select_orders();
 
 	//select Order by ID
-	Order selectOrderById(int32_t id);
-	Order selectOrderById(std::string uuid);
+	static Order select_order_by_id(const int32_t& id);
+	static Order select_order_by_id(const std::string& uuid);
 
 	//update Order
-	bool updateOrder(Order order);
+	static bool update_order(const Order& order);
 
 	//new Order
-	bool newOrder(Order order);
+	static bool new_order(const Order& order);
 
 	//delete Order
-	bool deleteOrder(int32_t id);
-	bool deleteOrder(std::string uuid);
+	static bool delete_order(const int32_t& id);
+	static bool delete_order(const std::string& uuid);
 
 
-	OrderList selectPendingOrders();
+	static OrderList select_pending_orders();
 
-	std::string to_json_array(OrderList order);
+	static std::string to_json_array(const OrderList& order);
 
-	void from_json(const nlohmann::json& j, Order& s);
-	void to_json(nlohmann::json& j, const Order& s);
+	static void from_json(const nlohmann::json& j, Order& s);
+	static void to_json(nlohmann::json& j, const Order& s);
 
 };
 

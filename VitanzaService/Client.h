@@ -14,16 +14,16 @@ class Client {
 
 public:	
 	// members
-	uint32_t ClientId;
-	std::string FirstName;
-	std::string LastNames;
-	std::string PrimaryAddress;
-	std::string SecondaryAddress;
-	std::string PrimaryPhone;
-	std::string SecondaryPhone;
-	std::string District;
+	uint32_t client_id;
+	std::string first_name;
+	std::string last_names;
+	std::string primary_address;
+	std::string secondary_address;
+	std::string primary_phone;
+	std::string secondary_phone;
+	std::string district;
 
-	std::string ClientId_uuid;
+	std::string client_id_uuid;
 
 
 	using ClientList = std::list<Client>;
@@ -31,31 +31,29 @@ public:
 	/*-------------- db access -----------------------*/
 
 	// select all clients
-	ClientList selectClients();
+	static ClientList select_clients();
 
 	//select client by ID
-	Client selectClientById(uint32_t id);
-	Client selectClientById(std::string uuid);
+	static Client select_client_by_id(const uint32_t& id);
+	static Client select_client_by_id(const std::string& uuid);
 
 	//update client
-	bool updateClient(Client client);
+	static bool update_client(const Client& client);
 
 	//new client
-	bool newClient(Client client);
+	static bool new_client(const Client& client);
 
 	//delete client
-	bool deleteClient(uint32_t id);
-	bool deleteClient(std::string uuid);
+	static bool delete_client(const uint32_t& id);
+	static bool delete_client(const std::string& uuid);
 
 
 	/* --------------- to and from json functions -----------------*/
-	std::string to_json_array(ClientList cl);
+	static std::string to_json_array(const ClientList& cl);
 
-	void from_json(const nlohmann::json& j, Client& s);
-	void to_json(nlohmann::json& j, const Client& s);
+	void from_json(const nlohmann::json& j, Client& s) const;
+	static void to_json(nlohmann::json& j, const Client& s);
 
 };
-
-
 
 #endif

@@ -1,10 +1,10 @@
 #include "order_wrapper.h"
 
-nlohmann::json Client_wrapper::getOrder(const std::string& id_or_uuid) {
+nlohmann::json Client_wrapper::get_order(const std::string& id_or_uuid) {
 #ifdef _DYNAMO
     DynamoDB dyn;
     Aws::String id(id_or_uuid.c_str());
-    return dyn.getItemDynamo("orders", "OrderId_uuid", id);
+    return dyn.get_item_dynamo("orders", "OrderId_uuid", id);
 #elif _MYSQL
     Order o;
     o.selectOrderById(id_or_uuid);
@@ -14,14 +14,14 @@ nlohmann::json Client_wrapper::getOrder(const std::string& id_or_uuid) {
 #endif 
 }
 
-bool Client_wrapper::putOrder(std::string id_or_uuid) {
+bool Client_wrapper::put_order(const std::string& id_or_uuid) {
     return nlohmann::json();
 }
 
-bool Client_wrapper::deleteOrder(std::string id_or_uuid) {
+bool Client_wrapper::delete_order(const std::string& id_or_uuid) {
     return nlohmann::json();
 }
 
-bool Client_wrapper::postOrder(std::string id_or_uuid) {
+bool Client_wrapper::post_order(const std::string& id_or_uuid) {
     return nlohmann::json();
 }

@@ -7,10 +7,10 @@
 
 class Client_wrapper {
 public:
-	nlohmann::json getOrder(const std::string& id_or_uuid);
-	bool putOrder(std::string id_or_uuid);
-	bool deleteOrder(std::string id_or_uuid);
-	bool postOrder(std::string id_or_uuid);
+	static nlohmann::json get_order(const std::string& id_or_uuid);
+	static bool put_order(const std::string& id_or_uuid);
+	static bool delete_order(const std::string& id_or_uuid);
+	static bool post_order(const std::string& id_or_uuid);
 };
 
 #endif

@@ -1,31 +1,31 @@
 #include "OrderDetail.h"
 
-OrderDetail::OrderDetailList OrderDetail::selectOrderDetailsByOrderId(int32_t orderId) {
-	OrderDetailList returnedTable;
+OrderDetail::OrderDetailList OrderDetail::select_order_details_by_order_id(const int32_t& order_id) {
+	OrderDetailList returned_table;
 	std::ostringstream query;
 	query << "SELECT od.`OrderDetailId`,od.`OrderId`,p.`ProductName`,od.`Quantity`,od.`OverridePrice`, ";
 	query << "p.`Price`FROM `vitanza`.`orderdetails` od INNER JOIN products P ON od.`Product`= p.`ProductId` ";
-	query << "WHERE `OrderId` = " << orderId;
+	query << "WHERE `OrderId` = " << order_id;
 
 	DBResult_ptr result = Database::getInstance().storeQuery(query.str());
 	if (!result) {
-		return returnedTable;
+		return returned_table;
 	}
 	do {
-		OrderDetail orderDetail;
-		orderDetail.OrderDetailId = result->getNumber<uint32_t>("OrderDetailId");
-		orderDetail.OrderId = result->getNumber<uint32_t>("OrderId");
-		orderDetail.Product = result->getString("ProductName");
-		orderDetail.Quantity = result->getNumber<uint32_t>("Quantity");
-		orderDetail.Price = result->getNumber<float_t>("Price");
-		orderDetail.OverridePrice = result->getNumber<float_t>("OverridePrice");
-		returnedTable.push_back(orderDetail);
+		OrderDetail order_detail;
+		order_detail.order_detail_id = result->getNumber<uint32_t>("OrderDetailId");
+		order_detail.order_id = result->getNumber<uint32_t>("OrderId");
+		order_detail.product = result->getString("ProductName");
+		order_detail.quantity = result->getNumber<uint32_t>("Quantity");
+		order_detail.price = result->getNumber<float_t>("Price");
+		order_detail.override_price = result->getNumber<float_t>("OverridePrice");
+		returned_table.push_back(order_detail);
 	} while (result->next());
-	return returnedTable;
+	return returned_table;
 }
 
-OrderDetail::OrderDetailList OrderDetail::selectOrderDetailsByOrderId(std::string uuid) {
-	OrderDetailList returnedTable;
+OrderDetail::OrderDetailList OrderDetail::select_order_details_by_order_id(const std::string& uuid) {
+	OrderDetailList returned_table;
 	std::ostringstream query;
 	query << "SELECT od.`OrderDetailId`,od.`OrderId`,p.`ProductName`,od.`Quantity`,od.`OverridePrice`, ";
 	query << "p.`Price`FROM `vitanza`.`orderdetails` od INNER JOIN products P ON od.`Product`= p.`ProductId` ";
@@ -33,23 +33,23 @@ OrderDetail::OrderDetailList OrderDetail::selectOrderDetailsByOrderId(std::strin
 
 	DBResult_ptr result = Database::getInstance().storeQuery(query.str());
 	if (!result) {
-		return returnedTable;
+		return returned_table;
 	}
 	do {
-		OrderDetail orderDetail;
-		orderDetail.OrderDetailId = result->getNumber<uint32_t>("OrderDetailId");
-		orderDetail.OrderId = result->getNumber<uint32_t>("OrderId");
-		orderDetail.Product = result->getString("ProductName");
-		orderDetail.Quantity = result->getNumber<uint32_t>("Quantity");
-		orderDetail.Price = result->getNumber<float_t>("Price");
-		orderDetail.OverridePrice = result->getNumber<float_t>("OverridePrice");
-		returnedTable.push_back(orderDetail);
+		OrderDetail order_detail;
+		order_detail.order_detail_id = result->getNumber<uint32_t>("OrderDetailId");
+		order_detail.order_id = result->getNumber<uint32_t>("OrderId");
+		order_detail.product = result->getString("ProductName");
+		order_detail.quantity = result->getNumber<uint32_t>("Quantity");
+		order_detail.price = result->getNumber<float_t>("Price");
+		order_detail.override_price = result->getNumber<float_t>("OverridePrice");
+		returned_table.push_back(order_detail);
 	} while (result->next());
-	return returnedTable;
+	return returned_table;
 }
 
-OrderDetail OrderDetail::selectOrderDetailById(int32_t id) {
-	OrderDetail orderDetail;
+OrderDetail OrderDetail::select_order_detail_by_id(const int32_t& id) {
+	OrderDetail order_detail;
 	std::ostringstream query;
 	query << "SELECT od.`OrderDetailId`,od.`OrderId`,p.`ProductName`,od.`Quantity`,od.`OverridePrice`, ";
 	query << "p.`Price`FROM `vitanza`.`orderdetails` od INNER JOIN products P ON od.`Product`= p.`ProductId` ";
@@ -57,21 +57,21 @@ OrderDetail OrderDetail::selectOrderDetailById(int32_t id) {
 
 	DBResult_ptr result = Database::getInstance().storeQuery(query.str());
 	if (!result) {
-		return orderDetail;
+		return order_detail;
 	}
 
-	orderDetail.OrderDetailId = result->getNumber<uint32_t>("OrderDetailId");
-	orderDetail.OrderId = result->getNumber<uint32_t>("OrderId");
-	orderDetail.Product = result->getString("ProductName");
-	orderDetail.Quantity = result->getNumber<uint32_t>("Quantity");
-	orderDetail.Price = result->getNumber<float_t>("Price");
-	orderDetail.OverridePrice = result->getNumber<float_t>("OverridePrice");
+	order_detail.order_detail_id = result->getNumber<uint32_t>("OrderDetailId");
+	order_detail.order_id = result->getNumber<uint32_t>("OrderId");
+	order_detail.product = result->getString("ProductName");
+	order_detail.quantity = result->getNumber<uint32_t>("Quantity");
+	order_detail.price = result->getNumber<float_t>("Price");
+	order_detail.override_price = result->getNumber<float_t>("OverridePrice");
 
-	return orderDetail;
+	return order_detail;
 }
 
-OrderDetail OrderDetail::selectOrderDetailById(std::string uuid) {
-	OrderDetail orderDetail;
+OrderDetail OrderDetail::select_order_detail_by_id(const std::string& uuid) {
+	OrderDetail order_detail;
 	std::ostringstream query;
 	query << "SELECT od.`OrderDetailId`,od.`OrderId`,p.`ProductName`,od.`Quantity`,od.`OverridePrice`, ";
 	query << "p.`Price`FROM `vitanza`.`orderdetails` od INNER JOIN products P ON od.`Product`= p.`ProductId` ";
@@ -79,27 +79,27 @@ OrderDetail OrderDetail::selectOrderDetailById(std::string uuid) {
 
 	DBResult_ptr result = Database::getInstance().storeQuery(query.str());
 	if (!result) {
-		return orderDetail;
+		return order_detail;
 	}
 
-	orderDetail.OrderDetailId = result->getNumber<uint32_t>("OrderDetailId");
-	orderDetail.OrderId = result->getNumber<uint32_t>("OrderId");
-	orderDetail.Product = result->getString("ProductName");
-	orderDetail.Quantity = result->getNumber<uint32_t>("Quantity");
-	orderDetail.Price = result->getNumber<float_t>("Price");
-	orderDetail.OverridePrice = result->getNumber<float_t>("OverridePrice");
+	order_detail.order_detail_id = result->getNumber<uint32_t>("OrderDetailId");
+	order_detail.order_id = result->getNumber<uint32_t>("OrderId");
+	order_detail.product = result->getString("ProductName");
+	order_detail.quantity = result->getNumber<uint32_t>("Quantity");
+	order_detail.price = result->getNumber<float_t>("Price");
+	order_detail.override_price = result->getNumber<float_t>("OverridePrice");
 
-	return orderDetail;
+	return order_detail;
 }
 
-bool OrderDetail::updateOrderDetail(OrderDetail orderDetail) {
+bool OrderDetail::update_order_detail(const OrderDetail& order_detail) {
 	Database db;
 	std::ostringstream query;
 
 	query << "SELECT * FROM vitanza.orderdetails;UPDATE `vitanza`.`orderdetails` SET ";
-	query << "`Quantity` = " << orderDetail.Quantity << " ,";
-	query << "`OverridePrice` = " << orderDetail.OverridePrice;
-	query << "WHERE `OrderDetailId` = " << orderDetail.OrderDetailId << "; ";
+	query << "`Quantity` = " << order_detail.quantity << " ,";
+	query << "`OverridePrice` = " << order_detail.override_price;
+	query << "WHERE `OrderDetailId` = " << order_detail.order_detail_id << "; ";
 
 	if (db.getInstance().executeQuery(query.str())) {
 		return true;
@@ -109,14 +109,14 @@ bool OrderDetail::updateOrderDetail(OrderDetail orderDetail) {
 
 }
 
-bool OrderDetail::newOrderDetail(OrderDetail orderDetail) {
+bool OrderDetail::new_order_detail(const OrderDetail& order_detail) {
 	Database db;
 	std::ostringstream query;
 	query << "INSERT INTO `vitanza`.`orderdetails`(`OrderId`,`Product`,`Quantity`,`OverridePrice`)";
-	query << "VALUES(" << orderDetail.OrderId << ",(";
-	query << "SELECT `ProductId` FROM `products`WHERE ProductName = " << db.escapeString(orderDetail.Product) << " ),";
-	query << orderDetail.Quantity << ",";
-	query << orderDetail.OverridePrice << " );";
+	query << "VALUES(" << order_detail.order_id << ",(";
+	query << "SELECT `ProductId` FROM `products`WHERE ProductName = " << db.escapeString(order_detail.product) << " ),";
+	query << order_detail.quantity << ",";
+	query << order_detail.override_price << " );";
 	if (db.getInstance().executeQuery(query.str())) {
 		return true;
 	} else {
@@ -124,7 +124,7 @@ bool OrderDetail::newOrderDetail(OrderDetail orderDetail) {
 	}
 }
 
-bool OrderDetail::deleteOrderDetailByOrderId(int32_t id) {
+bool OrderDetail::delete_order_detail_by_order_id(const int32_t& id) {
 	std::ostringstream query;
 	query << "DELETE FROM `vitanza`.`orderdetails` WHERE `OrderId` = " << id;
 
@@ -135,7 +135,7 @@ bool OrderDetail::deleteOrderDetailByOrderId(int32_t id) {
 	}
 }
 
-bool OrderDetail::deleteOrderDetailByOrderId(std::string uuid) {
+bool OrderDetail::delete_order_detail_by_order_id(const std::string& uuid) {
 	std::ostringstream query;
 	query << "DELETE FROM `vitanza`.`orderdetails` WHERE `OrderId_uuid` = " << uuid;
 
@@ -146,7 +146,7 @@ bool OrderDetail::deleteOrderDetailByOrderId(std::string uuid) {
 	}
 }
 
-bool OrderDetail::deleteOrderDetail(int32_t id) {
+bool OrderDetail::delete_order_detail(const int32_t& id) {
 	std::ostringstream query;
 	query << "DELETE FROM `vitanza`.`orderdetails` WHERE `OrderDetailId` = " << id;
 
@@ -157,7 +157,7 @@ bool OrderDetail::deleteOrderDetail(int32_t id) {
 	}
 }
 
-bool OrderDetail::deleteOrderDetail(std::string uuid) {
+bool OrderDetail::delete_order_detail(const std::string& uuid) {
 	std::ostringstream query;
 	query << "DELETE FROM `vitanza`.`orderdetails` WHERE `OrderDetailId_uuid` = " << uuid;
 
@@ -169,19 +169,19 @@ bool OrderDetail::deleteOrderDetail(std::string uuid) {
 }
 
 
-std::string OrderDetail::to_json_array(OrderDetailList orderDetail) {
+std::string OrderDetail::to_json_array(const OrderDetailList& order_detail) {
 
 	nlohmann::json j;
 
-	for (auto const& i : orderDetail) {
+	for (auto const& i : order_detail) {
 		j.push_back({
-			{ "OrderDetailId",i.OrderDetailId},
-			{ "OrderDetailId_uuid",i.OrderDetailId_uuid},
-			{ "OrderId", i.OrderId},
-			{ "OrderId_uuid", i.OrderId_uuid},
-			{ "Product", i.Product},
-			{ "Quantity", i.Quantity},
-			{ "OverridePrice", i.OverridePrice}
+			{ "OrderDetailId",i.order_detail_id},
+			{ "OrderDetailId_uuid",i.order_detail_id_uuid},
+			{ "OrderId", i.order_id},
+			{ "OrderId_uuid", i.order_id_uuid},
+			{ "Product", i.product},
+			{ "Quantity", i.quantity},
+			{ "OverridePrice", i.override_price}
 					});
 	}
 
@@ -189,31 +189,31 @@ std::string OrderDetail::to_json_array(OrderDetailList orderDetail) {
 }
 
 void OrderDetail::to_json(nlohmann::json& j, const OrderDetail& s) {
-	j [ "OrderDetailId" ] = s.OrderDetailId;
-	j [ "OrderDetailId_uuid" ] = s.OrderDetailId_uuid;
-	j [ "OrderId" ] = s.OrderId;
-	j [ "OrderId_uuid" ] = s.OrderId_uuid;
-	j [ "Product" ] = s.Product;
-	j [ "Quantity" ] = s.Quantity;
-	j [ "OverridePrice" ] = s.OverridePrice;
+	j [ "OrderDetailId" ] = s.order_detail_id;
+	j [ "OrderDetailId_uuid" ] = s.order_detail_id_uuid;
+	j [ "OrderId" ] = s.order_id;
+	j [ "OrderId_uuid" ] = s.order_id_uuid;
+	j [ "Product" ] = s.product;
+	j [ "Quantity" ] = s.quantity;
+	j [ "OverridePrice" ] = s.override_price;
 
 }
 
 void OrderDetail::from_json(const nlohmann::json& j, OrderDetail& s) {
 
 	try {
-		s.OrderDetailId = j.at("OrderDetailId").get<int32_t>();
-		s.OrderDetailId_uuid = j.at("OrderDetailId_uuid").get<std::string>();
-	} catch (nlohmann::json::exception) {
+		s.order_detail_id = j.at("OrderDetailId").get<int32_t>();
+		s.order_detail_id_uuid = j.at("OrderDetailId_uuid").get<std::string>();
+	} catch (nlohmann::json::exception&) {
 		// Expected behavior
 	}
 	try {
-		s.OverridePrice = j.at("OverridePrice").get<float_t>();
-		s.OrderId = j.at("OrderId").get<int32_t>();
-		s.Quantity = j.at("Quantity").get<int32_t>();
-		s.Product = j.at("ProductName").get<std::string>();
-		s.OrderId_uuid = j.at("OrderId_uuid").get<std::string>();
-	} catch (nlohmann::json::exception) {
+		s.override_price = j.at("OverridePrice").get<float_t>();
+		s.order_id = j.at("OrderId").get<int32_t>();
+		s.quantity = j.at("Quantity").get<int32_t>();
+		s.product = j.at("ProductName").get<std::string>();
+		s.order_id_uuid = j.at("OrderId_uuid").get<std::string>();
+	} catch (nlohmann::json::exception&) {
 		std::cout << "Order Detail sent with invalid mandatory fields" << std::endl;
 	}
 

@@ -4,7 +4,7 @@
 #include <string>
 class config {
 public:
-	const std::string configFileName = "config.dv";
+	const std::string config_file_name = "config.dv";
 
 	// write custom parser for configuration file
 	// it will be simply -> key : value <- list of items

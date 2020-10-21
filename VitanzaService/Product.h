@@ -12,41 +12,41 @@
 class Product {
 
 public:
-	int32_t ProductId;
-	std::string ProductName;
-	std::string ProductDescription;
-	float_t Price;
-	int32_t AvailableStock;
+	int32_t product_id;
+	std::string product_name;
+	std::string product_description;
+	float_t price;
+	int32_t available_stock;
 
-	std::string ProductId_uuid;
+	std::string product_id_uuid;
 
 	using ProductList = std::list<Product>;
 
 	//db access
 
 	// select all OrderDetails
-	ProductList selectProducts();
+	static ProductList select_products();
 
 	//select OrderDetail by ID
-	Product selectProductById(int32_t id);
-	Product selectProductById(std::string uuid);
+	static Product select_product_by_id(const int32_t& id);
+	static Product select_product_by_id(const std::string& uuid);
 
 	//update OrderDetail
-	bool updateProduct(Product product);
+	static bool update_product(const Product& product);
 
 	//new OrderDetail
-	bool newProduct(Product product);
+	static bool new_product(const Product& product);
 
 	//delete OrderDetail
-	bool deleteProduct(int32_t id);
-	bool deleteProduct(std::string uuid);
+	static bool delete_product(int32_t id);
+	static bool delete_product(const std::string& uuid);
 
 
 	/* ----------- Json methods ---------------*/
-	std::string to_json_array(ProductList product);
+	static std::string to_json_array(const ProductList& product);
 
-	void from_json(const nlohmann::json& j, Product& s);
-	void to_json(nlohmann::json& j, const Product& s);
+	static void from_json(const nlohmann::json& j, Product& s);
+	static void to_json(nlohmann::json& j, const Product& s);
 };
 
 #endif

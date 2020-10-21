@@ -20,12 +20,12 @@
 class DynamoDB {
 public:
 
-	std::map<std::string, std::string> getItemDynamo(const Aws::String& tableName, const Aws::String& keyName, const Aws::String& keyValue);
-	
-	bool updateItemDynamo(const Aws::String& tableName, const Aws::String& keyName, const Aws::String& keyValue, const nlohmann::json& json_req);
-	bool newItemDynamo(const Aws::String& tableName, const Aws::String& keyName, const Aws::String& keyValue, const nlohmann::json& json_req);
+	static std::map<std::string, std::string> get_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value);
 
-	bool deleteItemDynamo(const Aws::String& tableName, const Aws::String& keyName, const Aws::String& keyValue);
+	static bool update_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, const nlohmann::json& json_req);
+	static bool new_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, const nlohmann::json& json_req);
+
+	static bool delete_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value);
 
 
 };

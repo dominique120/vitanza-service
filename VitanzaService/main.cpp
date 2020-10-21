@@ -35,7 +35,7 @@ int main() {
 		int id = std::stoi(req.params [ "id" ]);
 
 		// Get the {id} variable from the path and 
-		client = client.selectClientById(id);
+		client = client.select_client_by_id(id);
 
 		// Set j to the serialized json of what was returned in the query
 		std::cout << "to_json" << std::endl;
@@ -60,20 +60,20 @@ int main() {
 				 }
 
 				 std::cout << req.body();
-				 cl.updateClient(cl);
+				 cl.update_client(cl);
 
 			 })
 				 .del([](served::response& res, const served::request& req) {
 				 Client cl;
 				 int id = std::stoi(req.params [ "id" ]);
-				 cl.deleteClient(id);
+				 cl.delete_client(id);
 					  });
 
 			 mux.handle("/customers")
 				 .get([](served::response& res, const served::request& req) {
 				 Client client;
 				 res.set_header("Content-type", "application/json");
-				 res << client.to_json_array(client.selectClients());
+				 res << client.to_json_array(client.select_clients());
 
 					  })
 				 .post([](served::response& res, const served::request& req) {
@@ -87,7 +87,7 @@ int main() {
 						  }
 
 						  std::cout << req.body();
-						  bool succes = cl.newClient(cl);
+						  bool succes = cl.new_client(cl);
 						  std::cout << "client creation was " << succes << std::endl;
 					   });
 
@@ -102,7 +102,7 @@ int main() {
 						  int id = std::stoi(req.params [ "id" ]);
 
 						  // Get the {id} variable from the path and 
-						  product = product.selectProductById(id);
+						  product = product.select_product_by_id(id);
 
 						  // Set j to the serialized json of what was returned in the query
 						  product.to_json(j, product);
@@ -126,20 +126,20 @@ int main() {
 								   }
 
 								   std::cout << req.body();
-								   bool succes = product.updateProduct(product);
+								   bool succes = product.update_product(product);
 
 							   })
 								   .del([](served::response& res, const served::request& req) {
 								   Product product;
 								   int id = std::stoi(req.params [ "id" ]);
-								   bool succes = product.deleteProduct(id);
+								   bool succes = product.delete_product(id);
 										});
 
 							   mux.handle("/products")
 								   .get([](served::response& res, const served::request& req) {
 								   Product product;
 								   res.set_header("Content-type", "application/json");
-								   res << product.to_json_array(product.selectProducts());
+								   res << product.to_json_array(product.select_products());
 
 										})
 								   .post([](served::response& res, const served::request& req) {
@@ -151,11 +151,11 @@ int main() {
 											} catch (nlohmann::json::exception& e) {
 												std::cout << e.what();
 											}
-											std::cout << product.Price << std::endl;
-											std::cout << product.AvailableStock << std::endl;
+											std::cout << product.price << std::endl;
+											std::cout << product.available_stock << std::endl;
 
 											std::cout << req.body();
-											bool succes = product.newProduct(product);
+											bool succes = product.new_product(product);
 										 });
 
 										/*--------------- Orders and Order Details ---------------------------*/
@@ -168,7 +168,7 @@ int main() {
 											int id = std::stoi(req.params [ "id" ]);
 
 											// Get the {id} variable from the path and 
-											product = product.selectProductById(id);
+											product = product.select_product_by_id(id);
 
 											// Set j to the serialized json of what was returned in the query
 											product.to_json(j, product);
@@ -192,20 +192,20 @@ int main() {
 													 }
 
 													 std::cout << req.body();
-													 bool succes = product.updateProduct(product);
+													 bool succes = product.update_product(product);
 
 												 })
 													 .del([](served::response& res, const served::request& req) {
 													 Product product;
 													 int id = std::stoi(req.params [ "id" ]);
-													 bool succes = product.deleteProduct(id);
+													 bool succes = product.delete_product(id);
 														  });
 
 												 mux.handle("/orders")
 													 .get([](served::response& res, const served::request& req) {
 													 Product product;
 													 res.set_header("Content-type", "application/json");
-													 res << product.to_json_array(product.selectProducts()); //place serialized json here
+													 res << product.to_json_array(product.select_products()); //place serialized json here
 
 														  })
 													 .post([](served::response& res, const served::request& req) {
@@ -217,11 +217,11 @@ int main() {
 															  } catch (nlohmann::json::exception& e) {
 																  std::cout << e.what();
 															  }
-															  std::cout << product.Price << std::endl;
-															  std::cout << product.AvailableStock << std::endl;
+															  std::cout << product.price << std::endl;
+															  std::cout << product.available_stock << std::endl;
 
 															  std::cout << req.body();
-															  bool succes = product.newProduct(product);
+															  bool succes = product.new_product(product);
 														   });
 
 

@@ -10,46 +10,46 @@
 
 class OrderDetail {
 public:
-	int32_t OrderDetailId;
-	int32_t OrderId;
-	std::string Product;
-	int32_t Quantity;
-	float_t Price;
-	float_t OverridePrice;
+	int32_t order_detail_id;
+	int32_t order_id;
+	std::string product;
+	int32_t quantity;
+	float_t price;
+	float_t override_price;
 
-	std::string OrderDetailId_uuid;
-	std::string OrderId_uuid;
+	std::string order_detail_id_uuid;
+	std::string order_id_uuid;
 
 	using OrderDetailList = std::list<OrderDetail>;
 
 	//db access
 
 	// select all OrderDetails
-	OrderDetailList selectOrderDetailsByOrderId(int32_t orderId);
-	OrderDetailList selectOrderDetailsByOrderId(std::string uuid);
+	static OrderDetailList select_order_details_by_order_id(const int32_t& order_id);
+	static OrderDetailList select_order_details_by_order_id(const std::string& uuid);
 
 	//select OrderDetail by ID
-	OrderDetail selectOrderDetailById(int32_t id);
-	OrderDetail selectOrderDetailById(std::string uuid);
+	static OrderDetail select_order_detail_by_id(const int32_t& id);
+	static OrderDetail select_order_detail_by_id(const std::string& uuid);
 
 	//update OrderDetail
-	bool updateOrderDetail(OrderDetail orderDetail);
+	static bool update_order_detail(const OrderDetail& order_detail);
 
 	//new OrderDetail
-	bool newOrderDetail(OrderDetail orderDetail);
+	static bool new_order_detail(const OrderDetail& order_detail);
 
 	//delete OrderDetail
-	bool deleteOrderDetail(int32_t id);
-	bool deleteOrderDetail(std::string uuid);
+	static bool delete_order_detail(const int32_t& id);
+	static bool delete_order_detail(const std::string& uuid);
 
 	//delete OrderDetail
-	bool deleteOrderDetailByOrderId(int32_t id);
-	bool deleteOrderDetailByOrderId(std::string uuid);
+	static bool delete_order_detail_by_order_id(const int32_t& id);
+	static bool delete_order_detail_by_order_id(const std::string& uuid);
 
-	std::string to_json_array(OrderDetailList orderDetail);
+	static std::string to_json_array(const OrderDetailList& order_detail);
 
-	void from_json(const nlohmann::json& j, OrderDetail& s);
-	void to_json(nlohmann::json& j, const OrderDetail& s);
+	static void from_json(const nlohmann::json& j, OrderDetail& s);
+	static void to_json(nlohmann::json& j, const OrderDetail& s);
 };
 
 #endif
