@@ -4,8 +4,8 @@ std::string Client_wrapper::get_client(const std::string& id_or_uuid) {
 
 #ifdef _DYNAMO
 	DynamoDB dyn;
-	Aws::String id(id_or_uuid.c_str());
-	nlohmann::json j = dyn.get_item_dynamo("clients", "ClientId_uuid", id);
+	const Aws::String id(id_or_uuid.c_str());
+	const nlohmann::json j = dyn.get_item_dynamo("clients", "ClientId_uuid", id);
 	return j.dump();
 #elif _MYSQL
 	Client p;

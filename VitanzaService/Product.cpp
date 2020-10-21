@@ -28,7 +28,7 @@ Product Product::select_product_by_id(const int32_t& id) {
 	query << "SELECT `products`.`ProductId`, `products`.`ProductName`, `products`.`ProductDescription`, `products`.`Price`, `products`.`AvailableStock` FROM `vitanza`.`products` WHERE ProductId = ";
 	query << id;
 
-	DBResult_ptr result = Database::getInstance().storeQuery(query.str());
+	const DBResult_ptr result = Database::getInstance().storeQuery(query.str());
 	if (!result) {
 		return product;
 	}
@@ -48,7 +48,7 @@ Product Product::select_product_by_id(const std::string& uuid) {
 	query << "SELECT `products`.`ProductId`, `products`.`ProductName`, `products`.`ProductDescription`, `products`.`Price`, `products`.`AvailableStock` FROM `vitanza`.`products` WHERE ProductId_uuid = ";
 	query << uuid;
 
-	DBResult_ptr result = Database::getInstance().storeQuery(query.str());
+	const DBResult_ptr result = Database::getInstance().storeQuery(query.str());
 	if (!result) {
 		return product;
 	}

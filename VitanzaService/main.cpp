@@ -87,8 +87,8 @@ int main() {
 						  }
 
 						  std::cout << req.body();
-						  bool succes = cl.new_client(cl);
-						  std::cout << "client creation was " << succes << std::endl;
+						  bool success = cl.new_client(cl);
+						  std::cout << "client creation was " << success << std::endl;
 					   });
 
 
@@ -126,13 +126,13 @@ int main() {
 								   }
 
 								   std::cout << req.body();
-								   bool succes = product.update_product(product);
+								   bool success = product.update_product(product);
 
 							   })
 								   .del([](served::response& res, const served::request& req) {
 								   Product product;
 								   int id = std::stoi(req.params [ "id" ]);
-								   bool succes = product.delete_product(id);
+								   bool success = product.delete_product(id);
 										});
 
 							   mux.handle("/products")
@@ -155,7 +155,7 @@ int main() {
 											std::cout << product.available_stock << std::endl;
 
 											std::cout << req.body();
-											bool succes = product.new_product(product);
+											bool success = product.new_product(product);
 										 });
 
 										/*--------------- Orders and Order Details ---------------------------*/
@@ -192,13 +192,13 @@ int main() {
 													 }
 
 													 std::cout << req.body();
-													 bool succes = product.update_product(product);
+													 bool success = product.update_product(product);
 
 												 })
 													 .del([](served::response& res, const served::request& req) {
 													 Product product;
 													 int id = std::stoi(req.params [ "id" ]);
-													 bool succes = product.delete_product(id);
+													 bool success = product.delete_product(id);
 														  });
 
 												 mux.handle("/orders")
@@ -221,7 +221,7 @@ int main() {
 															  std::cout << product.available_stock << std::endl;
 
 															  std::cout << req.body();
-															  bool succes = product.new_product(product);
+															  bool success = product.new_product(product);
 														   });
 
 

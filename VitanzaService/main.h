@@ -12,12 +12,6 @@
 #pragma warning(disable:4267) // 'var' : conversion from 'size_t' to 'type', possible loss of data
 #endif
 #include <iostream>
-#include <aws/core/Aws.h>
-#include <aws/core/utils/Outcome.h> 
-#include <aws/dynamodb/DynamoDBClient.h>
-#include <aws/dynamodb/model/AttributeDefinition.h>
-#include <aws/dynamodb/model/GetItemRequest.h>
-#include <aws/dynamodb/model/UpdateItemRequest.h>
 
 
 #include <served/served.hpp>

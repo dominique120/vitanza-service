@@ -3,7 +3,7 @@
 nlohmann::json Client_wrapper::get_order(const std::string& id_or_uuid) {
 #ifdef _DYNAMO
     DynamoDB dyn;
-    Aws::String id(id_or_uuid.c_str());
+    const Aws::String id(id_or_uuid.c_str());
     return dyn.get_item_dynamo("orders", "OrderId_uuid", id);
 #elif _MYSQL
     Order o;

@@ -55,7 +55,7 @@ OrderDetail OrderDetail::select_order_detail_by_id(const int32_t& id) {
 	query << "p.`Price`FROM `vitanza`.`orderdetails` od INNER JOIN products P ON od.`Product`= p.`ProductId` ";
 	query << "WHERE `OrderDetailId` = " << id;
 
-	DBResult_ptr result = Database::getInstance().storeQuery(query.str());
+	const DBResult_ptr result = Database::getInstance().storeQuery(query.str());
 	if (!result) {
 		return order_detail;
 	}
@@ -77,7 +77,7 @@ OrderDetail OrderDetail::select_order_detail_by_id(const std::string& uuid) {
 	query << "p.`Price`FROM `vitanza`.`orderdetails` od INNER JOIN products P ON od.`Product`= p.`ProductId` ";
 	query << "WHERE `OrderDetailId_uuid` = " << uuid;
 
-	DBResult_ptr result = Database::getInstance().storeQuery(query.str());
+	const DBResult_ptr result = Database::getInstance().storeQuery(query.str());
 	if (!result) {
 		return order_detail;
 	}

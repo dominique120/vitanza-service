@@ -15,6 +15,7 @@
 #include <aws/dynamodb/model/DeleteItemResult.h>
 #include <aws/dynamodb/model/DeleteItemRequest.h>
 
+
 #include "nlohmann/json.hpp"
 
 class DynamoDB {

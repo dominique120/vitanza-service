@@ -103,7 +103,7 @@ Order Order::select_order_by_id(const int32_t& id) {
 	std::ostringstream query;
 	query << "SELECT * FROM orders WHERE OrderId = " << id;
 
-	DBResult_ptr result = Database::getInstance().storeQuery(query.str());
+	const DBResult_ptr result = Database::getInstance().storeQuery(query.str());
 	if (!result) {
 		return order;
 	}
@@ -123,7 +123,7 @@ Order Order::select_order_by_id(const std::string& uuid) {
 	std::ostringstream query;
 	query << "SELECT * FROM orders WHERE OrderId_uuid = " << uuid;
 
-	DBResult_ptr result = Database::getInstance().storeQuery(query.str());
+	const DBResult_ptr result = Database::getInstance().storeQuery(query.str());
 	if (!result) {
 		return order;
 	}

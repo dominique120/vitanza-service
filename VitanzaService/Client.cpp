@@ -28,8 +28,9 @@ Client Client::select_client_by_id(const uint32_t& id) {
 	std::ostringstream query;
 	query << "SELECT c.`ClientId`, c.`FirstName`, c.`LastNames`, c.`PrimaryAddress`, c.`SecondaryAddress`, c.`PrimaryPhone`, c.`SecondaryPhone`, d.`DistrictName` FROM `clients` c INNER JOIN Districts d on c.`District` = d.`DistrictId` WHERE ClientId = " << id;
 
-	DBResult_ptr result = Database::getInstance().storeQuery(query.str());
+	const DBResult_ptr result = Database::getInstance().storeQuery(query.str());
 	if (!result) {
+		client.client_id = -1;
 		return client;
 	}
 
