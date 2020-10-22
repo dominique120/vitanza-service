@@ -8,18 +8,6 @@ int main() {
 	Aws::InitAPI(options);
 	served::multiplexer mux;
 
-	/* ---------UUID Generation -----------------*/
-	/*
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_generators.hpp>
-#include <boost/uuid/uuid_io.hpp>
-	boost::uuids::uuid uuid = boost::uuids::random_generator()();
-	std::cout << uuid << std::endl;
-	std::string id = boost::uuids::to_string(uuid);
-	*/
-
-
-
 	// register a more specialized route first, otherwise all requests with
 	// "/customers" prefix will be routed to "/customers" handlers
 

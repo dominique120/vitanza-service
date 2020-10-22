@@ -5,12 +5,16 @@
 #include "OrderDetail.h"
 #include "db_dynamo.h"
 
-class Client_wrapper {
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+#include <boost/uuid/uuid_io.hpp>
+
+class OrderDetail_wrapper {
 public:
-	static nlohmann::json get_order_detail(const std::string& id_or_uuid);
-	static bool put_order_detail(const std::string& id_or_uuid);
+	static std::string get_order_detail(const std::string& id_or_uuid);
 	static bool delete_order_detail(const std::string& id_or_uuid);
-	static bool post_order_detail(const std::string& id_or_uuid);
+	static bool new_order_detail(const nlohmann::json& json_req);
+	static bool update_order_detail(const std::string& id_or_uuid, const nlohmann::json& json_req);
 };
 
 #endif

@@ -1,8 +1,6 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
-
-
 #include <list>
 
 #include <nlohmann/json.hpp>

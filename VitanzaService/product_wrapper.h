@@ -5,12 +5,16 @@
 #include "Product.h"
 #include "db_dynamo.h"
 
-class Client_wrapper {
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+#include <boost/uuid/uuid_io.hpp>
+
+class Product_wrapper {
 public:
-	static nlohmann::json get_product(const std::string& id_or_uuid);
-	static bool put_product(const std::string& id_or_uuid);
+	static std::string get_product(const std::string& id_or_uuid);
 	static bool delete_product(const std::string& id_or_uuid);
-	static bool post_product(const std::string& id_or_uuid);
+	static bool new_product(const nlohmann::json& json_req);
+	static bool update_product(const std::string& id_or_uuid, const nlohmann::json& json_req);
 };
 
 #endif
