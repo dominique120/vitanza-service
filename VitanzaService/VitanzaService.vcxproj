@@ -64,7 +64,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>E:\cpp_libs\served-1.6.0\lib\Debug</AdditionalLibraryDirectories>
-      <AdditionalDependencies>served.dll;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>served.dll;bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -87,7 +87,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>E:\cpp_libs\served-1.6.0\lib\Release</AdditionalLibraryDirectories>
-      <AdditionalDependencies>served.dll;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>served.dll;bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
