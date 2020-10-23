@@ -12,7 +12,7 @@ std::string Product_wrapper::get_product(const std::string& id_or_uuid) {
     p.select_product_by_id(id_or_uuid);
     nlohmann::json j;
     p.to_json(j, p);
-    return p.dump();
+    return j.dump();
 #endif 
 }
 

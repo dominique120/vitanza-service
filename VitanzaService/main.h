@@ -25,6 +25,11 @@
 #include "Order.h"
 #include "OrderDetail.h"
 
+#include "client_wrapper.h"
+#include "order_wrapper.h"
+#include "orderDetail_wrapper.h"
+#include "product_wrapper.h"
+
 int main();
 
 #endif

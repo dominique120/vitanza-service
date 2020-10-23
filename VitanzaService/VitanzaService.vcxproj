@@ -55,7 +55,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_DYNAMO;_DYNAMO_LOCAL;_CONSOLE;%(PreprocessorDefinitions);NOGDI;_WIN32_WINNT=0x0a00;WIN32_LEAN_AND_MEAN</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);NOGDI;_WIN32_WINNT=0x0a00;WIN32_LEAN_AND_MEAN;_DYNAMO;_DYNAMO_LOCAL</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>E:\cpp_libs\served-1.6.0\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp14</LanguageStandard>

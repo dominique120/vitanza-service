@@ -36,7 +36,7 @@ bool OrderDetail_wrapper::new_order_detail(const nlohmann::json& json_req) {
 #elif _MYSQL
     OrderDetail od;
     od.from_json(json_req, od);
-    return od.new_order_detail(o);
+    return od.new_order_detail(od);
 #endif 
 }
 
