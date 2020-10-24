@@ -14,6 +14,7 @@ set_target_properties(vts PROPERTIES CXX_STANDARD 14)
 set_target_properties(vts PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 include(FetchContent)
+LINK_DIRECTORIES(/usr/local/lib)
 
 FetchContent_Declare(json
   GIT_REPOSITORY https://github.com/ArthurSonzogni/nlohmann_json_cmake_fetchcontent.git
@@ -41,15 +42,13 @@ find_package(MySQL REQUIRED)
 find_package(Boost 1.53.0 REQUIRED COMPONENTS system )
 
 
-
-
 include_directories(${Boost_INCLUDE_DIRS} ${MYSQL_INCLUDE_DIR} )
 
 target_link_libraries(vts PRIVATE
         Boost::system
-		served::served
 		${AWSSDK_LINK_LIBRARIES}
         ${MYSQL_CLIENT_LIBS}
 		nlohmann_json::nlohmann_json
+		served libserved.so
         )
 
