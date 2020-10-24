@@ -1,0 +1,129 @@
+{
+	"info": {
+		"_postman_id": "d4d98aa0-7783-4677-b2de-aee02cc42a94",
+		"name": "vitanza-service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "customers",
+			"item": [
+				{
+					"name": "get by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://192.168.1.72:8123/customers/2effcecc-b953-4669-a915-e5f5fb7df846",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"1",
+								"72"
+							],
+							"port": "8123",
+							"path": [
+								"customers",
+								"2effcecc-b953-4669-a915-e5f5fb7df846"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "insert",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"District\": \"Surco\",\r\n    \"FirstName\": \"Jaun\",\r\n    \"LastNames\": \"Perez Sanchez\",\r\n    \"PrimaryAddress\": \"Calle Las Palmeras\",\r\n    \"PrimaryPhone\": \"951753159\"   \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://192.168.1.72:8123/customers",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"1",
+								"72"
+							],
+							"port": "8123",
+							"path": [
+								"customers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://192.168.1.72:8123/customers/5ffd7bbb-4a39-4b33-9d14-8e983aa9a303",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"1",
+								"72"
+							],
+							"port": "8123",
+							"path": [
+								"customers",
+								"5ffd7bbb-4a39-4b33-9d14-8e983aa9a303"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"District\": \"Lince\",\r\n    \"FirstName\": \"Jauna\",\r\n    \"LastNames\": \"Pereza Sancheza\",\r\n    \"PrimaryAddress\": \"Calle Las Palmeras #2164\",\r\n    \"PrimaryPhone\": \"159357225\"   \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://192.168.1.72:8123/customers/5ffd7bbb-4a39-4b33-9d14-8e983aa9a303",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"1",
+								"72"
+							],
+							"port": "8123",
+							"path": [
+								"customers",
+								"5ffd7bbb-4a39-4b33-9d14-8e983aa9a303"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}

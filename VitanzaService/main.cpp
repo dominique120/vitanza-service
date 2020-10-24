@@ -23,14 +23,14 @@ int main() {
 			bool success = client_wrapper.update_client(req.params [ "id" ], req.body());
 			std::string s;
 			s = success;
-			res << s;
+			res << s.c_str();
 		})
 		.del([](served::response& res, const served::request& req) {
 			Client_wrapper client_wrapper;
 			bool success = client_wrapper.delete_client(req.params [ "id" ]);
 			std::string s;
 			s = success;
-			res << s;
+			res << s.c_str();
 		});
 
 	mux.handle("/customers")
@@ -42,7 +42,7 @@ int main() {
 			bool success = client_wrapper.new_client(req.body());
 			std::string s;
 			s = success;
-			res << s;
+			res << s.c_str();
 		});
 
 
@@ -58,14 +58,14 @@ int main() {
 			bool success = product_wrapper.update_product(req.params [ "id" ], req.body());
 			std::string s;
 			s = success;
-			res << s;
+			res << s.c_str();
 		})
 		.del([](served::response& res, const served::request& req) {
 			Product_wrapper product_wrapper;
 			bool success = product_wrapper.delete_product(req.params [ "id" ]);
 			std::string s;
 			s = success;
-			res << s;
+			res << s.c_str();
 		});
 
 	mux.handle("/products")
@@ -77,7 +77,7 @@ int main() {
 			bool success = product_wrapper.new_product(req.body());
 			std::string s;
 			s = success;
-			res << s;
+			res << s.c_str();
 		});
 
 	/*--------------- Orders ---------------------------*/
@@ -92,14 +92,14 @@ int main() {
 			bool success = order_wrapper.update_order(req.params [ "id" ], req.body());
 			std::string s;
 			s = success;
-			res << s;
+			res << s.c_str();
 		})
 		.del([](served::response& res, const served::request& req) {
 			Order_wrapper order_wrapper;
 			bool success = order_wrapper.delete_order(req.params [ "id" ]);
 			std::string s;
 			s = success;
-			res << s;
+			res << s.c_str();
 		 });
 
 	mux.handle("/orders")
@@ -111,7 +111,7 @@ int main() {
 			bool success = order_wrapper.new_order(req.body());
 			std::string s;
 			s = success;
-			res << s;
+			res << s.c_str();
 		 });
 
 		/*--------------- Order Details ---------------------------*/
@@ -126,14 +126,14 @@ int main() {
 			bool success = order_detail_wrapper.update_order_detail(req.params [ "id" ], req.body());
 			std::string s;
 			s = success;
-			res << s;
+			res << s.c_str();
 		})
 		.del([](served::response& res, const served::request& req) {
 			OrderDetail_wrapper order_detail_wrapper;
 			bool success = order_detail_wrapper.delete_order_detail(req.params [ "id" ]);
 			std::string s;
 			s = success;
-			res << s;
+			res << s.c_str();
 		});
 
 	mux.handle("/orders")
@@ -145,7 +145,7 @@ int main() {
 			bool success = order_detail_wrapper.new_order_detail(req.body());
 			std::string s;
 			s = success;
-			res << s;
+			res << s.c_str();
 		});
 
 

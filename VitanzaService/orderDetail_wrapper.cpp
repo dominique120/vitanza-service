@@ -26,13 +26,13 @@ bool OrderDetail_wrapper::delete_order_detail(const std::string& id_or_uuid) {
 #endif 
 }
 
-bool OrderDetail_wrapper::new_order_detail(const nlohmann::json& json_req) {
+bool OrderDetail_wrapper::new_order_detail(const std::string& request_body) {
 #ifdef _DYNAMO
     /* ---------UUID Generation -----------------*/
     boost::uuids::uuid uuid = boost::uuids::random_generator()();
     const std::string id = boost::uuids::to_string(uuid);
     DynamoDB dyn;
-    return dyn.new_item_dynamo("orderdetails", "OrderDetailId_uuid", id.c_str(), json_req);
+    return dyn.new_item_dynamo("orderdetails", "OrderDetailId_uuid", id.c_str(), request_body);
 #elif _MYSQL
     OrderDetail od;
     od.from_json(json_req, od);
@@ -40,11 +40,11 @@ bool OrderDetail_wrapper::new_order_detail(const nlohmann::json& json_req) {
 #endif 
 }
 
-bool OrderDetail_wrapper::update_order_detail(const std::string& id_or_uuid, const nlohmann::json& json_req) {
+bool OrderDetail_wrapper::update_order_detail(const std::string& id_or_uuid, const std::string& request_body) {
 #ifdef _DYNAMO
     DynamoDB dyn;
     const Aws::String id(id_or_uuid.c_str());
-    return dyn.update_item_dynamo("orderdetails", "OrderDetailId_uuid", id_or_uuid.c_str(), json_req);
+    return dyn.update_item_dynamo("orderdetails", "OrderDetailId_uuid", id_or_uuid.c_str(), request_body);
 #elif _MYSQL
     OrderDetail od;
     od.from_json(json_req, od);

@@ -50,7 +50,7 @@ std::map<std::string, std::string> DynamoDB::get_item_dynamo(const Aws::String& 
 }
 
 
-bool DynamoDB::update_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, const nlohmann::json& json_req) {
+bool DynamoDB::update_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, const std::string& request_body) {
 
 	Aws::Client::ClientConfiguration client_config;
 	Aws::DynamoDB::DynamoDBClient dynamo_client(client_config);
@@ -70,9 +70,10 @@ bool DynamoDB::update_item_dynamo(const Aws::String& table_name, const Aws::Stri
 	attrib_value.SetS(key_value);
 	request.AddKey(key_name, attrib_value);
 
-
+	nlohmann::json j = nlohmann::json::parse(request_body);
+	
 	// map json request to an std::map
-	std::map<std::string, std::string> json_map = json_req;
+	std::map<std::string, std::string> json_map = j;
 
 	// TODO: I would like to make this mode dynamic instead of manually keeping all the tables here
 	if (table_name == "clients") {
@@ -110,7 +111,7 @@ bool DynamoDB::update_item_dynamo(const Aws::String& table_name, const Aws::Stri
 		Aws::DynamoDB::Model::AttributeValue attribute_updated_value;
 		attribute_updated_value.SetS(i.second.c_str());//need to pass here the value to be updated
 		Aws::OStringStream ostr;
-		ostr << ":" << i.first;
+		ostr << ":" << i.first.c_str();
 		expression_attribute_values [ ostr.str() ] = attribute_updated_value;
 	}
 	request.SetExpressionAttributeValues(expression_attribute_values);
@@ -126,7 +127,7 @@ bool DynamoDB::update_item_dynamo(const Aws::String& table_name, const Aws::Stri
 	return true;
 }
 
-bool DynamoDB::new_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, const nlohmann::json& json_req) {
+bool DynamoDB::new_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, const std::string& request_body) {
 	const Aws::Client::ClientConfiguration client_config;
 	Aws::DynamoDB::DynamoDBClient dynamo_client(client_config);
 
@@ -135,16 +136,29 @@ bool DynamoDB::new_item_dynamo(const Aws::String& table_name, const Aws::String&
 	dynamo_client.OverrideEndpoint(endpoint);
 #endif // _DYNAMO_LOCAL
 
-	std::map<Aws::String, Aws::String> items = json_req;
+	nlohmann::json j = nlohmann::json::parse(request_body);
+
+	//for (auto i = j.begin(); i != j.end(); ++i) {
+	//	std::cout << "key: " << i.key() << " - value: " << i.value() << std::endl;
+	//}
+	
+	std::map<std::string, std::string> items = j;
 
 	Aws::DynamoDB::Model::PutItemRequest pir;
 	pir.SetTableName(table_name);
 
+	// Add body
 	for (const auto& i : items) {
-		Aws::DynamoDB::Model::AttributeValue atval;
-		atval.SetS(i.second);
-		pir.AddItem(i.first, atval);
+		Aws::DynamoDB::Model::AttributeValue attribute_value;
+		attribute_value.SetS(i.second.c_str());
+		pir.AddItem(i.first.c_str(), attribute_value);
 	}
+
+	// Add key
+	Aws::DynamoDB::Model::AttributeValue attribute_value;
+	attribute_value.SetS(key_value);
+	pir.AddItem(key_name, attribute_value);
+	
 
 	const Aws::DynamoDB::Model::PutItemOutcome result = dynamo_client.PutItem(pir);
 	if (!result.IsSuccess()) {

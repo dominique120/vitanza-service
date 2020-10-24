@@ -13,8 +13,8 @@ class OrderDetail_wrapper {
 public:
 	static std::string get_order_detail(const std::string& id_or_uuid);
 	static bool delete_order_detail(const std::string& id_or_uuid);
-	static bool new_order_detail(const nlohmann::json& json_req);
-	static bool update_order_detail(const std::string& id_or_uuid, const nlohmann::json& json_req);
+	static bool new_order_detail(const std::string& request_body);
+	static bool update_order_detail(const std::string& id_or_uuid, const std::string& request_body);
 };
 
 #endif

@@ -15,11 +15,11 @@ std::string Client_wrapper::get_client(const std::string& id_or_uuid) {
 #endif 
 }
 
-bool Client_wrapper::update_client(const std::string& id_or_uuid, const nlohmann::json& json_req) {
+bool Client_wrapper::update_client(const std::string& id_or_uuid, const std::string& request_body) {
 #ifdef _DYNAMO
 	DynamoDB dyn;
 	const Aws::String id(id_or_uuid.c_str());
-	return dyn.update_item_dynamo("clients", "ClientId_uuid", id_or_uuid.c_str(), json_req);
+	return dyn.update_item_dynamo("clients", "ClientId_uuid", id_or_uuid.c_str(), request_body);
 #elif _MYSQL
 	Client p;
 	p.from_json(json_req, p);
@@ -38,14 +38,13 @@ bool Client_wrapper::delete_client(const std::string& id_or_uuid) {
 #endif 
 }
 
-bool Client_wrapper::new_client(const nlohmann::json& json_req) {
+bool Client_wrapper::new_client(const std::string& request_body) {
+#ifdef _DYNAMO
 	/* ---------UUID Generation -----------------*/
 	boost::uuids::uuid uuid = boost::uuids::random_generator()();
 	const std::string id = boost::uuids::to_string(uuid);
-
-#ifdef _DYNAMO
 	DynamoDB dyn;
-	return dyn.new_item_dynamo("clients", "ClientId_uuid", id.c_str(), json_req);
+	return dyn.new_item_dynamo("clients", "ClientId_uuid", id.c_str(), request_body);
 #elif _MYSQL
 	Client p;
 	p.from_json(json_req, p);

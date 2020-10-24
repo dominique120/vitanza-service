@@ -27,13 +27,13 @@ bool Product_wrapper::delete_product(const std::string& id_or_uuid) {
 #endif 
 }
 
-bool Product_wrapper::new_product(const nlohmann::json& json_req) {
+bool Product_wrapper::new_product(const std::string& request_body) {
 #ifdef _DYNAMO
     /* ---------UUID Generation -----------------*/
     boost::uuids::uuid uuid = boost::uuids::random_generator()();
     const std::string id = boost::uuids::to_string(uuid);
     DynamoDB dyn;
-    return dyn.new_item_dynamo("products", "ProductId_uuid", id.c_str(), json_req);
+    return dyn.new_item_dynamo("products", "ProductId_uuid", id.c_str(), request_body);
 #elif _MYSQL
     Product p;
     p.from_json(json_req, p);
@@ -41,11 +41,11 @@ bool Product_wrapper::new_product(const nlohmann::json& json_req) {
 #endif 
 }
 
-bool Product_wrapper::update_product(const std::string& id_or_uuid, const nlohmann::json& json_req) {
+bool Product_wrapper::update_product(const std::string& id_or_uuid, const std::string& request_body) {
 #ifdef _DYNAMO
     DynamoDB dyn;
     const Aws::String id(id_or_uuid.c_str());
-    return dyn.update_item_dynamo("products", "ProductId_uuid", id_or_uuid.c_str(), json_req);
+    return dyn.update_item_dynamo("products", "ProductId_uuid", id_or_uuid.c_str(), request_body);
 #elif _MYSQL
     Product p;
     p.from_json(json_req, p);

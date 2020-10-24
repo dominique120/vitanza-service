@@ -13,8 +13,8 @@ class Product_wrapper {
 public:
 	static std::string get_product(const std::string& id_or_uuid);
 	static bool delete_product(const std::string& id_or_uuid);
-	static bool new_product(const nlohmann::json& json_req);
-	static bool update_product(const std::string& id_or_uuid, const nlohmann::json& json_req);
+	static bool new_product(const std::string& request_body);
+	static bool update_product(const std::string& id_or_uuid, const std::string& request_body);
 };
 
 #endif

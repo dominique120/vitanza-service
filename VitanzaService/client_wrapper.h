@@ -12,9 +12,9 @@
 class Client_wrapper{
 public:
 	static std::string get_client(const std::string& id_or_uuid);
-	static bool update_client(const std::string& id_or_uuid, const nlohmann::json& json_req);
+	static bool update_client(const std::string& id_or_uuid, const std::string& request_body);
 	static bool delete_client(const std::string& id_or_uuid);
-	static bool new_client(const nlohmann::json& json_req);
+	static bool new_client(const std::string& request_body);
 };
 
 #endif
