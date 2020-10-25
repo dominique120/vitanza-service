@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <sstream>
 #include <list>
-#include <nlohmann\json.hpp>
+#include <nlohmann/json.hpp>
 #include "db_mysql.h"
 
 class OrderDetail {

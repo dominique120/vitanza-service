@@ -18,7 +18,7 @@
 #include <served/request_error.hpp>
 #include <served/status.hpp>
 
-#include <nlohmann\json.hpp>
+#include <nlohmann/json.hpp>
 
 #include "Client.h"
 #include "Product.h"

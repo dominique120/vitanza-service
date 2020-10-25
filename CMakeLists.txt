@@ -13,6 +13,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 set_target_properties(vts PROPERTIES CXX_STANDARD 14)
 set_target_properties(vts PROPERTIES CXX_STANDARD_REQUIRED ON)
 
+target_compile_definitions(vts PUBLIC -DDB_DYNAMO -DDYNAMO_LOCAL)
+
 include(FetchContent)
 LINK_DIRECTORIES(/usr/local/lib)
 
@@ -25,7 +27,6 @@ if(NOT json_POPULATED)
   FetchContent_Populate(json)
   add_subdirectory(${json_SOURCE_DIR} ${json_BINARY_DIR} EXCLUDE_FROM_ALL)
 endif()
-
 
 if (NOT WIN32)
     add_compile_options(-Wall -Werror -pipe -fvisibility=hidden)
@@ -41,8 +42,7 @@ find_package(AWSSDK REQUIRED COMPONENTS dynamodb)
 find_package(MySQL REQUIRED)
 find_package(Boost 1.53.0 REQUIRED COMPONENTS system )
 
-
-include_directories(${Boost_INCLUDE_DIRS} ${MYSQL_INCLUDE_DIR} )
+include_directories(${Boost_INCLUDE_DIRS} ${MYSQL_INCLUDE_DIR} ${json_SOURCE_DIR})
 
 target_link_libraries(vts PRIVATE
         Boost::system
@@ -51,4 +51,3 @@ target_link_libraries(vts PRIVATE
 		nlohmann_json::nlohmann_json
 		served libserved.so
         )
-

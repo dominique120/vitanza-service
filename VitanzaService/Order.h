@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <string>
 #include <list>
-#include <nlohmann\json.hpp>
+#include <nlohmann/json.hpp>
 #include "db_mysql.h"
 #include "util.h"
 #include "OrderDetail.h"

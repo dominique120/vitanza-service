@@ -6,7 +6,7 @@
 #include <string>
 #include <list>
 #include <sstream>
-#include <nlohmann\json.hpp>
+#include <nlohmann/json.hpp>
 #include "db_mysql.h"
 
 class Product {
