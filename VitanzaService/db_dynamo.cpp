@@ -6,6 +6,11 @@ std::map<std::string, std::string> DynamoDB::get_item_dynamo(const Aws::String& 
 	Aws::Auth::AWSCredentials credentials;
 	credentials.SetAWSAccessKeyId(Aws::String(g_config [ "AWS_ACCESS_KEY" ].c_str()));
 	credentials.SetAWSSecretKey(Aws::String(g_config [ "AWS_SECRET_KEY" ].c_str()));
+	bool use_token;
+	std::istringstream(g_config [ "AWS_USE_SESSION_TOKEN" ]) >> std::boolalpha >> use_token;
+	if (use_token) {
+		credentials.SetSessionToken(Aws::String(g_config [ "AWS_SESSION_TOKEN" ].c_str()));
+	}
 
 	Aws::Client::ClientConfiguration client_config;
 	client_config.region = g_config [ "AWS_REGION" ].c_str();
@@ -49,7 +54,7 @@ std::map<std::string, std::string> DynamoDB::get_item_dynamo(const Aws::String& 
 			std::cout << "No item found with the key " << key_name << std::endl;
 		}
 	} else {
-		std::cout << "Failed to get item: " << result.GetError().GetMessage();
+		std::cout << "Failed to get item: " << result.GetError().GetMessage() << std::endl;
 	}
 	return new_map;
 }
@@ -59,6 +64,11 @@ bool DynamoDB::update_item_dynamo(const Aws::String& table_name, const Aws::Stri
 	Aws::Auth::AWSCredentials credentials;
 	credentials.SetAWSAccessKeyId(Aws::String(g_config [ "AWS_ACCESS_KEY" ].c_str()));
 	credentials.SetAWSSecretKey(Aws::String(g_config [ "AWS_SECRET_KEY" ].c_str()));
+	bool use_token;
+	std::istringstream(g_config [ "AWS_USE_SESSION_TOKEN" ]) >> std::boolalpha >> use_token;
+	if (use_token) {
+		credentials.SetSessionToken(Aws::String(g_config [ "AWS_SESSION_TOKEN" ].c_str()));
+	}
 	
 	Aws::Client::ClientConfiguration client_config;
 	client_config.region = g_config [ "AWS_REGION" ].c_str();
@@ -140,6 +150,11 @@ bool DynamoDB::new_item_dynamo(const Aws::String& table_name, const Aws::String&
 	Aws::Auth::AWSCredentials credentials;
 	credentials.SetAWSAccessKeyId(Aws::String(g_config [ "AWS_ACCESS_KEY" ].c_str()));
 	credentials.SetAWSSecretKey(Aws::String(g_config [ "AWS_SECRET_KEY" ].c_str()));
+	bool use_token;
+	std::istringstream(g_config [ "AWS_USE_SESSION_TOKEN" ]) >> std::boolalpha >> use_token;
+	if (use_token) {
+		credentials.SetSessionToken(Aws::String(g_config [ "AWS_SESSION_TOKEN" ].c_str()));
+	}
 
 	Aws::Client::ClientConfiguration client_config;
 	client_config.region = g_config [ "AWS_REGION" ].c_str();
@@ -186,6 +201,11 @@ bool DynamoDB::delete_item_dynamo(const Aws::String& table_name, const Aws::Stri
 	Aws::Auth::AWSCredentials credentials;
 	credentials.SetAWSAccessKeyId(Aws::String(g_config [ "AWS_ACCESS_KEY" ].c_str()));
 	credentials.SetAWSSecretKey(Aws::String(g_config [ "AWS_SECRET_KEY" ].c_str()));
+	bool use_token;
+	std::istringstream(g_config [ "AWS_USE_SESSION_TOKEN" ]) >> std::boolalpha >> use_token;
+	if (use_token) {
+		credentials.SetSessionToken(Aws::String(g_config [ "AWS_SESSION_TOKEN" ].c_str()));
+	}
 
 	Aws::Client::ClientConfiguration client_config;
 	client_config.region = g_config [ "AWS_REGION" ].c_str();

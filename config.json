@@ -1,14 +1,16 @@
 {
-  "MYSQL_PORT" :  "3306",
-  "MYSQL_HOST" : "127.0.0.1",
-  "MYSQL_DATABASE" : "vitanza",
-  "MYSQL_USER" :  "root",
-  "MYSQL_PASSWORD" : "root",
-  "MYSQL_PROTOCOL" :  "tcp",
-  "AWS_ACCESS_KEY" : "xyz",
-  "AWS_SECRET_KEY" : "xyz",
-  "AWS_REGION" :  "US_EAST_1",
-  "SERVER_PORT" : "8123",
-  "SERVER_IP" : "publicip", 
-  "SERVER_INIT_THREAD_POOL" : "100" 
+  "MYSQL_PORT": "3306",
+  "MYSQL_HOST": "127.0.0.1",
+  "MYSQL_DATABASE": "vitanza",
+  "MYSQL_USER": "root",
+  "MYSQL_PASSWORD": "root",
+  "MYSQL_PROTOCOL": "tcp",
+  "AWS_ACCESS_KEY": "xyz",
+  "AWS_SECRET_KEY": "xyz",
+  "AWS_SESSION_TOKEN": "xyz",
+  "AWS_USE_SESSION_TOKEN": "false",
+  "AWS_REGION": "US_EAST_1",
+  "SERVER_PORT": "8123",
+  "SERVER_IP": "publicip",
+  "SERVER_INIT_THREAD_POOL": "100"
 }
