@@ -21,6 +21,7 @@ private:
 		
 	// Currently not used, just used to list possible configurations
 	// Maybe map the json config file to this enum?
+	/*
 	enum config_options {
 		MYSQL_PORT,
 		MYSQL_HOST,
@@ -37,7 +38,7 @@ private:
 		SERVER_IP,
 		SERVER_INIT_THREAD_POOL		
 	};
-
+	*/
 };
 
 #endif
