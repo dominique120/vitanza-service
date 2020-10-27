@@ -16,10 +16,8 @@ std::map<std::string, std::string> DynamoDB::get_item_dynamo(const Aws::String& 
 	client_config.region = g_config [ "AWS_REGION" ].c_str();
 	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
 
-#ifdef _DYNAMO_LOCAL
-	const Aws::String endpoint("http://localhost:8000");
+	const Aws::String endpoint(g_config [ "AWS_DYNAMODB_ENDPOINT" ].c_str());
 	dynamo_client.OverrideEndpoint(endpoint);
-#endif // _DYNAMO_LOCAL
 	
 	std::map<std::string, std::string> new_map;
 	Aws::DynamoDB::Model::GetItemRequest req;
@@ -74,10 +72,8 @@ bool DynamoDB::update_item_dynamo(const Aws::String& table_name, const Aws::Stri
 	client_config.region = g_config [ "AWS_REGION" ].c_str();
 	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials ,client_config);
 
-#ifdef _DYNAMO_LOCAL
-	const Aws::String endpoint("http://localhost:8000");
+	const Aws::String endpoint(g_config [ "AWS_DYNAMODB_ENDPOINT" ].c_str());
 	dynamo_client.OverrideEndpoint(endpoint);
-#endif // _DYNAMO_LOCAL
 
 	// *** Define UpdateItem request arguments
 	// Define TableName argument
@@ -160,10 +156,8 @@ bool DynamoDB::new_item_dynamo(const Aws::String& table_name, const Aws::String&
 	client_config.region = g_config [ "AWS_REGION" ].c_str();
 	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
 
-#ifdef _DYNAMO_LOCAL
-	const Aws::String endpoint("http://localhost:8000");
+	const Aws::String endpoint(g_config [ "AWS_DYNAMODB_ENDPOINT" ].c_str());
 	dynamo_client.OverrideEndpoint(endpoint);
-#endif // _DYNAMO_LOCAL
 
 	nlohmann::json j = nlohmann::json::parse(request_body);
 
@@ -211,10 +205,8 @@ bool DynamoDB::delete_item_dynamo(const Aws::String& table_name, const Aws::Stri
 	client_config.region = g_config [ "AWS_REGION" ].c_str();
 	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
 
-#ifdef _DYNAMO_LOCAL
-	const Aws::String endpoint("http://localhost:8000");
+	const Aws::String endpoint(g_config [ "AWS_DYNAMODB_ENDPOINT" ].c_str());
 	dynamo_client.OverrideEndpoint(endpoint);
-#endif // _DYNAMO_LOCAL
 
 	Aws::DynamoDB::Model::DeleteItemRequest req;
 

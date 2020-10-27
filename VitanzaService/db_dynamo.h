@@ -22,12 +22,9 @@
 
 class DynamoDB {
 public:
-
 	static std::map<std::string, std::string> get_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value);
-
 	static bool update_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, const std::string& request_body);
 	static bool new_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, const std::string& request_body);
-
 	static bool delete_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value);
 };
 #endif

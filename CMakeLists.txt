@@ -3,6 +3,9 @@ cmake_minimum_required(VERSION 3.10)
 set(CMAKE_DISABLE_SOURCE_CHANGES ON)
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 
+option(DB_DYNAMO "Use DynamoDB" ON)
+option(DB_MYSQL "Use MySQL" OFF)
+
 project(vitanza-service CXX)
 
 add_subdirectory(VitanzaService)
@@ -13,7 +16,17 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 set_target_properties(vts PROPERTIES CXX_STANDARD 14)
 set_target_properties(vts PROPERTIES CXX_STANDARD_REQUIRED ON)
 
-target_compile_definitions(vts PUBLIC -DDB_DYNAMO -DDYNAMO_LOCAL)
+if(DB_DYNAMO)
+	target_compile_definitions(vts PUBLIC -DDB_DYNAMO)
+endif(DB_DYNAMO)
+
+if(DB_MYSQL)
+	target_compile_definitions(vts PUBLIC -DDB_MYSQL)
+endif(DB_MYSQL)
+
+if(DB_MYSQL AND DB_DYNAMO)
+	message(FATAL_ERROR "Specify only one database, you are using multiple options." )
+endif(DB_MYSQL AND DB_DYNAMO)
 
 include(FetchContent)
 LINK_DIRECTORIES(/usr/local/lib)

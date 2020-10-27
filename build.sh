@@ -1,5 +1,5 @@
 sudo dnf update -y && sudo dnf upgrade -y
-dnf install -y git boost-devel make cmake3 gcc-c++ mariadb-devel libcurl-devel openssl-devel libuuid-devel pulseaudio-libs-devel
+sudo dnf install -y git boost-devel make cmake3 gcc-c++ mariadb-devel libcurl-devel openssl-devel libuuid-devel pulseaudio-libs-devel
 
 
 /* If on t2.micro create a swp volume */
@@ -7,7 +7,6 @@ sudo /bin/dd if=/dev/zero of=/var/swap.1 bs=1M count=1024
 sudo /sbin/mkswap /var/swap.1
 sudo chmod 600 /var/swap.1
 sudo /sbin/swapon /var/swap.1
-
 /* end if */
 
 git clone https://github.com/aws/aws-sdk-cpp.git
@@ -25,12 +24,11 @@ sudo ln /usr/local/lib/libserved.so.1.4 /usr/lib64/libserved.so.1.4
 
 cd ..
 
-git clone https://USER:PASSWORD@github.com/dominique120/vitanza-service.git
-mkdir vts
-mkdir vts.build && cd vts.build
-cmake3 ../vitanza-service
+git clone https://github.com/dominique120/vitanza-service.git
+mkdir vts && mkdir vts.build && cd vts.build
+cmake3 ../vitanza-service -DDB_DYNAMO=ON
 make
 
 mv vts ../vts/vts
 cd ..
-mv vitanza-service/config.json vts/config.json
+cp vitanza-service/config.json vts/config.json

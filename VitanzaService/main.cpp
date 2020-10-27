@@ -28,6 +28,7 @@ int main() {
 
 	
 	served::net::server server(g_config [ "SERVER_IP" ], g_config [ "SERVER_PORT" ], mux);
+	std::cout << "Modules loaded - Address " << g_config [ "SERVER_IP" ] << " bound using port " << g_config [ "SERVER_PORT" ] <<std::endl;
 	server.run(10);
 	
 	Aws::ShutdownAPI(options);
