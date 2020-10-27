@@ -1,5 +1,6 @@
 #include "db_mysql.h"
-//extern ConfigManager g_config;
+
+extern ConfigurationManager g_config;
 
 Database::~Database() {
 	if (handle != nullptr) {
@@ -19,22 +20,14 @@ bool Database::connect() {
 	bool reconnect = true;
 	mysql_options(handle, MYSQL_OPT_RECONNECT, &reconnect);
 
-	// connects to database
-
-	static std::string DATABASE_PROTOCOL = "tcp";
-	static std::string DATABASE_NAME = "vitanza";
-	static std::string DATABASE_HOST = "127.0.0.1";
-	static unsigned int DATABASE_PORT = 3306;
-	static std::string DATABASE_USER = "root";
-	static std::string DATABASE_PASSWORD = "vicecity";
-	
-	/*
-	if (!mysql_real_connect(handle, g_config.getString(ConfigManager::MYSQL_HOST).c_str(), g_config.getString(ConfigManager::MYSQL_USER).c_str(), g_config.getString(ConfigManager::MYSQL_PASS).c_str(), g_config.getString(ConfigManager::MYSQL_DB).c_str(), g_config.getNumber(ConfigManager::SQL_PORT), g_config.getString(ConfigManager::MYSQL_SOCK).c_str(), 0)) {
-		std::cout << std::endl << "MySQL Error Message: " << mysql_error(handle) << std::endl;
-		return false;
-	}
-	*/
-	if (!mysql_real_connect(handle, DATABASE_HOST.c_str(), DATABASE_USER.c_str(), DATABASE_PASSWORD.c_str(), DATABASE_NAME.c_str(), DATABASE_PORT, nullptr, 0)) {
+	if (!mysql_real_connect(handle, 
+							g_config["MYSQL_HOST"].c_str(), 
+							g_config [ "MYSQL_USER" ].c_str(), 
+							g_config [ "MYSQL_PASSWORD" ].c_str(),
+							g_config [ "MYSQL_DATABASE" ].c_str(),
+							std::stoi(g_config [ "MYSQL_PORT" ]),
+							nullptr, 
+							0)) {
 		std::cout << std::endl << "MySQL Error Message: " << mysql_error(handle) << std::endl;
 		return false;
 	}

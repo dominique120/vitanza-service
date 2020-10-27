@@ -1,12 +1,40 @@
 #include "main.h"
 
+ConfigurationManager g_config;
 
 int main() {
+	std::cout << "Vitanza Service - Version 0.3a" << std::endl;
+	std::cout << "Compiled with " << BOOST_COMPILER << std::endl;
+	std::cout << "Compiled on " << __DATE__ << ' ' << __TIME__ << " for platform ";
+	std::cout << BOOST_PLATFORM << std::endl;
+	
+	std::cout << "A microservice written by Dominique Verellen" << std::endl;
+	std::cout << "Contact: dominique120@live.com" << std::endl;
+	std::cout << std::endl;
+
+	
+	std::cout << "Initializing - Loading Configuration" << std::endl;
+	g_config.load();
+	
+
+	std::cout << "Initializing - Setting up AWS SDK" << std::endl;
 	Aws::SDKOptions options;
 	Aws::InitAPI(options);
 
-	served::multiplexer mux;
 
+	std::cout << "Initializing - Setting up multiplexer and registering handlers." << std::endl;
+	served::multiplexer mux;
+	register_handlers(mux);
+
+	
+	served::net::server server(g_config [ "SERVER_IP" ], g_config [ "SERVER_PORT" ], mux);
+	server.run(10);
+	
+	Aws::ShutdownAPI(options);
+	return (EXIT_SUCCESS);
+}
+
+void register_handlers(served::multiplexer& mux) {
 	// register a more specialized route first, otherwise all requests with
 	// "/customers" prefix will be routed to "/customers" handlers
 
@@ -114,7 +142,7 @@ int main() {
 			res << s.c_str();
 		 });
 
-		/*--------------- Order Details ---------------------------*/
+	/*--------------- Order Details ---------------------------*/
 	mux.handle("/orders/{id}")
 		.get([](served::response& res, const served::request& req) {
 			OrderDetail_wrapper order_detail_wrapper;
@@ -147,12 +175,4 @@ int main() {
 			s = success;
 			res << s.c_str();
 		});
-
-
-	served::net::server server("192.168.1.72", "8123", mux);
-	server.run(10);
-	
-	Aws::ShutdownAPI(options);
-	return (EXIT_SUCCESS);
-
 }

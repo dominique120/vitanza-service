@@ -2,14 +2,42 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 #include <string>
-class config {
-public:
-	const std::string config_file_name = "config.dv";
+#include <fstream>
+#include <iostream>
+#include <map>
+#include "nlohmann/json.hpp"
 
-	// write custom parser for configuration file
-	// it will be simply -> key : value <- list of items
-	// that will be parsed into an std::map(maybe)
-	// and assigned to a class
+class ConfigurationManager {
+public:
+
+	bool load();
+
+	std::string operator [] (const std::string& config_name) {
+		return this->configuration_table.at(config_name);
+	}
+
+private:
+	std::map<std::string, std::string> configuration_table;
+		
+	// Currently not used, just used to list possible configurations
+	// Maybe map the json config file to this enum?
+	enum config_options {
+		MYSQL_PORT,
+		MYSQL_HOST,
+		MYSQL_DATABASE,
+		MYSQL_USER,
+		MYSQL_PASSWORD,
+		MYSQL_PROTOCOL,
+
+		AWS_ACCESS_KEY,
+		AWS_SECRET_KEY,
+		AWS_REGION,
+
+		SERVER_PORT,
+		SERVER_IP,
+		SERVER_INIT_THREAD_POOL		
+	};
+
 };
 
 #endif

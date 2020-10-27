@@ -1,19 +1,24 @@
 #include "db_dynamo.h"
 
+extern ConfigurationManager g_config;
 
 std::map<std::string, std::string> DynamoDB::get_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value) {
-	std::map<std::string, std::string> new_map;
+	Aws::Auth::AWSCredentials credentials;
+	credentials.SetAWSAccessKeyId(Aws::String(g_config [ "AWS_ACCESS_KEY" ].c_str()));
+	credentials.SetAWSSecretKey(Aws::String(g_config [ "AWS_SECRET_KEY" ].c_str()));
 
-	const Aws::Client::ClientConfiguration client_config;
-
-	Aws::DynamoDB::DynamoDBClient dynamo_client(client_config);
-	Aws::DynamoDB::Model::GetItemRequest req;
+	Aws::Client::ClientConfiguration client_config;
+	client_config.region = g_config [ "AWS_REGION" ].c_str();
+	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
 
 #ifdef _DYNAMO_LOCAL
 	const Aws::String endpoint("http://localhost:8000");
 	dynamo_client.OverrideEndpoint(endpoint);
 #endif // _DYNAMO_LOCAL
-
+	
+	std::map<std::string, std::string> new_map;
+	Aws::DynamoDB::Model::GetItemRequest req;
+	
 	// Set up the request
 	req.SetTableName(table_name); // table name
 	Aws::DynamoDB::Model::AttributeValue hash_key;
@@ -51,9 +56,13 @@ std::map<std::string, std::string> DynamoDB::get_item_dynamo(const Aws::String& 
 
 
 bool DynamoDB::update_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, const std::string& request_body) {
-
+	Aws::Auth::AWSCredentials credentials;
+	credentials.SetAWSAccessKeyId(Aws::String(g_config [ "AWS_ACCESS_KEY" ].c_str()));
+	credentials.SetAWSSecretKey(Aws::String(g_config [ "AWS_SECRET_KEY" ].c_str()));
+	
 	Aws::Client::ClientConfiguration client_config;
-	Aws::DynamoDB::DynamoDBClient dynamo_client(client_config);
+	client_config.region = g_config [ "AWS_REGION" ].c_str();
+	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials ,client_config);
 
 #ifdef _DYNAMO_LOCAL
 	const Aws::String endpoint("http://localhost:8000");
@@ -128,8 +137,13 @@ bool DynamoDB::update_item_dynamo(const Aws::String& table_name, const Aws::Stri
 }
 
 bool DynamoDB::new_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, const std::string& request_body) {
-	const Aws::Client::ClientConfiguration client_config;
-	Aws::DynamoDB::DynamoDBClient dynamo_client(client_config);
+	Aws::Auth::AWSCredentials credentials;
+	credentials.SetAWSAccessKeyId(Aws::String(g_config [ "AWS_ACCESS_KEY" ].c_str()));
+	credentials.SetAWSSecretKey(Aws::String(g_config [ "AWS_SECRET_KEY" ].c_str()));
+
+	Aws::Client::ClientConfiguration client_config;
+	client_config.region = g_config [ "AWS_REGION" ].c_str();
+	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
 
 #ifdef _DYNAMO_LOCAL
 	const Aws::String endpoint("http://localhost:8000");
@@ -169,8 +183,13 @@ bool DynamoDB::new_item_dynamo(const Aws::String& table_name, const Aws::String&
 }
 
 bool DynamoDB::delete_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value) {
-	const Aws::Client::ClientConfiguration client_config;
-	Aws::DynamoDB::DynamoDBClient dynamo_client(client_config);
+	Aws::Auth::AWSCredentials credentials;
+	credentials.SetAWSAccessKeyId(Aws::String(g_config [ "AWS_ACCESS_KEY" ].c_str()));
+	credentials.SetAWSSecretKey(Aws::String(g_config [ "AWS_SECRET_KEY" ].c_str()));
+
+	Aws::Client::ClientConfiguration client_config;
+	client_config.region = g_config [ "AWS_REGION" ].c_str();
+	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
 
 #ifdef _DYNAMO_LOCAL
 	const Aws::String endpoint("http://localhost:8000");

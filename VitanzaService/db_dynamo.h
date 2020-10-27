@@ -2,6 +2,7 @@
 #define DYNAMO_H
 
 #include <aws/core/Aws.h>
+#include <aws/core/auth/AWSCredentials.h>
 #include <aws/core/utils/Outcome.h> 
 #include <aws/dynamodb/DynamoDBClient.h>
 #include <aws/dynamodb/model/AttributeDefinition.h>
@@ -15,6 +16,7 @@
 #include <aws/dynamodb/model/DeleteItemResult.h>
 #include <aws/dynamodb/model/DeleteItemRequest.h>
 
+#include "config.h"
 
 #include "nlohmann/json.hpp"
 

@@ -11,8 +11,11 @@
 #include <mysql/mysql.h>
 #include <mysql/errmsg.h>
 
+#include "config.h"
 
-
+#ifdef _MSC_VER
+#pragma warning(disable:4267) // 'var' : conversion from 'size_t' to 'type', possible loss of data
+#endif
 
 
 class DBResult;
