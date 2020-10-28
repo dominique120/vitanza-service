@@ -3,6 +3,20 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+
+# Additional ignore directories and files
+[Xx]64/
+out/
+cmake-build-debug/
+cmake-build-release/
+.git/
+.idea/
+.vs/
+*.bak
+*.log
+
+
+
 # User-specific files
 *.rsuser
 *.suo

@@ -3,7 +3,7 @@
 
 extern "C" char* strptime(const char* s,
     const char* f,
-    struct tm* tm) {
+    struct tm* tm) noexcept{
     std::istringstream input(s);
     input.imbue(std::locale(setlocale(LC_ALL, nullptr)));
     input >> std::get_time(tm, f);
