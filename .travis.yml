@@ -1,17 +1,36 @@
 language: cpp
-sudo: required
 
-matrix:
-    include:
-        - dist: focal
-          compiler: gcc
-          arch: amd64  
-        - dist: focal
-          compiler: clang
-          arch: amd64  
-        - dist: focal
-          compiler: gcc
-          arch: arm64-graviton2
+os: linux
+dist: focal
+
+jobs:
+   include:
+      - language: cpp
+        arch: amd64
+        compiler: gcc
+        env: DB=mysql
+      - language: cpp
+        arch: s390x
+        compiler: gcc
+        env: DB=mysql
+      
+      - language: cpp
+        arch: amd64
+        compiler: gcc
+        env: DB=dynamo
+      - language: cpp
+        arch: arm64-graviton2
+        compiler: gcc
+        env: DB=dynamo
+        
+      - language: cpp
+        arch: amd64
+        compiler: clang
+        env: DB=mysql
+      - language: cpp
+        arch: amd64
+        compiler: clang
+        env: DB=dynamo
 
 branches:
     only:
@@ -43,7 +62,7 @@ before_install:
     - cd ..
     - git clone https://github.com/dominique120/vitanza-service.git
     - mkdir vts && mkdir vts.build && cd vts.build
-    - cmake -DDB_DYNAMO=ON ../vitanza-service
+    - if [ "$DB" = "dynamo" ]; cmake -DDB_DYNAMO=ON ../vitanza-service         ; fi
+    - if [ "$DB" = "mysql" ]; cmake -DDB_MYSQL=ON ../vitanza-service         ; fi
     
 script: make -j2
-

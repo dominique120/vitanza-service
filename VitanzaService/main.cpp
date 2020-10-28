@@ -7,18 +7,27 @@ int main() {
 	std::cout << "Compiled with " << BOOST_COMPILER << std::endl;
 	std::cout << "Compiled on " << __DATE__ << ' ' << __TIME__ << " for platform ";
 	std::cout << BOOST_PLATFORM << std::endl;
+
+	std::cout << "Compiled for: "
+#if defined(DB_DYNAMO)
+		<< "DynamoDB." << std::endl;
+#elif defined(DB_MYSQL)
+		<< "MySQL." << std::endl;
+#endif
+
 	
-	std::cout << "A microservice written by Dominique Verellen" << std::endl;
-	std::cout << "Contact: dominique120@live.com" << std::endl;
+	
+	std::cout << "A microservice written by Dominique Verellen." << std::endl;
+	std::cout << "Contact: dominique120@live.com." << std::endl;
 	std::cout << std::endl;
 
 	
-	std::cout << "Initializing - Loading Configuration" << std::endl;
+	std::cout << "Initializing - Loading Configuration." << std::endl;
 	g_config.load();
 	
 
-	std::cout << "Initializing - Setting up AWS SDK" << std::endl;
-	Aws::SDKOptions options;
+	std::cout << "Initializing - Setting up AWS SDK." << std::endl;
+	const Aws::SDKOptions options;
 	Aws::InitAPI(options);
 
 
@@ -28,7 +37,7 @@ int main() {
 
 	
 	served::net::server server(g_config [ "SERVER_IP" ], g_config [ "SERVER_PORT" ], mux);
-	std::cout << "Modules loaded - Address " << g_config [ "SERVER_IP" ] << " bound using port " << g_config [ "SERVER_PORT" ] <<std::endl;
+	std::cout << "Init done - Local address: " << g_config [ "SERVER_IP" ] << " bound using port " << g_config [ "SERVER_PORT" ] <<std::endl;
 	server.run(10);
 	
 	Aws::ShutdownAPI(options);
