@@ -13,5 +13,6 @@
   "AWS_DYNAMODB_ENDPOINT": "dynamodb.us-east-2.amazonaws.com",
   "SERVER_PORT": "8123",
   "SERVER_IP": "eth0_ip",
-  "SERVER_INIT_THREAD_POOL": "100"
+  "SERVER_INIT_THREAD_POOL": "100",
+  "API_BASE_URL" :  "/vts/api/v1" 
 }
