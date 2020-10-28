@@ -22,7 +22,7 @@ bool Client_wrapper::update_client(const std::string& id_or_uuid, const std::str
 	return dyn.update_item_dynamo("clients", "ClientId_uuid", id_or_uuid.c_str(), request_body);
 #elif DB_MYSQL
 	Client p;
-	p.from_json(json_req, p);
+	p.from_json(request_body, p);
 	return p.update_client(p);
 #endif 
 }
@@ -47,7 +47,7 @@ bool Client_wrapper::new_client(const std::string& request_body) {
 	return dyn.new_item_dynamo("clients", "ClientId_uuid", id.c_str(), request_body);
 #elif DB_MYSQL
 	Client p;
-	p.from_json(json_req, p);
+	p.from_json(request_body, p);
 	return p.new_client(p);
 #endif 
 }

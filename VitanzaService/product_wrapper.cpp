@@ -36,7 +36,7 @@ bool Product_wrapper::new_product(const std::string& request_body) {
     return dyn.new_item_dynamo("products", "ProductId_uuid", id.c_str(), request_body);
 #elif DB_MYSQL
     Product p;
-    p.from_json(json_req, p);
+    p.from_json(request_body, p);
     return p.new_product(p);
 #endif 
 }
@@ -48,7 +48,7 @@ bool Product_wrapper::update_product(const std::string& id_or_uuid, const std::s
     return dyn.update_item_dynamo("products", "ProductId_uuid", id_or_uuid.c_str(), request_body);
 #elif DB_MYSQL
     Product p;
-    p.from_json(json_req, p);
+    p.from_json(request_body, p);
     return p.update_product(p);
 #endif 
 }

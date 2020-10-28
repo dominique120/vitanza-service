@@ -22,7 +22,7 @@ bool Order_wrapper::update_order(const std::string& id_or_uuid, const std::strin
     return dyn.update_item_dynamo("orders", "OrderId_uuid", id_or_uuid.c_str(), request_body);
 #elif DB_MYSQL
     Order o;
-    o.from_json(json_req, o);
+    o.from_json(request_body, o);
     return o.update_order(o);
 #endif 
 }
@@ -47,7 +47,7 @@ bool Order_wrapper::new_order(const std::string& request_body) {
     return dyn.new_item_dynamo("orders", "OrderId_uuid", id.c_str(), request_body);
 #elif DB_MYSQL
     Order o;
-    o.from_json(json_req, o);
+    o.from_json(request_body, o);
     return o.new_order(o);
 #endif 
 }

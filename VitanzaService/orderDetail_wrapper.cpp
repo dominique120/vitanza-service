@@ -35,7 +35,7 @@ bool OrderDetail_wrapper::new_order_detail(const std::string& request_body) {
     return dyn.new_item_dynamo("orderdetails", "OrderDetailId_uuid", id.c_str(), request_body);
 #elif DB_MYSQL
     OrderDetail od;
-    od.from_json(json_req, od);
+    od.from_json(request_body, od);
     return od.new_order_detail(od);
 #endif 
 }
@@ -47,7 +47,7 @@ bool OrderDetail_wrapper::update_order_detail(const std::string& id_or_uuid, con
     return dyn.update_item_dynamo("orderdetails", "OrderDetailId_uuid", id_or_uuid.c_str(), request_body);
 #elif DB_MYSQL
     OrderDetail od;
-    od.from_json(json_req, od);
+    od.from_json(request_body, od);
     return od.update_order_detail(od);
 #endif 
 }
