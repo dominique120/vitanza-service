@@ -11,14 +11,14 @@ sudo /sbin/swapon /var/swap.1
 
 git clone https://github.com/aws/aws-sdk-cpp.git
 mkdir aws-sdk-cpp.build && cd aws-sdk-cpp.build
-cmake3 ../aws-sdk-cpp -DBUILD_ONLY="dynamodb" -DENABLE_TESTING=OFF -DCUSTOM_MEMORY_MANAGEMENT=OFF  -DBUILD_SHARED_LIBS=OFF
+cmake3 -DBUILD_ONLY="dynamodb" -DENABLE_TESTING=OFF -DCUSTOM_MEMORY_MANAGEMENT=OFF  -DBUILD_SHARED_LIBS=OFF ../aws-sdk-cpp
 sudo make && sudo make install
 
 cd ..
 
 git clone https://github.com/meltwater/served.git
 mkdir served.build && cd served.build
-cmake3 ../served -DSERVED_BUILD_EXAMPLES=OFF -DSERVED_BUILD_TESTS=OFF -DSERVED_BUILD_SHARED=ON -DSERVED_BUILD_STATIC=ON
+cmake3 -DSERVED_BUILD_EXAMPLES=OFF -DSERVED_BUILD_TESTS=OFF -DSERVED_BUILD_SHARED=ON -DSERVED_BUILD_STATIC=ON ../served
 make && sudo make install
 sudo ln /usr/local/lib/libserved.so.1.4 /usr/lib64/libserved.so.1.4
 
@@ -26,7 +26,7 @@ cd ..
 
 git clone https://github.com/dominique120/vitanza-service.git
 mkdir vts && mkdir vts.build && cd vts.build
-cmake3 ../vitanza-service -DDB_DYNAMO=ON
+cmake3 -DDB_DYNAMO=ON ../vitanza-service
 make
 
 mv vts ../vts/vts

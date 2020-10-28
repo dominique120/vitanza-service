@@ -1,0 +1,49 @@
+language: cpp
+sudo: required
+
+matrix:
+    include:
+        - dist: focal
+          compiler: gcc
+          arch: amd64  
+        - dist: focal
+          compiler: clang
+          arch: amd64  
+        - dist: focal
+          compiler: gcc
+          arch: arm64-graviton2
+
+branches:
+    only:
+        - master
+
+cache: apt
+addons:
+  apt:
+    packages:
+      - libboost-system-dev
+      - libmysqlclient-dev
+      - libcurl4-openssl-dev
+      - libssl-dev
+      - uuid-dev
+      - zlib1g-dev
+      - libpulse-dev
+
+before_install: 
+    - git clone https://github.com/aws/aws-sdk-cpp.git
+    - mkdir aws-sdk-cpp.build && cd aws-sdk-cpp.build
+    - cmake ../aws-sdk-cpp -DBUILD_ONLY="dynamodb" -DENABLE_TESTING=OFF -DCUSTOM_MEMORY_MANAGEMENT=OFF  -DBUILD_SHARED_LIBS=OFF
+    - sudo make && sudo make install
+    - cd ..
+    - git clone https://github.com/meltwater/served.git
+    - mkdir served.build && cd served.build
+    - cmake ../served -DSERVED_BUILD_EXAMPLES=OFF -DSERVED_BUILD_TESTS=OFF -DSERVED_BUILD_SHARED=ON -DSERVED_BUILD_STATIC=ON
+    - make && sudo make install
+    - sudo ln /usr/local/lib/libserved.so.1.4 /usr/lib64/libserved.so.1.4
+    - cd ..
+    - git clone https://github.com/dominique120/vitanza-service.git
+    - mkdir vts && mkdir vts.build && cd vts.build
+    - cmake -DDB_DYNAMO=ON ../vitanza-service
+    
+script: make -j2
+
