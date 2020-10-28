@@ -14,7 +14,8 @@ cmake-build-release/
 .vs/
 *.bak
 *.log
-
+VitanzaServiceModel.json
+dynamodb-data/
 
 
 # User-specific files
