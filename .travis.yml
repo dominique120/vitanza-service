@@ -5,32 +5,18 @@ dist: focal
 
 jobs:
    include:
-      - language: cpp
+        
+      - env: DB=mysql
         arch: amd64
         compiler: gcc
-        env: DB=mysql
-      - language: cpp
-        arch: s390x
-        compiler: gcc
-        env: DB=mysql
-      
-      - language: cpp
+       
+      - env: DB=dynamo
         arch: amd64
         compiler: gcc
-        env: DB=dynamo
-      - language: cpp
+
+      - env: DB=dynamo
         arch: arm64-graviton2
         compiler: gcc
-        env: DB=dynamo
-        
-      - language: cpp
-        arch: amd64
-        compiler: clang
-        env: DB=mysql
-      - language: cpp
-        arch: amd64
-        compiler: clang
-        env: DB=dynamo
 
 branches:
     only:
