@@ -1,5 +1,5 @@
 #include "Client.h"
-
+#if defined(DB_MYSQL)
 Client::ClientList Client::select_clients() {
 	ClientList returned_table;
 	std::ostringstream query;
@@ -111,6 +111,7 @@ bool Client::delete_client(const std::string& uuid)
 		return false;
 	}
 }
+#endif
 
 std::string Client::to_json_array(const ClientList& cl) {
 

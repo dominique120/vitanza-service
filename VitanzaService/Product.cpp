@@ -1,5 +1,5 @@
 #include "Product.h"
-
+#if defined(DB_MYSQL)
 
 Product::ProductList Product::select_products() {
 	ProductList returned_table;
@@ -118,7 +118,7 @@ bool Product::delete_product(const std::string& uuid) {
 		return false;
 	}
 }
-
+#endif
 
 std::string Product::to_json_array(const ProductList& product) {
 	nlohmann::json j;

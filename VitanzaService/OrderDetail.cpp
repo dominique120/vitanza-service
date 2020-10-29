@@ -1,5 +1,5 @@
 #include "OrderDetail.h"
-
+#if defined(DB_MYSQL)
 OrderDetail::OrderDetailList OrderDetail::select_order_details_by_order_id(const int32_t& order_id) {
 	OrderDetailList returned_table;
 	std::ostringstream query;
@@ -167,7 +167,7 @@ bool OrderDetail::delete_order_detail(const std::string& uuid) {
 		return false;
 	}
 }
-
+#endif
 
 std::string OrderDetail::to_json_array(const OrderDetailList& order_detail) {
 

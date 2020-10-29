@@ -1,3 +1,4 @@
+#if defined(DB_MYSQL)
 #include "db_mysql.h"
 
 extern ConfigurationManager g_config;
@@ -256,3 +257,4 @@ bool DBInsert::execute() {
 	length = query.length();
 	return res;
 }
+#endif

@@ -23,7 +23,7 @@ public:
 	using ProductList = std::list<Product>;
 
 	//db access
-
+#if defined(DB_MYSQL)
 	// select all OrderDetails
 	static ProductList select_products();
 
@@ -40,7 +40,7 @@ public:
 	//delete OrderDetail
 	static bool delete_product(int32_t id);
 	static bool delete_product(const std::string& uuid);
-
+#endif
 
 	/* ----------- Json methods ---------------*/
 	static std::string to_json_array(const ProductList& product);

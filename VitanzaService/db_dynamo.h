@@ -1,6 +1,6 @@
 #ifndef DYNAMO_H
 #define DYNAMO_H
-
+#if defined(DB_DYNAMO)
 #include <aws/core/Aws.h>
 #include <aws/core/auth/AWSCredentials.h>
 #include <aws/core/utils/Outcome.h> 
@@ -15,6 +15,9 @@
 #include <aws/dynamodb/model/UpdateItemResult.h>
 #include <aws/dynamodb/model/DeleteItemResult.h>
 #include <aws/dynamodb/model/DeleteItemRequest.h>
+#include <aws/dynamodb/model/ScanRequest.h>
+#include <aws/dynamodb/model/ScanResult.h>
+
 
 #include "config.h"
 
@@ -22,9 +25,15 @@
 
 class DynamoDB {
 public:
+
 	static std::map<std::string, std::string> get_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value);
 	static bool update_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, const std::string& request_body);
 	static bool new_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, const std::string& request_body);
 	static bool delete_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value);
+	static std::string query_table_items_dynamo(const Aws::String& table_name, const std::map<std::string, std::string>& index_condition_map);
+	static std::string scan_table_items_dynamo(const Aws::String& table_name);
+
 };
+#endif
+
 #endif

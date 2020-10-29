@@ -1,5 +1,6 @@
 #include "db_dynamo.h"
 
+#if defined(DB_DYNAMO)
 extern ConfigurationManager g_config;
 
 std::map<std::string, std::string> DynamoDB::get_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value) {
@@ -56,7 +57,6 @@ std::map<std::string, std::string> DynamoDB::get_item_dynamo(const Aws::String& 
 	}
 	return new_map;
 }
-
 
 bool DynamoDB::update_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, const std::string& request_body) {
 	Aws::Auth::AWSCredentials credentials;
@@ -161,10 +161,6 @@ bool DynamoDB::new_item_dynamo(const Aws::String& table_name, const Aws::String&
 
 	nlohmann::json j = nlohmann::json::parse(request_body);
 
-	//for (auto i = j.begin(); i != j.end(); ++i) {
-	//	std::cout << "key: " << i.key() << " - value: " << i.value() << std::endl;
-	//}
-	
 	std::map<std::string, std::string> items = j;
 
 	Aws::DynamoDB::Model::PutItemRequest pir;
@@ -182,7 +178,6 @@ bool DynamoDB::new_item_dynamo(const Aws::String& table_name, const Aws::String&
 	attribute_value.SetS(key_value);
 	pir.AddItem(key_name, attribute_value);
 	
-
 	const Aws::DynamoDB::Model::PutItemOutcome result = dynamo_client.PutItem(pir);
 	if (!result.IsSuccess()) {
 		std::cout << result.GetError().GetMessage() << std::endl;
@@ -223,3 +218,159 @@ bool DynamoDB::delete_item_dynamo(const Aws::String& table_name, const Aws::Stri
 		return false;
 	}
 }
+
+std::string DynamoDB::query_table_items_dynamo(const Aws::String& table_name, const std::map<std::string, std::string>& index_condition_map) {
+	Aws::Auth::AWSCredentials credentials;
+	credentials.SetAWSAccessKeyId(Aws::String(g_config [ "AWS_ACCESS_KEY" ].c_str()));
+	credentials.SetAWSSecretKey(Aws::String(g_config [ "AWS_SECRET_KEY" ].c_str()));
+	bool use_token;
+	std::istringstream(g_config [ "AWS_USE_SESSION_TOKEN" ]) >> std::boolalpha >> use_token;
+	if (use_token) {
+		credentials.SetSessionToken(Aws::String(g_config [ "AWS_SESSION_TOKEN" ].c_str()));
+	}
+
+	Aws::Client::ClientConfiguration client_config;
+	client_config.region = g_config [ "AWS_REGION" ].c_str();
+	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
+
+	const Aws::String endpoint(g_config [ "AWS_DYNAMODB_ENDPOINT" ].c_str());
+	dynamo_client.OverrideEndpoint(endpoint);
+
+
+	/* Build condition expression */
+	Aws::OStringStream ss;
+	size_t counter = 0;
+	for (const auto& i : index_condition_map) {
+		ss << i.first << " = :" << i.first;
+		++counter;
+		if (counter != index_condition_map.size()) {
+			ss << " and ";
+		}
+	}
+	Aws::String query_expression(ss.str());
+
+
+	// Construct attribute value argument
+	Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue> expression_attribute_values;
+	/* Add parameters to expression */
+	for (const auto& i : index_condition_map) {
+		Aws::DynamoDB::Model::AttributeValue attribute_query_value;
+		attribute_query_value.SetS(i.second.c_str());//need to pass here the condition of the query
+		Aws::OStringStream ostr;
+		ostr << ":" << i.first.c_str();
+		expression_attribute_values [ ostr.str() ] = attribute_query_value;
+	}
+
+	Aws::DynamoDB::Model::QueryRequest query_request;
+	query_request.SetTableName(table_name);
+	query_request.SetKeyConditionExpression(query_expression);
+	query_request.SetExpressionAttributeValues(expression_attribute_values);
+
+
+	// run the query
+	const Aws::DynamoDB::Model::QueryOutcome& result = dynamo_client.Query(query_request);
+	if (!result.IsSuccess()) {
+		std::cout << result.GetError().GetMessage() << std::endl;
+		return "";
+	}
+	
+	const Aws::Vector<Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue>> query_result = result.GetResult().GetItems();
+
+	// convert to json
+	size_t cntr = 0;
+	Aws::OStringStream j_ss;
+	j_ss << "[";
+	for (size_t i = 0; i < query_result.size(); ++i) {
+		j_ss << "{";
+		for (auto j : query_result.at(i)) {
+			j_ss << "\"" << j.first << "\" : \"";
+
+			if (j.second.GetType() == Aws::DynamoDB::Model::ValueType::STRING) {
+				j_ss << j.second.GetS().c_str();
+			} else if (j.second.GetType() == Aws::DynamoDB::Model::ValueType::NUMBER) {
+				j_ss << j.second.GetN().c_str();
+			} else if (j.second.GetType() == Aws::DynamoDB::Model::ValueType::BOOL) {
+				j_ss << j.second.GetBool();
+			}
+			j_ss << "\"";
+		}
+		if (cntr != query_result.size()) {
+			j_ss << "}, ";
+		} else {
+			j_ss << "}";
+		}	
+	}
+	j_ss << "]";
+	Aws::String json_result_aws = j_ss.str();
+
+	return json_result_aws.c_str();
+}
+
+std::string DynamoDB::scan_table_items_dynamo(const Aws::String& table_name) {
+	Aws::Auth::AWSCredentials credentials;
+	credentials.SetAWSAccessKeyId(Aws::String(g_config [ "AWS_ACCESS_KEY" ].c_str()));
+	credentials.SetAWSSecretKey(Aws::String(g_config [ "AWS_SECRET_KEY" ].c_str()));
+	bool use_token;
+	std::istringstream(g_config [ "AWS_USE_SESSION_TOKEN" ]) >> std::boolalpha >> use_token;
+	if (use_token) {
+		credentials.SetSessionToken(Aws::String(g_config [ "AWS_SESSION_TOKEN" ].c_str()));
+	}
+
+	Aws::Client::ClientConfiguration client_config;
+	client_config.region = g_config [ "AWS_REGION" ].c_str();
+	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
+
+	const Aws::String endpoint(g_config [ "AWS_DYNAMODB_ENDPOINT" ].c_str());
+	dynamo_client.OverrideEndpoint(endpoint);
+
+
+
+
+	Aws::DynamoDB::Model::ScanRequest scan_request;
+	scan_request.SetTableName(table_name);
+
+
+
+
+
+
+	// run the query
+	const Aws::DynamoDB::Model::ScanOutcome& result = dynamo_client.Scan(scan_request);
+	if (!result.IsSuccess()) {
+		std::cout << result.GetError().GetMessage() << std::endl;
+		return "";
+	}
+
+	const Aws::Vector<Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue>> query_result = result.GetResult().GetItems();
+
+	// convert to json
+	size_t cntr = 0;
+	Aws::OStringStream j_ss;
+	j_ss << "[";
+	for (size_t i = 0; i < query_result.size(); ++i) {
+		j_ss << "{";
+		for (auto j : query_result.at(i)) {
+			j_ss << "\"" << j.first << "\" : \"";
+
+			if (j.second.GetType() == Aws::DynamoDB::Model::ValueType::STRING) {
+				j_ss << j.second.GetS().c_str();
+			} else if (j.second.GetType() == Aws::DynamoDB::Model::ValueType::NUMBER) {
+				j_ss << j.second.GetN().c_str();
+			} else if (j.second.GetType() == Aws::DynamoDB::Model::ValueType::BOOL) {
+				j_ss << j.second.GetBool();
+			}
+			j_ss << "\"";
+		}
+		if (cntr != query_result.size()) {
+			j_ss << "}, ";
+		} else {
+			j_ss << "}";
+		}
+	}
+	j_ss << "]";
+	Aws::String json_result_aws = j_ss.str();
+
+	return json_result_aws.c_str();
+	
+}
+#endif

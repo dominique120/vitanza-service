@@ -31,8 +31,10 @@ public:
 
 	std::string order_id_uuid;
 
-	using OrderList = std::list<Order>;
 
+
+	using OrderList = std::list<Order>;
+#if defined(DB_MYSQL)
 	//OrderDetails vector from database table
 	std::vector<OrderDetail> products;
 
@@ -60,7 +62,7 @@ public:
 
 
 	static OrderList select_pending_orders();
-
+#endif
 	static std::string to_json_array(const OrderList& order);
 
 	static void from_json(const nlohmann::json& j, Order& s);

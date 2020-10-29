@@ -1,5 +1,5 @@
 #include "Order.h"
-
+#if defined(DB_MYSQL)
 bool Order::update_order(const Order& order) {
 	Database db;
 	std::ostringstream query;
@@ -137,7 +137,7 @@ Order Order::select_order_by_id(const std::string& uuid) {
 
 	return order;
 }
-
+#endif
 
 std::string Order::to_json_array(const OrderList& order) {
 	nlohmann::json j;

@@ -1,6 +1,8 @@
 #ifndef DATABASE_H
 #define DATABASE_H
 
+#if defined(DB_MYSQL)
+
 #include <mutex>
 #include <map>
 #include <iostream>
@@ -226,5 +228,7 @@ private:
 
 	TransactionStates_t state = STATE_NO_START;
 };
+
+#endif
 
 #endif

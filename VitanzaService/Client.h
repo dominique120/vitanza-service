@@ -1,6 +1,7 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
+#include <iostream>
 #include <list>
 
 #include <nlohmann/json.hpp>
@@ -25,6 +26,7 @@ public:
 
 	using ClientList = std::list<Client>;
 
+#if defined(DB_MYSQL)
 	/*-------------- db access -----------------------*/
 
 	// select all clients
@@ -43,7 +45,7 @@ public:
 	//delete client
 	static bool delete_client(const uint32_t& id);
 	static bool delete_client(const std::string& uuid);
-
+#endif
 
 	/* --------------- to and from json functions -----------------*/
 	static std::string to_json_array(const ClientList& cl);
