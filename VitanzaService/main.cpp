@@ -4,14 +4,16 @@
 ConfigurationManager g_config;
 
 int main() {
-	std::cout << "Vitanza Service - Version 0.3a" << std::endl;
+	std::cout << "Vitanza Service - Version 0.4a" << std::endl;
 	std::cout << "Compiled with " << BOOST_COMPILER << std::endl;
 	std::cout << "Compiled on " << __DATE__ << ' ' << __TIME__ << " for platform ";
-	std::cout << BOOST_PLATFORM << std::endl;
+	std::cout << BOOST_PLATFORM << "." << std::endl;
+
 
 	std::cout << "Compiled for: "
 #if defined(DB_DYNAMO)
 		<< "DynamoDB." << std::endl;
+	std::cout << "Aws sdk version: " << AWS_SDK_VERSION_STRING << std::endl;
 #elif defined(DB_MYSQL)
 		<< "MySQL." << std::endl;
 #endif

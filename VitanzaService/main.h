@@ -34,6 +34,7 @@
 #include "product_wrapper.h"
 
 #include <aws/core/Aws.h>
+#include <aws/core/VersionConfig.h>
 
 int main();
 void register_handlers(served::multiplexer& mux);
