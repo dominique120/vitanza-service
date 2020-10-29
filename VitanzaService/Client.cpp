@@ -1,3 +1,4 @@
+#include "vtspch.h"
 #include "Client.h"
 #if defined(DB_MYSQL)
 Client::ClientList Client::select_clients() {

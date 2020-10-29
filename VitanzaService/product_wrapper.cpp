@@ -1,5 +1,5 @@
+#include "vtspch.h"
 #include "product_wrapper.h"
-
 
 std::string Product_wrapper::get_product(const std::string& id_or_uuid) {
 #ifdef DB_DYNAMO

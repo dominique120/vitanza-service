@@ -1,10 +1,7 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
-#include <iostream>
-#include <list>
 
-#include <nlohmann/json.hpp>
 
 #include "db_mysql.h"
 

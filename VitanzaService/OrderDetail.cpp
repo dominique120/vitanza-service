@@ -1,3 +1,4 @@
+#include "vtspch.h"
 #include "OrderDetail.h"
 #if defined(DB_MYSQL)
 OrderDetail::OrderDetailList OrderDetail::select_order_details_by_order_id(const int32_t& order_id) {

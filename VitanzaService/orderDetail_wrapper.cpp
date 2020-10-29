@@ -1,3 +1,4 @@
+#include "vtspch.h"
 #include "orderDetail_wrapper.h"
 
 std::string OrderDetail_wrapper::get_order_detail(const std::string& id_or_uuid) {

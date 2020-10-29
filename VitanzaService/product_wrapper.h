@@ -1,13 +1,8 @@
 #ifndef PRODUCT_WRAPPER_H
 #define PRODUCT_WRAPPER_H
 
-#include "nlohmann/json.hpp"
 #include "Product.h"
 #include "db_dynamo.h"
-
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_generators.hpp>
-#include <boost/uuid/uuid_io.hpp>
 
 class Product_wrapper {
 public:

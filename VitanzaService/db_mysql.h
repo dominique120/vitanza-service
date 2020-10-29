@@ -3,11 +3,6 @@
 
 #if defined(DB_MYSQL)
 
-#include <mutex>
-#include <map>
-#include <iostream>
-#include <memory>
-#include <thread>
 #include <boost/lexical_cast.hpp>
 
 #include <mysql/mysql.h>

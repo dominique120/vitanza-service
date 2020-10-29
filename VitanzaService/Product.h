@@ -1,12 +1,7 @@
 
 #ifndef PRODUCT_H
 #define PRODUCT_H
-#include <iostream>
-#include <cstdint>
-#include <string>
-#include <list>
-#include <sstream>
-#include <nlohmann/json.hpp>
+
 #include "db_mysql.h"
 
 class Product {

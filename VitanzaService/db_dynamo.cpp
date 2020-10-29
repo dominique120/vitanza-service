@@ -1,3 +1,4 @@
+#include "vtspch.h"
 #include "db_dynamo.h"
 
 #if defined(DB_DYNAMO)

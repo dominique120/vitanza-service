@@ -1,3 +1,4 @@
+#include "vtspch.h"
 #include "Order.h"
 #if defined(DB_MYSQL)
 bool Order::update_order(const Order& order) {

@@ -51,14 +51,14 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>Create</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);NOGDI;_WIN32_WINNT=0x0a00;WIN32_LEAN_AND_MEAN;DB_DYNAMO</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>E:\cpp_libs\served-1.6.0\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp14</LanguageStandard>
+      <PrecompiledHeaderFile>vtspch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -69,7 +69,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Create</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -104,13 +104,13 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="product_wrapper.cpp" />
     <ClCompile Include="util.cpp" />
+    <ClCompile Include="vtspch.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="client_wrapper.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="db_dynamo.h" />
     <ClInclude Include="db_mysql.h" />
-    <ClInclude Include="database_manager.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Order.h" />
@@ -120,6 +120,7 @@
     <ClInclude Include="Product.h" />
     <ClInclude Include="product_wrapper.h" />
     <ClInclude Include="util.h" />
+    <ClInclude Include="vtspch.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\config.json" />

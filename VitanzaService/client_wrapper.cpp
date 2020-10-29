@@ -1,3 +1,4 @@
+#include "vtspch.h"
 #include "client_wrapper.h"
 
 std::string Client_wrapper::get_client(const std::string& id_or_uuid) {

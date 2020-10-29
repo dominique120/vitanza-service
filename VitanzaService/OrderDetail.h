@@ -1,11 +1,7 @@
 
 #ifndef ORDERDETAIL_H
 #define ORDERDETAIL_H
-#include <iostream>
-#include <cstdint>
-#include <sstream>
-#include <list>
-#include <nlohmann/json.hpp>
+
 #include "db_mysql.h"
 
 class OrderDetail {

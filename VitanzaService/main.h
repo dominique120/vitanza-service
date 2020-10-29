@@ -17,15 +17,11 @@
 #pragma warning(disable:4267) // 'var' : conversion from 'size_t' to 'type', possible loss of data
 #endif
 
-#include <iostream>
-
-#include "config.h"
-
 #include <served/served.hpp>
 #include <served/request_error.hpp>
 #include <served/status.hpp>
 
-#include <nlohmann/json.hpp>
+#include "config.h"
 
 #include "Client.h"
 #include "Product.h"

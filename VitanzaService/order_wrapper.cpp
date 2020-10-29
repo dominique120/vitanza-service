@@ -1,3 +1,4 @@
+#include "vtspch.h"
 #include "order_wrapper.h"
 
 std::string Order_wrapper::get_order(const std::string& id_or_uuid) {

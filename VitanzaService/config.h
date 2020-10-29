@@ -1,11 +1,7 @@
 
 #ifndef CONFIG_H
 #define CONFIG_H
-#include <string>
-#include <fstream>
-#include <iostream>
-#include <map>
-#include "nlohmann/json.hpp"
+
 
 class ConfigurationManager {
 public:

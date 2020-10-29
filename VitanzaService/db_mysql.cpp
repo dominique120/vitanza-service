@@ -1,3 +1,4 @@
+#include "vtspch.h"
 #if defined(DB_MYSQL)
 #include "db_mysql.h"
 

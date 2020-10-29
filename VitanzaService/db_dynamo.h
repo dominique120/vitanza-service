@@ -18,10 +18,7 @@
 #include <aws/dynamodb/model/ScanRequest.h>
 #include <aws/dynamodb/model/ScanResult.h>
 
-
 #include "config.h"
-
-#include "nlohmann/json.hpp"
 
 class DynamoDB {
 public:

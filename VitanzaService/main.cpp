@@ -1,3 +1,4 @@
+#include "vtspch.h"
 #include "main.h"
 
 ConfigurationManager g_config;

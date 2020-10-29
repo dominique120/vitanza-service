@@ -1,11 +1,7 @@
 #ifndef ORDER_H
 #define ORDER_H
 
-#include <iostream>
-#include <cstdint>
-#include <string>
-#include <list>
-#include <nlohmann/json.hpp>
+
 #include "db_mysql.h"
 #include "util.h"
 #include "OrderDetail.h"
