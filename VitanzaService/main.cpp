@@ -15,9 +15,7 @@ int main() {
 #elif defined(DB_MYSQL)
 		<< "MySQL." << std::endl;
 #endif
-
-	
-	
+		
 	std::cout << "A microservice written by Dominique Verellen." << std::endl;
 	std::cout << "Contact: dominique120@live.com." << std::endl;
 	std::cout << std::endl;
@@ -51,7 +49,7 @@ void register_handlers(served::multiplexer& mux) {
 
 
 	/*--------------- Customers ---------------------------*/
-	mux.handle("/customers/{id}")
+	mux.handle(g_config [ "API_BASE_URL" ] + "/customers/{id}")
 		.get([](served::response& res, const served::request& req) {
 			Client_wrapper client_wrapper;
 			res.set_header("Content-type", "application/json");
@@ -72,9 +70,11 @@ void register_handlers(served::multiplexer& mux) {
 			res << s.c_str();
 		});
 
-	mux.handle("/customers")
+	mux.handle(g_config [ "API_BASE_URL" ] + "/customers")
 		.get([](served::response& res, const served::request& req) {
-			//implement a return all values in table in dynamo
+			Client_wrapper client_wrapper;
+			res.set_header("Content-type", "application/json");
+			res << client_wrapper.get_all_clients();
 		})
 		.post([](served::response& res, const served::request& req) {
 			Client_wrapper client_wrapper;
@@ -86,7 +86,7 @@ void register_handlers(served::multiplexer& mux) {
 
 
 	/*--------------- Products ---------------------------*/
-	mux.handle("/products/{id}")
+	mux.handle(g_config [ "API_BASE_URL" ] + "/products/{id}")
 		.get([](served::response& res, const served::request& req) {
 			Product_wrapper product_wrapper;
 			res.set_header("Content-type", "application/json");
@@ -107,9 +107,11 @@ void register_handlers(served::multiplexer& mux) {
 			res << s.c_str();
 		});
 
-	mux.handle("/products")
+	mux.handle(g_config [ "API_BASE_URL" ] + "/products")
 		.get([](served::response& res, const served::request& req) {
-			//implement a return all values in table in dynamo
+			Product_wrapper product_wrapper;
+			res.set_header("Content-type", "application/json");
+			res << product_wrapper.get_all_products();
 		})
 		.post([](served::response& res, const served::request& req) {
 			Product_wrapper product_wrapper;
@@ -120,7 +122,15 @@ void register_handlers(served::multiplexer& mux) {
 		});
 
 	/*--------------- Orders ---------------------------*/
-	mux.handle("/orders/{id}")
+
+	mux.handle(g_config [ "API_BASE_URL" ] + "/orders/outstanding/")
+		.get([](served::response& res, const served::request& req) {
+			Order_wrapper order_wrapper;
+			res.set_header("Content-type", "application/json");
+			res << order_wrapper.get_outstanding_orders();
+		});
+	
+	mux.handle(g_config [ "API_BASE_URL" ] + "/orders/{id}")
 		.get([](served::response& res, const served::request& req) {
 			Order_wrapper order_wrapper;
 			res.set_header("Content-type", "application/json");
@@ -141,9 +151,11 @@ void register_handlers(served::multiplexer& mux) {
 			res << s.c_str();
 		 });
 
-	mux.handle("/orders")
+	mux.handle(g_config [ "API_BASE_URL" ] + "/orders")
 		.get([](served::response& res, const served::request& req) {
-			//implement a return all values in table in dynamo
+			Order_wrapper order_wrapper;
+			res.set_header("Content-type", "application/json");
+			res << order_wrapper.get_all_orders();
 		})
 		.post([](served::response& res, const served::request& req) {
 			Order_wrapper order_wrapper;
@@ -154,7 +166,7 @@ void register_handlers(served::multiplexer& mux) {
 		 });
 
 	/*--------------- Order Details ---------------------------*/
-	mux.handle("/orders/{id}")
+	mux.handle(g_config [ "API_BASE_URL" ] + "/orderdetails/{id}")
 		.get([](served::response& res, const served::request& req) {
 			OrderDetail_wrapper order_detail_wrapper;
 			res.set_header("Content-type", "application/json");
@@ -175,9 +187,9 @@ void register_handlers(served::multiplexer& mux) {
 			res << s.c_str();
 		});
 
-	mux.handle("/orders")
+	mux.handle(g_config [ "API_BASE_URL" ] + "/orderdetails")
 		.get([](served::response& res, const served::request& req) {
-		//implement a return all values in table in dynamo
+		//implement a return all order details after providing a filter( order header id )
 		})
 		.post([](served::response& res, const served::request& req) {
 			OrderDetail_wrapper order_detail_wrapper;

@@ -52,3 +52,16 @@ bool Product_wrapper::update_product(const std::string& id_or_uuid, const std::s
     return p.update_product(p);
 #endif 
 }
+
+std::string Product_wrapper::get_all_products() {
+#ifdef DB_DYNAMO
+    DynamoDB dyn;
+    return dyn.scan_table_items_dynamo("products");
+#elif DB_MYSQL
+    // TODO: implement mysql method for getting all clients
+    //Client p;
+    //p.from_json(request_body, p);
+    //return p.new_client(p);
+    return "";
+#endif
+}

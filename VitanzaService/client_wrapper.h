@@ -13,6 +13,7 @@ public:
 	static bool update_client(const std::string& id_or_uuid, const std::string& request_body);
 	static bool delete_client(const std::string& id_or_uuid);
 	static bool new_client(const std::string& request_body);
+	static std::string get_all_clients();
 };
 
 #endif

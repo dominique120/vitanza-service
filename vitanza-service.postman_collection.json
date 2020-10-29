@@ -14,7 +14,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://192.168.1.72:8123/customers/2effcecc-b953-4669-a915-e5f5fb7df846",
+							"raw": "http://192.168.1.72:8123/vts/api/v1/customers/4653662f-c1e0-45e2-a98b-99a2805f128b",
 							"protocol": "http",
 							"host": [
 								"192",
@@ -24,8 +24,11 @@
 							],
 							"port": "8123",
 							"path": [
+								"vts",
+								"api",
+								"v1",
 								"customers",
-								"2effcecc-b953-4669-a915-e5f5fb7df846"
+								"4653662f-c1e0-45e2-a98b-99a2805f128b"
 							]
 						}
 					},
@@ -46,7 +49,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://192.168.1.72:8123/customers",
+							"raw": "http://192.168.1.72:8123/vts/api/v1/customers",
 							"protocol": "http",
 							"host": [
 								"192",
@@ -56,6 +59,9 @@
 							],
 							"port": "8123",
 							"path": [
+								"vts",
+								"api",
+								"v1",
 								"customers"
 							]
 						}
@@ -72,7 +78,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://192.168.1.72:8123/customers/5ffd7bbb-4a39-4b33-9d14-8e983aa9a303",
+							"raw": "http://192.168.1.72:8123/vts/api/v1/customers/50e81114-b8b8-4fef-a24b-2aace4861969",
 							"protocol": "http",
 							"host": [
 								"192",
@@ -82,8 +88,11 @@
 							],
 							"port": "8123",
 							"path": [
+								"vts",
+								"api",
+								"v1",
 								"customers",
-								"5ffd7bbb-4a39-4b33-9d14-8e983aa9a303"
+								"50e81114-b8b8-4fef-a24b-2aace4861969"
 							]
 						}
 					},
@@ -104,7 +113,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://192.168.1.72:8123/customers/5ffd7bbb-4a39-4b33-9d14-8e983aa9a303",
+							"raw": "http://192.168.1.72:8123/vts/api/v1/customers/50e81114-b8b8-4fef-a24b-2aace4861969",
 							"protocol": "http",
 							"host": [
 								"192",
@@ -114,8 +123,108 @@
 							],
 							"port": "8123",
 							"path": [
+								"vts",
+								"api",
+								"v1",
 								"customers",
-								"5ffd7bbb-4a39-4b33-9d14-8e983aa9a303"
+								"50e81114-b8b8-4fef-a24b-2aace4861969"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://192.168.1.72:8123/vts/api/v1/customers",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"1",
+								"72"
+							],
+							"port": "8123",
+							"path": [
+								"vts",
+								"api",
+								"v1",
+								"customers"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "orders",
+			"item": [
+				{
+					"name": "get outstanding ",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://192.168.1.72:8123/vts/api/v1/orders/outstanding/",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"1",
+								"72"
+							],
+							"port": "8123",
+							"path": [
+								"vts",
+								"api",
+								"v1",
+								"orders",
+								"outstanding",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://192.168.1.72:8123/vts/api/v1/orders/outstanding/",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"1",
+								"72"
+							],
+							"port": "8123",
+							"path": [
+								"vts",
+								"api",
+								"v1",
+								"orders",
+								"outstanding",
+								""
 							]
 						}
 					},

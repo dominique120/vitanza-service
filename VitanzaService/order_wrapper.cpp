@@ -52,3 +52,35 @@ bool Order_wrapper::new_order(const std::string& request_body) {
     return o.new_order(o);
 #endif 
 }
+
+std::string Order_wrapper::get_all_orders() {
+#ifdef DB_DYNAMO
+    DynamoDB dyn;
+    return dyn.scan_table_items_dynamo("orders");
+#elif DB_MYSQL
+    // TODO: implement mysql method for getting all clients
+    //Client p;
+    //p.from_json(request_body, p);
+    //return p.new_client(p);
+    return "";
+#endif
+}
+
+std::string Order_wrapper::get_outstanding_orders() {
+#ifdef DB_DYNAMO
+    DynamoDB dyn;
+    std::map<std::string, std::string> conditions;
+    auto pending = std::pair<std::string, std::string>("Pending", "0");
+    conditions.insert(pending);
+    auto paid = std::pair<std::string, std::string>("Paid", "0");
+    conditions.insert(paid);
+
+    return dyn.scan_table_items_filer_dynamo("orders", conditions);
+#elif DB_MYSQL
+    // TODO: implement mysql method for getting all clients
+    //Client p;
+    //p.from_json(request_body, p);
+    //return p.new_client(p);
+    return "";
+#endif
+}

@@ -52,3 +52,16 @@ bool Client_wrapper::new_client(const std::string& request_body) {
 	return p.new_client(p);
 #endif 
 }
+
+std::string Client_wrapper::get_all_clients() {
+#ifdef DB_DYNAMO
+	DynamoDB dyn;
+	return dyn.scan_table_items_dynamo("clients");
+#elif DB_MYSQL
+	// TODO: implement mysql method for getting all clients
+	//Client p;
+	//p.from_json(request_body, p);
+	//return p.new_client(p);
+	return "";
+#endif 
+}

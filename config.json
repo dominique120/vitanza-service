@@ -10,7 +10,7 @@
   "AWS_SESSION_TOKEN": "xyz",
   "AWS_USE_SESSION_TOKEN": "true",
   "AWS_REGION": "us-east-1",
-  "AWS_DYNAMODB_ENDPOINT": "dynamodb.us-east-2.amazonaws.com",
+  "AWS_DYNAMODB_ENDPOINT": "dynamodb.us-east-1.amazonaws.com",
   "SERVER_PORT": "8123",
   "SERVER_IP": "eth0_ip",
   "SERVER_INIT_THREAD_POOL": "100",
