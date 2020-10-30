@@ -1,13 +1,13 @@
+#!/bin/bash
 sudo dnf update -y && sudo dnf upgrade -y
 sudo dnf install -y git boost-devel make cmake3 gcc-c++ mariadb-devel libcurl-devel openssl-devel libuuid-devel pulseaudio-libs-devel
 
 
-/* If on t2.micro create a swp volume */
 sudo /bin/dd if=/dev/zero of=/var/swap.1 bs=1M count=1024
 sudo /sbin/mkswap /var/swap.1
 sudo chmod 600 /var/swap.1
 sudo /sbin/swapon /var/swap.1
-/* end if */
+
 
 git clone https://github.com/aws/aws-sdk-cpp.git
 mkdir aws-sdk-cpp.build && cd aws-sdk-cpp.build
