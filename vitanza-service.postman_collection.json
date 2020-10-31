@@ -14,13 +14,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://192.168.1.72:8123/vts/api/v1/customers/4653662f-c1e0-45e2-a98b-99a2805f128b",
+							"raw": "http://54.210.53.36:8123/vts/api/v1/customers/4653662f-c1e0-45e2-a98b-99a2805f128b",
 							"protocol": "http",
 							"host": [
-								"192",
-								"168",
-								"1",
-								"72"
+								"54",
+								"210",
+								"53",
+								"36"
 							],
 							"port": "8123",
 							"path": [
@@ -49,13 +49,13 @@
 							}
 						},
 						"url": {
-							"raw": "http://192.168.1.72:8123/vts/api/v1/customers",
+							"raw": "http://54.210.53.36:8123/vts/api/v1/customers",
 							"protocol": "http",
 							"host": [
-								"192",
-								"168",
-								"1",
-								"72"
+								"54",
+								"210",
+								"53",
+								"36"
 							],
 							"port": "8123",
 							"path": [
@@ -78,13 +78,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://192.168.1.72:8123/vts/api/v1/customers/50e81114-b8b8-4fef-a24b-2aace4861969",
+							"raw": "http://54.210.53.36:8123/vts/api/v1/customers/65c9a74d-9aeb-4157-815f-68cac046f5f8",
 							"protocol": "http",
 							"host": [
-								"192",
-								"168",
-								"1",
-								"72"
+								"54",
+								"210",
+								"53",
+								"36"
 							],
 							"port": "8123",
 							"path": [
@@ -92,7 +92,7 @@
 								"api",
 								"v1",
 								"customers",
-								"50e81114-b8b8-4fef-a24b-2aace4861969"
+								"65c9a74d-9aeb-4157-815f-68cac046f5f8"
 							]
 						}
 					},
@@ -105,7 +105,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"District\": \"Lince\",\r\n    \"FirstName\": \"Jauna\",\r\n    \"LastNames\": \"Pereza Sancheza\",\r\n    \"PrimaryAddress\": \"Calle Las Palmeras #2164\",\r\n    \"PrimaryPhone\": \"159357225\"   \r\n}",
+							"raw": "    {\r\n        \"District\": \"Mirafloes\",\r\n        \"FirstName\": \"Jose Maria\",\r\n        \"LastNames\": \"Aguilar Perez\",\r\n        \"PrimaryAddress\": \"Av. Benavides #4821\",\r\n        \"PrimaryPhone\": \"93205148\"\r\n    }",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -113,13 +113,13 @@
 							}
 						},
 						"url": {
-							"raw": "http://192.168.1.72:8123/vts/api/v1/customers/50e81114-b8b8-4fef-a24b-2aace4861969",
+							"raw": "http://54.210.53.36:8123/vts/api/v1/customers/506bfb6a-7d3f-4ff7-bdf2-f9e841d218e8",
 							"protocol": "http",
 							"host": [
-								"192",
-								"168",
-								"1",
-								"72"
+								"54",
+								"210",
+								"53",
+								"36"
 							],
 							"port": "8123",
 							"path": [
@@ -127,7 +127,7 @@
 								"api",
 								"v1",
 								"customers",
-								"50e81114-b8b8-4fef-a24b-2aace4861969"
+								"506bfb6a-7d3f-4ff7-bdf2-f9e841d218e8"
 							]
 						}
 					},
@@ -151,13 +151,13 @@
 							}
 						},
 						"url": {
-							"raw": "http://192.168.1.72:8123/vts/api/v1/customers",
+							"raw": "http://54.210.53.36:8123/vts/api/v1/customers",
 							"protocol": "http",
 							"host": [
-								"192",
-								"168",
-								"1",
-								"72"
+								"54",
+								"210",
+								"53",
+								"36"
 							],
 							"port": "8123",
 							"path": [
@@ -182,13 +182,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://192.168.1.72:8123/vts/api/v1/orders/outstanding/",
+							"raw": "http://54.210.53.36:8123/vts/api/v1/orders/outstanding/",
 							"protocol": "http",
 							"host": [
-								"192",
-								"168",
-								"1",
-								"72"
+								"54",
+								"210",
+								"53",
+								"36"
 							],
 							"port": "8123",
 							"path": [
@@ -209,22 +209,85 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://192.168.1.72:8123/vts/api/v1/orders/outstanding/",
+							"raw": "http://54.210.53.36:8123/vts/api/v1/orders",
 							"protocol": "http",
 							"host": [
-								"192",
-								"168",
-								"1",
-								"72"
+								"54",
+								"210",
+								"53",
+								"36"
 							],
 							"port": "8123",
 							"path": [
 								"vts",
 								"api",
 								"v1",
-								"orders",
-								"outstanding",
-								""
+								"orders"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "products",
+			"item": [
+				{
+					"name": "get all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://54.210.53.36:8123/vts/api/v1/products",
+							"protocol": "http",
+							"host": [
+								"54",
+								"210",
+								"53",
+								"36"
+							],
+							"port": "8123",
+							"path": [
+								"vts",
+								"api",
+								"v1",
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "insert",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n        \"AvailableStock\": \"514\",\r\n        \"Price\": \"25\",\r\n        \"ProductDescription\": \"1kg container of tablets\",\r\n        \"ProductName\": \"Calcium Hypochlorite Tablets\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://54.210.53.36:8123/vts/api/v1/products",
+							"protocol": "http",
+							"host": [
+								"54",
+								"210",
+								"53",
+								"36"
+							],
+							"port": "8123",
+							"path": [
+								"vts",
+								"api",
+								"v1",
+								"products"
 							]
 						}
 					},

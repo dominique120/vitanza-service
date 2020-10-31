@@ -24,6 +24,13 @@ sudo ln /usr/local/lib/libserved.so.1.4 /usr/lib64/libserved.so.1.4
 
 cd ..
 
+git clone https://github.com/nlohmann/json.git
+mkdir json.build && cd json.build
+cmake3 -DJSON_BuildTests=OFF ../json
+make && sudo make install
+
+cd ..
+
 git clone https://github.com/dominique120/vitanza-service.git
 mkdir vts && mkdir vts.build && cd vts.build
 cmake3 -DDB_DYNAMO=ON ../vitanza-service
