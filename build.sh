@@ -1,6 +1,6 @@
 #!/bin/bash
 sudo dnf update -y && sudo dnf upgrade -y
-sudo dnf install -y git boost-devel make cmake3 gcc-c++ mariadb-devel libcurl-devel openssl-devel libuuid-devel pulseaudio-libs-devel
+sudo dnf install -y git boost-devel make cmake3 gcc-c++ mariadb-devel libcurl-devel openssl-devel libuuid-devel pulseaudio-libs-devel nano
 
 
 sudo /bin/dd if=/dev/zero of=/var/swap.1 bs=1M count=1024

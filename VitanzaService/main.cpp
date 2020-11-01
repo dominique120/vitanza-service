@@ -55,6 +55,7 @@ void register_handlers(served::multiplexer& mux) {
 		.get([](served::response& res, const served::request& req) {
 			Client_wrapper client_wrapper;
 			res.set_header("Content-type", "application/json");
+			res.set_header("Access-control-allow-origin", "*");
 			res << client_wrapper.get_client(req.params [ "id" ]);			
 		})
 		.put([](served::response& res, const served::request& req) {
@@ -76,6 +77,7 @@ void register_handlers(served::multiplexer& mux) {
 		.get([](served::response& res, const served::request& req) {
 			Client_wrapper client_wrapper;
 			res.set_header("Content-type", "application/json");
+			res.set_header("Access-control-allow-origin", "*");
 			res << client_wrapper.get_all_clients();
 		})
 		.post([](served::response& res, const served::request& req) {
@@ -92,6 +94,7 @@ void register_handlers(served::multiplexer& mux) {
 		.get([](served::response& res, const served::request& req) {
 			Product_wrapper product_wrapper;
 			res.set_header("Content-type", "application/json");
+			res.set_header("Access-control-allow-origin", "*");
 			res << product_wrapper.get_product(req.params [ "id" ]);
 		})
 		.put([](served::response& res, const served::request& req) {
@@ -113,6 +116,7 @@ void register_handlers(served::multiplexer& mux) {
 		.get([](served::response& res, const served::request& req) {
 			Product_wrapper product_wrapper;
 			res.set_header("Content-type", "application/json");
+			res.set_header("Access-control-allow-origin", "*");
 			res << product_wrapper.get_all_products();
 		})
 		.post([](served::response& res, const served::request& req) {
@@ -129,6 +133,7 @@ void register_handlers(served::multiplexer& mux) {
 		.get([](served::response& res, const served::request& req) {
 			Order_wrapper order_wrapper;
 			res.set_header("Content-type", "application/json");
+			res.set_header("Access-control-allow-origin", "*");
 			res << order_wrapper.get_outstanding_orders();
 		});
 	
@@ -136,6 +141,7 @@ void register_handlers(served::multiplexer& mux) {
 		.get([](served::response& res, const served::request& req) {
 			Order_wrapper order_wrapper;
 			res.set_header("Content-type", "application/json");
+			res.set_header("Access-control-allow-origin", "*");
 			res << order_wrapper.get_order(req.params [ "id" ]);
 		})
 		.put([](served::response& res, const served::request& req) {
@@ -172,6 +178,7 @@ void register_handlers(served::multiplexer& mux) {
 		.get([](served::response& res, const served::request& req) {
 			OrderDetail_wrapper order_detail_wrapper;
 			res.set_header("Content-type", "application/json");
+			res.set_header("Access-control-allow-origin", "*");
 			res << order_detail_wrapper.get_order_detail(req.params [ "id" ]);
 		})
 		.put([](served::response& res, const served::request& req) {
