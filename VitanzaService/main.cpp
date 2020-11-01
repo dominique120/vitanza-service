@@ -63,14 +63,25 @@ void register_handlers(served::multiplexer& mux) {
 		});
 	mux.handle(g_config [ "API_BASE_URL" ] + "/auth")
 		.post([](served::response& res, const served::request& req) {
-			const auto j = nlohmann::json::parse(req.body());
-			std::map<std::string, std::string> user = j;			
-			if (auth_wrapper::authenticate(user["username"], user["password"])) {
-				res << Auth::generate_token(user [ "username" ], user [ "password" ]);
+			const std::map<std::string, std::string> user = nlohmann::json::parse(req.body());
+			 //if (auth_wrapper::authenticate(user.at("username"), user.at("password"))) {
+				res << Auth::generate_token(user.at("username"), user.at("password"));
+				res.set_status(200);
+			//} else {
+				//res.set_status(403);
+			//}
+		})
+		.get([](served::response& res, const served::request& req) {
+			//just a test to try to validate generated tokens
+			res.set_header("Content-type", "application/json");
+			res.set_header("Access-control-allow-origin", "*");
+
+			if(Auth::validate_token(req.header("Authorization"))) {
 				res.set_status(200);
 			} else {
 				res.set_status(403);
 			}
+			
 		});
 
 	/*--------------- Customers ---------------------------*/
