@@ -87,8 +87,10 @@ void register_handlers(served::multiplexer& mux) {
 	/*--------------- Customers ---------------------------*/
 	mux.handle(g_config [ "API_BASE_URL" ] + "/customers/{id}")
 		.get([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization"))) 
+			if (!Auth::validate_token(req.header("Authorization"))) {
 				res.set_status(403);
+				return;
+			}
 		
 			res.set_header("Content-type", "application/json");
 			res.set_header("Access-control-allow-origin", "*");
@@ -101,8 +103,10 @@ void register_handlers(served::multiplexer& mux) {
 			}
 		})
 		.put([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization")))
+			if (!Auth::validate_token(req.header("Authorization"))) {
 				res.set_status(403);
+				return;
+			}
 			
 			if(Client_wrapper::update_client(req.params [ "id" ], req.body())) {
 				res.set_status(204);
@@ -111,8 +115,10 @@ void register_handlers(served::multiplexer& mux) {
 			}	
 		})
 		.del([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization")))
+			if (!Auth::validate_token(req.header("Authorization"))) {
 				res.set_status(403);
+				return;
+			}
 			
 			if (!Auth::validate_token(req.header("Authorization")))
 				res.set_status(403);
@@ -125,8 +131,10 @@ void register_handlers(served::multiplexer& mux) {
 
 	mux.handle(g_config [ "API_BASE_URL" ] + "/customers")
 		.get([](served::response& res, const served::request& req) {
-		if (!Auth::validate_token(req.header("Authorization")))
-			res.set_status(403);
+			if (!Auth::validate_token(req.header("Authorization"))) {
+				res.set_status(403);
+				return;
+			}
 			
 			res.set_header("Content-type", "application/json");
 			res.set_header("Access-control-allow-origin", "*");
@@ -139,8 +147,10 @@ void register_handlers(served::multiplexer& mux) {
 			}
 		})
 		.post([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization")))
+			if (!Auth::validate_token(req.header("Authorization"))) {
 				res.set_status(403);
+				return;
+			}
 			
 			if(Client_wrapper::new_client(req.body())) {
 				res.set_status(201);
@@ -153,8 +163,10 @@ void register_handlers(served::multiplexer& mux) {
 	/*--------------- Products ---------------------------*/
 	mux.handle(g_config [ "API_BASE_URL" ] + "/products/{id}")
 		.get([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization")))
+			if (!Auth::validate_token(req.header("Authorization"))) {
 				res.set_status(403);
+				return;
+			}
 			
 			res.set_header("Content-type", "application/json");
 			res.set_header("Access-control-allow-origin", "*");
@@ -167,8 +179,10 @@ void register_handlers(served::multiplexer& mux) {
 			}
 		})
 		.put([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization")))
+			if (!Auth::validate_token(req.header("Authorization"))) {
 				res.set_status(403);
+				return;
+			}
 			
 			if(Product_wrapper::update_product(req.params [ "id" ], req.body())) {
 				res.set_status(200);
@@ -177,8 +191,10 @@ void register_handlers(served::multiplexer& mux) {
 			}
 		})
 		.del([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization")))
+			if (!Auth::validate_token(req.header("Authorization"))) {
 				res.set_status(403);
+				return;
+			}
 			
 			if(Product_wrapper::delete_product(req.params [ "id" ])) {
 				res.set_status(200);
@@ -189,8 +205,10 @@ void register_handlers(served::multiplexer& mux) {
 
 	mux.handle(g_config [ "API_BASE_URL" ] + "/products")
 		.get([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization")))
-			res.set_status(403);
+			if (!Auth::validate_token(req.header("Authorization"))) {
+				res.set_status(403);
+				return;
+			}
 			
 			res.set_header("Content-type", "application/json");
 			res.set_header("Access-control-allow-origin", "*");
@@ -203,8 +221,10 @@ void register_handlers(served::multiplexer& mux) {
 			}
 		})
 		.post([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization")))
+			if (!Auth::validate_token(req.header("Authorization"))) {
 				res.set_status(403);
+				return;
+			}
 			
 			if(Product_wrapper::new_product(req.body())) {
 				res.set_status(201);
@@ -216,8 +236,10 @@ void register_handlers(served::multiplexer& mux) {
 	/*--------------- Orders ---------------------------*/
 	mux.handle(g_config [ "API_BASE_URL" ] + "/orders/outstanding/")
 		.get([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization")))
+			if (!Auth::validate_token(req.header("Authorization"))) {
 				res.set_status(403);
+				return;
+			}
 			
 			res.set_header("Content-type", "application/json");
 			res.set_header("Access-control-allow-origin", "*");
@@ -232,8 +254,10 @@ void register_handlers(served::multiplexer& mux) {
 	
 	mux.handle(g_config [ "API_BASE_URL" ] + "/orders/{id}")
 		.get([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization")))
+			if (!Auth::validate_token(req.header("Authorization"))) {
 				res.set_status(403);
+				return;
+			}
 			
 			res.set_header("Content-type", "application/json");
 			res.set_header("Access-control-allow-origin", "*");
@@ -246,8 +270,10 @@ void register_handlers(served::multiplexer& mux) {
 			}
 		})
 		.put([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization")))
+			if (!Auth::validate_token(req.header("Authorization"))) {
 				res.set_status(403);
+				return;
+			}
 			
 			if (Order_wrapper::update_order(req.params [ "id" ], req.body())) {
 				res.set_status(200);
@@ -256,8 +282,10 @@ void register_handlers(served::multiplexer& mux) {
 			}			
 		})
 		.del([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization")))
+			if (!Auth::validate_token(req.header("Authorization"))) {
 				res.set_status(403);
+				return;
+			}
 			
 			if(Order_wrapper::delete_order(req.params [ "id" ])) {
 				res.set_status(200);
@@ -268,8 +296,10 @@ void register_handlers(served::multiplexer& mux) {
 
 	mux.handle(g_config [ "API_BASE_URL" ] + "/orders")
 		.get([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization")))
+			if (!Auth::validate_token(req.header("Authorization"))) {
 				res.set_status(403);
+				return;
+			}
 			
 			res.set_header("Content-type", "application/json");
 			const std::string response = Order_wrapper::get_all_orders();
@@ -281,8 +311,10 @@ void register_handlers(served::multiplexer& mux) {
 			}
 		})
 		.post([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization")))
+			if (!Auth::validate_token(req.header("Authorization"))) {
 				res.set_status(403);
+				return;
+			}
 			
 			if(Order_wrapper::new_order(req.body())) {
 				res.set_status(201);
@@ -294,8 +326,10 @@ void register_handlers(served::multiplexer& mux) {
 	/*--------------- Order Details ---------------------------*/
 	mux.handle(g_config [ "API_BASE_URL" ] + "/orderdetails/{id}")
 		.get([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization")))
+			if (!Auth::validate_token(req.header("Authorization"))) {
 				res.set_status(403);
+				return;
+			}
 			
 			res.set_header("Content-type", "application/json");
 			res.set_header("Access-control-allow-origin", "*");
@@ -308,8 +342,10 @@ void register_handlers(served::multiplexer& mux) {
 			}
 		})
 		.put([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization")))
+			if (!Auth::validate_token(req.header("Authorization"))) {
 				res.set_status(403);
+				return;
+			}
 			
 			if(OrderDetail_wrapper::update_order_detail(req.params [ "id" ], req.body())) {
 				res.set_status(200);
@@ -318,8 +354,10 @@ void register_handlers(served::multiplexer& mux) {
 			}			
 		})
 		.del([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization")))
+			if (!Auth::validate_token(req.header("Authorization"))) {
 				res.set_status(403);
+				return;
+			}
 			
 			if(OrderDetail_wrapper::delete_order_detail(req.params [ "id" ])) {
 				res.set_status(200);
@@ -333,8 +371,10 @@ void register_handlers(served::multiplexer& mux) {
 		//implement a return all order details after providing a filter( order header id )
 		})
 		.post([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization")))
+			if (!Auth::validate_token(req.header("Authorization"))) {
 				res.set_status(403);
+				return;
+			}
 			
 			if(OrderDetail_wrapper::new_order_detail(req.body())) {
 				res.set_status(201);
