@@ -64,7 +64,8 @@ endif ()
 
 find_package(AWSSDK REQUIRED COMPONENTS dynamodb)
 find_package(MySQL REQUIRED)
-find_package(Boost 1.53.0 REQUIRED COMPONENTS system )
+find_package(Boost 1.53.0 REQUIRED COMPONENTS system)
+find_package(OpenSSL 1.0.2 REQUIRED)
 
 target_include_directories(vts PRIVATE ${JWT_CPP_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${MYSQL_INCLUDE_DIR} ${json_SOURCE_DIR})
 

@@ -42,7 +42,7 @@ before_install:
     - cd ..
     - git clone https://github.com/Thalhammer/jwt-cpp.git
     - mkdir jwt-cpp.build && cd jwt-cpp.build
-    - cmake3 -DBUILD_TESTS=OFF -DBUILD_EXAMPLES=OFF ../jwt-cpp
+    - cmake -DBUILD_TESTS=OFF -DBUILD_EXAMPLES=OFF ../jwt-cpp
     - make && sudo make install    
     - cd ..
     - git clone https://github.com/meltwater/served.git
