@@ -1,5 +1,7 @@
 set(vts_SRC
 	${CMAKE_CURRENT_LIST_DIR}/config.cpp
+	${CMAKE_CURRENT_LIST_DIR}/Auth.cpp
+	${CMAKE_CURRENT_LIST_DIR}/auth_wrapper.cpp
 	${CMAKE_CURRENT_LIST_DIR}/db_dynamo.cpp
 	${CMAKE_CURRENT_LIST_DIR}/db_mysql.cpp
 	${CMAKE_CURRENT_LIST_DIR}/main.cpp
