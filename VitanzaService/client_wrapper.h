@@ -1,13 +1,10 @@
 #ifndef CLIENT_WRAPPER_H
 #define CLIENT_WRAPPER_H
 
-
 #include "Client.h"
 #include "db_dynamo.h"
 
-
-
-class Client_wrapper{
+class Client_wrapper {
 public:
 	static std::string get_client(const std::string& id_or_uuid);
 	static bool update_client(const std::string& id_or_uuid, const std::string& request_body);

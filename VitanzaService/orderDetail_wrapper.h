@@ -4,7 +4,6 @@
 #include "OrderDetail.h"
 #include "db_dynamo.h"
 
-
 class OrderDetail_wrapper {
 public:
 	static std::string get_order_detail(const std::string& id_or_uuid);

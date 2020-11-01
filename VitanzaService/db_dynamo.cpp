@@ -20,10 +20,10 @@ std::map<std::string, std::string> DynamoDB::get_item_dynamo(const Aws::String& 
 
 	const Aws::String endpoint(g_config [ "AWS_DYNAMODB_ENDPOINT" ].c_str());
 	dynamo_client.OverrideEndpoint(endpoint);
-	
+
 	std::map<std::string, std::string> new_map;
 	Aws::DynamoDB::Model::GetItemRequest req;
-	
+
 	// Set up the request
 	req.SetTableName(table_name); // table name
 	Aws::DynamoDB::Model::AttributeValue hash_key;
@@ -68,10 +68,10 @@ bool DynamoDB::update_item_dynamo(const Aws::String& table_name, const Aws::Stri
 	if (use_token) {
 		credentials.SetSessionToken(Aws::String(g_config [ "AWS_SESSION_TOKEN" ].c_str()));
 	}
-	
+
 	Aws::Client::ClientConfiguration client_config;
 	client_config.region = g_config [ "AWS_REGION" ].c_str();
-	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials ,client_config);
+	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
 
 	const Aws::String endpoint(g_config [ "AWS_DYNAMODB_ENDPOINT" ].c_str());
 	dynamo_client.OverrideEndpoint(endpoint);
@@ -87,7 +87,7 @@ bool DynamoDB::update_item_dynamo(const Aws::String& table_name, const Aws::Stri
 	request.AddKey(key_name, attrib_value);
 
 	nlohmann::json j = nlohmann::json::parse(request_body);
-	
+
 	// map json request to an std::map
 	std::map<std::string, std::string> json_map = j;
 
@@ -131,7 +131,6 @@ bool DynamoDB::update_item_dynamo(const Aws::String& table_name, const Aws::Stri
 		expression_attribute_values [ ostr.str() ] = attribute_updated_value;
 	}
 	request.SetExpressionAttributeValues(expression_attribute_values);
-
 
 	// Update the item
 	const Aws::DynamoDB::Model::UpdateItemOutcome& result = dynamo_client.UpdateItem(request);
@@ -178,7 +177,7 @@ bool DynamoDB::new_item_dynamo(const Aws::String& table_name, const Aws::String&
 	Aws::DynamoDB::Model::AttributeValue attribute_value;
 	attribute_value.SetS(key_value);
 	pir.AddItem(key_name, attribute_value);
-	
+
 	const Aws::DynamoDB::Model::PutItemOutcome result = dynamo_client.PutItem(pir);
 	if (!result.IsSuccess()) {
 		std::cout << result.GetError().GetMessage() << std::endl;
@@ -238,7 +237,6 @@ std::string DynamoDB::query_table_items_dynamo(const Aws::String& table_name, co
 	const Aws::String endpoint(g_config [ "AWS_DYNAMODB_ENDPOINT" ].c_str());
 	dynamo_client.OverrideEndpoint(endpoint);
 
-
 	/* Build condition expression */
 	Aws::OStringStream ss;
 	size_t counter = 0;
@@ -250,7 +248,6 @@ std::string DynamoDB::query_table_items_dynamo(const Aws::String& table_name, co
 		}
 	}
 	Aws::String query_expression(ss.str());
-
 
 	// Construct attribute value argument
 	Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue> expression_attribute_values;
@@ -274,7 +271,7 @@ std::string DynamoDB::query_table_items_dynamo(const Aws::String& table_name, co
 		std::cout << result.GetError().GetMessage() << std::endl;
 		return "";
 	}
-	
+
 	const Aws::Vector<Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue>> query_result = result.GetResult().GetItems();
 
 	// convert to json
@@ -299,7 +296,7 @@ std::string DynamoDB::query_table_items_dynamo(const Aws::String& table_name, co
 			j_ss << "}, ";
 		} else {
 			j_ss << "}";
-		}	
+		}
 	}
 	j_ss << "]";
 	Aws::String json_result_aws = j_ss.str();
@@ -345,7 +342,7 @@ std::string DynamoDB::scan_table_items_dynamo(const Aws::String& table_name) {
 	j_ss << "[";
 	for (size_t i = 0; i < query_result.size(); ++i) {
 		j_ss << "{";
-		for (auto &j : query_result.at(i)) {
+		for (auto& j : query_result.at(i)) {
 			j_ss << "\"" << j.first << "\" : \"";
 
 			if (j.second.GetType() == Aws::DynamoDB::Model::ValueType::STRING) {
@@ -356,7 +353,7 @@ std::string DynamoDB::scan_table_items_dynamo(const Aws::String& table_name) {
 				j_ss << j.second.GetBool();
 			}
 			++inner_cntr;
-			inner_cntr != query_result.at(i).size() ? j_ss << "\", \n" : j_ss << "\" \n";			
+			inner_cntr != query_result.at(i).size() ? j_ss << "\", \n" : j_ss << "\" \n";
 		}
 		inner_cntr = 0;
 		++outer_cntr;
@@ -366,11 +363,6 @@ std::string DynamoDB::scan_table_items_dynamo(const Aws::String& table_name) {
 
 	return j_ss.str().c_str();
 }
-
-
-
-
-
 
 // Currently only tests for equality
 std::string DynamoDB::scan_table_items_filer_dynamo(const Aws::String& table_name, const std::map<std::string, std::string>& conditions_and_values) {
@@ -393,7 +385,6 @@ std::string DynamoDB::scan_table_items_filer_dynamo(const Aws::String& table_nam
 	Aws::DynamoDB::Model::ScanRequest scan_request;
 	scan_request.SetTableName(table_name);
 
-
 	// build expression
 	Aws::OStringStream ss;
 	size_t counter = 0;
@@ -413,7 +404,6 @@ std::string DynamoDB::scan_table_items_filer_dynamo(const Aws::String& table_nam
 	// Construct attribute value argument
 	Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue> expression_attribute_values;
 
-
 	// TODO: Need to filter for the type of the conditional to use
 	for (const auto& i : conditions_and_values) {
 		Aws::DynamoDB::Model::AttributeValue attribute_updated_value;
@@ -424,11 +414,6 @@ std::string DynamoDB::scan_table_items_filer_dynamo(const Aws::String& table_nam
 	}
 	scan_request.SetExpressionAttributeValues(expression_attribute_values);
 
-
-
-
-
-	
 	// run the scan
 	const Aws::DynamoDB::Model::ScanOutcome& result = dynamo_client.Scan(scan_request);
 	if (!result.IsSuccess()) {
@@ -468,7 +453,5 @@ std::string DynamoDB::scan_table_items_filer_dynamo(const Aws::String& table_nam
 
 	return j_ss.str().c_str();
 }
-
-
 
 #endif

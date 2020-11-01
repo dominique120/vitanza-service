@@ -68,7 +68,7 @@ void register_handlers(served::multiplexer& mux) {
 				res.set_status(204);
 			} else {
 				res.set_status(400);
-			}			
+			}	
 		})
 		.del([](served::response& res, const served::request& req) {
 			if(Client_wrapper::delete_client(req.params [ "id" ])) {

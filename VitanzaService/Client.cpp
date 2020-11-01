@@ -101,8 +101,7 @@ bool Client::delete_client(const uint32_t& id) {
 	}
 }
 
-bool Client::delete_client(const std::string& uuid)
-{
+bool Client::delete_client(const std::string& uuid) {
 	std::ostringstream query;
 	query << "DELETE FROM `clients`WHERE ClientId_uuid = " << uuid;
 
@@ -115,7 +114,6 @@ bool Client::delete_client(const std::string& uuid)
 #endif
 
 std::string Client::to_json_array(const ClientList& cl) {
-
 	nlohmann::json j;
 
 	for (auto const& i : cl) {
@@ -129,7 +127,7 @@ std::string Client::to_json_array(const ClientList& cl) {
 			{ "PrimaryPhone", i.primary_phone},
 			{ "SecondaryPhone",i.secondary_phone},
 			{ "District", i.district}
-				});
+					});
 	}
 	return j.dump();
 }
@@ -146,9 +144,7 @@ void Client::to_json(nlohmann::json& j, const Client& s) {
 	j [ "ClientId_uuid" ] = s.client_id_uuid;
 }
 
-void Client::from_json(const nlohmann::json& j, Client& s) const
-{
-
+void Client::from_json(const nlohmann::json& j, Client& s) const {
 	try {
 		s.client_id = std::stoi((j.at("ClientId").get<std::string>()));
 		s.client_id_uuid = j.at("ClientId_uuid").get<std::string>();

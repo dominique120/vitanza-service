@@ -3,7 +3,7 @@
 #if defined(DB_DYNAMO)
 #include <aws/core/Aws.h>
 #include <aws/core/auth/AWSCredentials.h>
-#include <aws/core/utils/Outcome.h> 
+#include <aws/core/utils/Outcome.h>
 #include <aws/dynamodb/DynamoDBClient.h>
 #include <aws/dynamodb/model/AttributeDefinition.h>
 #include <aws/dynamodb/model/GetItemRequest.h>
@@ -30,7 +30,6 @@ public:
 	static std::string query_table_items_dynamo(const Aws::String& table_name, const std::map<std::string, std::string>& index_condition_map);
 	static std::string scan_table_items_dynamo(const Aws::String& table_name);
 	static std::string scan_table_items_filer_dynamo(const Aws::String& table_name, const std::map<std::string, std::string>& conditions_and_values);
-
 };
 #endif
 

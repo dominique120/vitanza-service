@@ -22,18 +22,18 @@ bool Database::connect() {
 	bool reconnect = true;
 	mysql_options(handle, MYSQL_OPT_RECONNECT, &reconnect);
 
-	if (!mysql_real_connect(handle, 
-							g_config["MYSQL_HOST"].c_str(), 
-							g_config [ "MYSQL_USER" ].c_str(), 
+	if (!mysql_real_connect(handle,
+							g_config [ "MYSQL_HOST" ].c_str(),
+							g_config [ "MYSQL_USER" ].c_str(),
 							g_config [ "MYSQL_PASSWORD" ].c_str(),
 							g_config [ "MYSQL_DATABASE" ].c_str(),
 							std::stoi(g_config [ "MYSQL_PORT" ]),
-							nullptr, 
+							nullptr,
 							0)) {
 		std::cout << std::endl << "MySQL Error Message: " << mysql_error(handle) << std::endl;
 		return false;
 	}
-	
+
 	DBResult_ptr result = storeQuery("SHOW VARIABLES LIKE 'max_allowed_packet'");
 	if (result) {
 		maxPacketSize = result->getNumber<uint64_t>("Value");

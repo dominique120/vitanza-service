@@ -1,4 +1,3 @@
-
 #ifndef ORDERDETAIL_H
 #define ORDERDETAIL_H
 
@@ -44,7 +43,7 @@ public:
 	static bool delete_order_detail_by_order_id(const std::string& uuid);
 
 #endif
-	
+
 	static std::string to_json_array(const OrderDetailList& order_detail);
 
 	static void from_json(const nlohmann::json& j, OrderDetail& s);
@@ -52,6 +51,3 @@ public:
 };
 
 #endif
-
-
-

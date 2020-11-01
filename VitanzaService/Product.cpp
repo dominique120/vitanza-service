@@ -95,7 +95,6 @@ bool Product::new_product(const Product& product) {
 	} else {
 		return false;
 	}
-
 }
 
 bool Product::delete_product(int32_t id) {
@@ -147,7 +146,6 @@ void Product::to_json(nlohmann::json& j, const Product& s) {
 }
 
 void Product::from_json(const nlohmann::json& j, Product& s) {
-
 	try {
 		s.product_id = j.at("ProductId").get<int32_t>();
 		s.product_id_uuid = j.at("ProductId_uuid").get<std::string>();

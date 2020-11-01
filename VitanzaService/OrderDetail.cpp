@@ -107,7 +107,6 @@ bool OrderDetail::update_order_detail(const OrderDetail& order_detail) {
 	} else {
 		return false;
 	}
-
 }
 
 bool OrderDetail::new_order_detail(const OrderDetail& order_detail) {
@@ -171,7 +170,6 @@ bool OrderDetail::delete_order_detail(const std::string& uuid) {
 #endif
 
 std::string OrderDetail::to_json_array(const OrderDetailList& order_detail) {
-
 	nlohmann::json j;
 
 	for (auto const& i : order_detail) {
@@ -197,11 +195,9 @@ void OrderDetail::to_json(nlohmann::json& j, const OrderDetail& s) {
 	j [ "Product" ] = s.product;
 	j [ "Quantity" ] = s.quantity;
 	j [ "OverridePrice" ] = s.override_price;
-
 }
 
 void OrderDetail::from_json(const nlohmann::json& j, OrderDetail& s) {
-
 	try {
 		s.order_detail_id = j.at("OrderDetailId").get<int32_t>();
 		s.order_detail_id_uuid = j.at("OrderDetailId_uuid").get<std::string>();
@@ -217,5 +213,4 @@ void OrderDetail::from_json(const nlohmann::json& j, OrderDetail& s) {
 	} catch (nlohmann::json::exception&) {
 		std::cout << "Order Detail sent with invalid mandatory fields" << std::endl;
 	}
-
 }

@@ -157,7 +157,6 @@ std::string Order::to_json_array(const OrderList& order) {
 	return j.dump();
 }
 
-
 void Order::to_json(nlohmann::json& j, const Order& s) {
 	j [ "OrderId" ] = s.order_id;
 	j [ "ClientId" ] = s.client_id;
@@ -168,7 +167,6 @@ void Order::to_json(nlohmann::json& j, const Order& s) {
 	j [ "DateDelivered" ] = s.date_delivered;
 	j [ "OrderId_uuid" ] = s.order_id_uuid;
 }
-
 
 void Order::from_json(const nlohmann::json& j, Order& s) {
 	try {
@@ -188,5 +186,4 @@ void Order::from_json(const nlohmann::json& j, Order& s) {
 	} catch (nlohmann::json::exception&) {
 		std::cout << "Order sent with missing mandatory data" << std::endl;
 	}
-
 }

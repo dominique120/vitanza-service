@@ -12,7 +12,7 @@ std::string Client_wrapper::get_client(const std::string& id_or_uuid) {
 	nlohmann::json j;
 	p.to_json(j, p);
 	return j.dump();
-#endif 
+#endif
 }
 
 bool Client_wrapper::update_client(const std::string& id_or_uuid, const std::string& request_body) {
@@ -23,7 +23,7 @@ bool Client_wrapper::update_client(const std::string& id_or_uuid, const std::str
 	Client p;
 	p.from_json(request_body, p);
 	return p.update_client(p);
-#endif 
+#endif
 }
 
 bool Client_wrapper::delete_client(const std::string& id_or_uuid) {
@@ -33,7 +33,7 @@ bool Client_wrapper::delete_client(const std::string& id_or_uuid) {
 #elif DB_MYSQL
 	Client p;
 	return p.delete_client(id_or_uuid);
-#endif 
+#endif
 }
 
 bool Client_wrapper::new_client(const std::string& request_body) {
@@ -46,7 +46,7 @@ bool Client_wrapper::new_client(const std::string& request_body) {
 	Client p;
 	p.from_json(request_body, p);
 	return p.new_client(p);
-#endif 
+#endif
 }
 
 std::string Client_wrapper::get_all_clients() {
@@ -58,5 +58,5 @@ std::string Client_wrapper::get_all_clients() {
 	//p.from_json(request_body, p);
 	//return p.new_client(p);
 	return "";
-#endif 
+#endif
 }

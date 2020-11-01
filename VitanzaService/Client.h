@@ -1,13 +1,10 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
-
-
 #include "db_mysql.h"
 
 class Client {
-
-public:	
+public:
 	// members
 	uint32_t client_id;
 	std::string first_name;
@@ -19,7 +16,6 @@ public:
 	std::string district;
 
 	std::string client_id_uuid;
-
 
 	using ClientList = std::list<Client>;
 
@@ -49,7 +45,6 @@ public:
 
 	void from_json(const nlohmann::json& j, Client& s) const;
 	static void to_json(nlohmann::json& j, const Client& s);
-
 };
 
 #endif

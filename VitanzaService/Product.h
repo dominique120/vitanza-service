@@ -1,11 +1,9 @@
-
 #ifndef PRODUCT_H
 #define PRODUCT_H
 
 #include "db_mysql.h"
 
 class Product {
-
 public:
 	int32_t product_id;
 	std::string product_name;

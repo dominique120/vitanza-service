@@ -14,5 +14,5 @@
   "SERVER_PORT": "8123",
   "SERVER_IP": "eth0_ip",
   "SERVER_INIT_THREAD_POOL": "100",
-  "API_BASE_URL" :  "/vts/api/v1" 
+  "API_BASE_URL": "/vts/api/v1"
 }
