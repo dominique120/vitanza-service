@@ -34,33 +34,35 @@ std::string Auth::generate_token(const std::string& username, const std::string&
 }
 
 bool Auth::validate_token(const std::string& token_header) {
-	std::string token = token_header;
-	// Remove the "Bearer " section of the header
-	token.erase(0, 7);
-	
-	const auto decoded = jwt::decode(token);
+	try {
+		std::string token = token_header;
+		
+		// Remove the "Bearer " section of the header
+		token.erase(0, 7);
 
-	nlohmann::json jwt_payload;
-	try {
-		jwt_payload = nlohmann::json::parse(decoded.get_payload());
-	} catch (nlohmann::json::exception&) {
-		return false;
-	}
-	
-	const jwt::claim user(jwt_payload.at("username").get<std::string>());
-	const jwt::claim pwd(jwt_payload.at("password").get<std::string>());
-	
-	const auto verifier = jwt::verify()
-		.allow_algorithm(jwt::algorithm::hs512{ g_config [ "SHA512_SECRET" ] })
-		.with_issuer(g_config [ "JWT_ISSUER" ])
-		.with_claim("username", user)
-		.with_claim("password", pwd);
-	
-	try {
+		const auto decoded = jwt::decode(token);
+
+		const nlohmann::json jwt_payload = nlohmann::json::parse(decoded.get_payload());
+
+		const jwt::claim user(jwt_payload.at("username").get<std::string>());
+		const jwt::claim pwd(jwt_payload.at("password").get<std::string>());
+
+		const auto verifier = jwt::verify()
+			.allow_algorithm(jwt::algorithm::hs512{ g_config [ "SHA512_SECRET" ] })
+			.with_issuer(g_config [ "JWT_ISSUER" ])
+			.with_claim("username", user)
+			.with_claim("password", pwd);
+
 		verifier.verify(decoded);
 		return true;
-	} catch (jwt::token_verification_exception& e) {
-		std::cout << e.what() << std::endl;
+		
+	} catch (jwt::token_verification_exception&) {
+		return false;
+	} catch (nlohmann::json::exception&) {
+		return false;
+	} catch (std::invalid_argument&) {
+		return false;
+	} catch (std::runtime_error&) {
 		return false;
 	}
 }
