@@ -53,147 +53,186 @@ void register_handlers(served::multiplexer& mux) {
 	/*--------------- Customers ---------------------------*/
 	mux.handle(g_config [ "API_BASE_URL" ] + "/customers/{id}")
 		.get([](served::response& res, const served::request& req) {
-			Client_wrapper client_wrapper;
 			res.set_header("Content-type", "application/json");
 			res.set_header("Access-control-allow-origin", "*");
-			res << client_wrapper.get_client(req.params [ "id" ]);			
+			const std::string response = Client_wrapper::get_client(req.params [ "id" ]);
+			if(response.empty()) {
+				res.set_status(204);
+			} else {
+				res.set_status(200);
+				res << response;
+			}
 		})
 		.put([](served::response& res, const served::request& req) {
-			Client_wrapper client_wrapper;
-			bool success = client_wrapper.update_client(req.params [ "id" ], req.body());
-			std::string s;
-			s = success;
-			res << s.c_str();
+			if(Client_wrapper::update_client(req.params [ "id" ], req.body())) {
+				res.set_status(204);
+			} else {
+				res.set_status(400);
+			}			
 		})
 		.del([](served::response& res, const served::request& req) {
-			Client_wrapper client_wrapper;
-			bool success = client_wrapper.delete_client(req.params [ "id" ]);
-			std::string s;
-			s = success;
-			res << s.c_str();
+			if(Client_wrapper::delete_client(req.params [ "id" ])) {
+				res.set_status(200);
+			} else {
+				res.set_status(400);
+			}
 		});
 
 	mux.handle(g_config [ "API_BASE_URL" ] + "/customers")
 		.get([](served::response& res, const served::request& req) {
-			Client_wrapper client_wrapper;
 			res.set_header("Content-type", "application/json");
 			res.set_header("Access-control-allow-origin", "*");
-			res << client_wrapper.get_all_clients();
+			const std::string response = Client_wrapper::get_all_clients();
+			if (response.empty()) {
+				res.set_status(204);
+			} else {
+				res.set_status(200);
+				res << response;
+			}
 		})
-		.post([](served::response& res, const served::request& req) {
-			Client_wrapper client_wrapper;
-			bool success = client_wrapper.new_client(req.body());
-			std::string s;
-			s = success;
-			res << s.c_str();
+		.post([](served::response& res, const served::request& req) {			
+			if(Client_wrapper::new_client(req.body())) {
+				res.set_status(201);
+			} else {
+				res.set_status(400);
+			}
 		});
 
 
 	/*--------------- Products ---------------------------*/
 	mux.handle(g_config [ "API_BASE_URL" ] + "/products/{id}")
 		.get([](served::response& res, const served::request& req) {
-			Product_wrapper product_wrapper;
 			res.set_header("Content-type", "application/json");
 			res.set_header("Access-control-allow-origin", "*");
-			res << product_wrapper.get_product(req.params [ "id" ]);
+			const std::string response = Product_wrapper::get_product(req.params [ "id" ]);
+			if(response.empty()) {
+				res.set_status(204);
+			} else {
+				res.set_status(200);
+				res << response;
+			}
 		})
 		.put([](served::response& res, const served::request& req) {
-			Product_wrapper product_wrapper;
-			bool success = product_wrapper.update_product(req.params [ "id" ], req.body());
-			std::string s;
-			s = success;
-			res << s.c_str();
+			if(Product_wrapper::update_product(req.params [ "id" ], req.body())) {
+				res.set_status(200);
+			} else {
+				res.set_status(400);
+			}
 		})
 		.del([](served::response& res, const served::request& req) {
-			Product_wrapper product_wrapper;
-			bool success = product_wrapper.delete_product(req.params [ "id" ]);
-			std::string s;
-			s = success;
-			res << s.c_str();
+			if(Product_wrapper::delete_product(req.params [ "id" ])) {
+				res.set_status(200);
+			} else {
+				res.set_status(400);
+			}
 		});
 
 	mux.handle(g_config [ "API_BASE_URL" ] + "/products")
 		.get([](served::response& res, const served::request& req) {
-			Product_wrapper product_wrapper;
 			res.set_header("Content-type", "application/json");
 			res.set_header("Access-control-allow-origin", "*");
-			res << product_wrapper.get_all_products();
+			const std::string response = Product_wrapper::get_all_products();
+			if(response.empty()) {
+				res.set_status(204);
+			} else {
+				res.set_status(200);
+				res << response;
+			}
 		})
 		.post([](served::response& res, const served::request& req) {
-			Product_wrapper product_wrapper;
-			bool success = product_wrapper.new_product(req.body());
-			std::string s;
-			s = success;
-			res << s.c_str();
+			if(Product_wrapper::new_product(req.body())) {
+				res.set_status(201);
+			} else {
+				res.set_status(400);
+			}
 		});
 
 	/*--------------- Orders ---------------------------*/
-
 	mux.handle(g_config [ "API_BASE_URL" ] + "/orders/outstanding/")
 		.get([](served::response& res, const served::request& req) {
-			Order_wrapper order_wrapper;
 			res.set_header("Content-type", "application/json");
 			res.set_header("Access-control-allow-origin", "*");
-			res << order_wrapper.get_outstanding_orders();
+			const std::string response = Order_wrapper::get_outstanding_orders();
+			if(response.empty()) {
+				res.set_status(204);
+			} else {
+				res.set_status(200);
+				res << response;
+			}
 		});
 	
 	mux.handle(g_config [ "API_BASE_URL" ] + "/orders/{id}")
 		.get([](served::response& res, const served::request& req) {
-			Order_wrapper order_wrapper;
 			res.set_header("Content-type", "application/json");
 			res.set_header("Access-control-allow-origin", "*");
-			res << order_wrapper.get_order(req.params [ "id" ]);
+			const std::string response = Order_wrapper::get_order(req.params [ "id" ]);
+			if (response.empty()) {
+				res.set_status(204);
+			} else {
+				res.set_status(200);
+				res << response;
+			}
 		})
 		.put([](served::response& res, const served::request& req) {
-			Order_wrapper order_wrapper;
-			bool success = order_wrapper.update_order(req.params [ "id" ], req.body());
-			std::string s;
-			s = success;
-			res << s.c_str();
+			if (Order_wrapper::update_order(req.params [ "id" ], req.body())) {
+				res.set_status(200);
+			} else {
+				res.set_status(400);
+			}			
 		})
 		.del([](served::response& res, const served::request& req) {
-			Order_wrapper order_wrapper;
-			bool success = order_wrapper.delete_order(req.params [ "id" ]);
-			std::string s;
-			s = success;
-			res << s.c_str();
+			if(Order_wrapper::delete_order(req.params [ "id" ])) {
+				res.set_status(200);
+			} else {
+				res.set_status(400);
+			}
 		 });
 
 	mux.handle(g_config [ "API_BASE_URL" ] + "/orders")
 		.get([](served::response& res, const served::request& req) {
-			Order_wrapper order_wrapper;
 			res.set_header("Content-type", "application/json");
-			res << order_wrapper.get_all_orders();
+			const std::string response = Order_wrapper::get_all_orders();
+			if (response.empty()) {
+				res.set_status(204);
+			} else {
+				res.set_status(200);
+				res << response;
+			}
 		})
 		.post([](served::response& res, const served::request& req) {
-			Order_wrapper order_wrapper;
-			bool success = order_wrapper.new_order(req.body());
-			std::string s;
-			s = success;
-			res << s.c_str();
+			if(Order_wrapper::new_order(req.body())) {
+				res.set_status(201);
+			} else {
+				res.set_status(400);
+			}			
 		 });
 
 	/*--------------- Order Details ---------------------------*/
 	mux.handle(g_config [ "API_BASE_URL" ] + "/orderdetails/{id}")
 		.get([](served::response& res, const served::request& req) {
-			OrderDetail_wrapper order_detail_wrapper;
 			res.set_header("Content-type", "application/json");
 			res.set_header("Access-control-allow-origin", "*");
-			res << order_detail_wrapper.get_order_detail(req.params [ "id" ]);
+			const std::string response = OrderDetail_wrapper::get_order_detail(req.params [ "id" ]);
+			if (response.empty()) {
+				res.set_status(204);
+			} else {
+				res.set_status(200);
+				res << response;
+			}
 		})
 		.put([](served::response& res, const served::request& req) {
-			OrderDetail_wrapper order_detail_wrapper;
-			bool success = order_detail_wrapper.update_order_detail(req.params [ "id" ], req.body());
-			std::string s;
-			s = success;
-			res << s.c_str();
+			if(OrderDetail_wrapper::update_order_detail(req.params [ "id" ], req.body())) {
+				res.set_status(200);
+			} else {
+				res.set_status(400);
+			}			
 		})
 		.del([](served::response& res, const served::request& req) {
-			OrderDetail_wrapper order_detail_wrapper;
-			bool success = order_detail_wrapper.delete_order_detail(req.params [ "id" ]);
-			std::string s;
-			s = success;
-			res << s.c_str();
+			if(OrderDetail_wrapper::delete_order_detail(req.params [ "id" ])) {
+				res.set_status(200);
+			} else {
+				res.set_status(400);
+			}
 		});
 
 	mux.handle(g_config [ "API_BASE_URL" ] + "/orderdetails")
@@ -201,10 +240,10 @@ void register_handlers(served::multiplexer& mux) {
 		//implement a return all order details after providing a filter( order header id )
 		})
 		.post([](served::response& res, const served::request& req) {
-			OrderDetail_wrapper order_detail_wrapper;
-			bool success = order_detail_wrapper.new_order_detail(req.body());
-			std::string s;
-			s = success;
-			res << s.c_str();
+			if(OrderDetail_wrapper::new_order_detail(req.body())) {
+				res.set_status(201);
+			} else {
+				res.set_status(400);
+			}
 		});
 }

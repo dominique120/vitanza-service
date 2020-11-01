@@ -3,9 +3,8 @@
 
 std::string Order_wrapper::get_order(const std::string& id_or_uuid) {
 #ifdef DB_DYNAMO
-    DynamoDB dyn;
     const Aws::String id(id_or_uuid.c_str());
-    const nlohmann::json j = dyn.get_item_dynamo("orders", "OrderId_uuid", id);
+    const nlohmann::json j = DynamoDB::get_item_dynamo("orders", "OrderId_uuid", id);
     return j.dump();
 #elif DB_MYSQL
     Order o;
@@ -18,9 +17,8 @@ std::string Order_wrapper::get_order(const std::string& id_or_uuid) {
 
 bool Order_wrapper::update_order(const std::string& id_or_uuid, const std::string& request_body) {
 #ifdef DB_DYNAMO
-    DynamoDB dyn;
     const Aws::String id(id_or_uuid.c_str());
-    return dyn.update_item_dynamo("orders", "OrderId_uuid", id_or_uuid.c_str(), request_body);
+    return DynamoDB::update_item_dynamo("orders", "OrderId_uuid", id_or_uuid.c_str(), request_body);
 #elif DB_MYSQL
     Order o;
     o.from_json(request_body, o);
@@ -30,9 +28,8 @@ bool Order_wrapper::update_order(const std::string& id_or_uuid, const std::strin
 
 bool Order_wrapper::delete_order(const std::string& id_or_uuid) {
 #ifdef DB_DYNAMO
-    DynamoDB dyn;
     const Aws::String id(id_or_uuid.c_str());
-    return dyn.delete_item_dynamo("orders", "OrderId_uuid", id_or_uuid.c_str());
+    return DynamoDB::delete_item_dynamo("orders", "OrderId_uuid", id_or_uuid.c_str());
 #elif DB_MYSQL
     Order o;
     return o.delete_order(id_or_uuid);
@@ -42,10 +39,9 @@ bool Order_wrapper::delete_order(const std::string& id_or_uuid) {
 bool Order_wrapper::new_order(const std::string& request_body) {
 #ifdef DB_DYNAMO
     /* ---------UUID Generation -----------------*/
-    boost::uuids::uuid uuid = boost::uuids::random_generator()();
+    const auto uuid = boost::uuids::random_generator()();
     const std::string id = boost::uuids::to_string(uuid);
-    DynamoDB dyn;
-    return dyn.new_item_dynamo("orders", "OrderId_uuid", id.c_str(), request_body);
+    return DynamoDB::new_item_dynamo("orders", "OrderId_uuid", id.c_str(), request_body);
 #elif DB_MYSQL
     Order o;
     o.from_json(request_body, o);
@@ -55,8 +51,7 @@ bool Order_wrapper::new_order(const std::string& request_body) {
 
 std::string Order_wrapper::get_all_orders() {
 #ifdef DB_DYNAMO
-    DynamoDB dyn;
-    return dyn.scan_table_items_dynamo("orders");
+    return DynamoDB::scan_table_items_dynamo("orders");
 #elif DB_MYSQL
     // TODO: implement mysql method for getting all clients
     //Client p;
@@ -68,14 +63,13 @@ std::string Order_wrapper::get_all_orders() {
 
 std::string Order_wrapper::get_outstanding_orders() {
 #ifdef DB_DYNAMO
-    DynamoDB dyn;
     std::map<std::string, std::string> conditions;
     auto pending = std::pair<std::string, std::string>("Pending", "0");
     conditions.insert(pending);
     auto paid = std::pair<std::string, std::string>("Paid", "0");
     conditions.insert(paid);
 
-    return dyn.scan_table_items_filer_dynamo("orders", conditions);
+    return DynamoDB::scan_table_items_filer_dynamo("orders", conditions);
 #elif DB_MYSQL
     // TODO: implement mysql method for getting all clients
     //Client p;

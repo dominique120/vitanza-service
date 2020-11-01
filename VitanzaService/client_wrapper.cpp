@@ -3,9 +3,8 @@
 
 std::string Client_wrapper::get_client(const std::string& id_or_uuid) {
 #ifdef DB_DYNAMO
-	DynamoDB dyn;
 	const Aws::String id(id_or_uuid.c_str());
-	const nlohmann::json j = dyn.get_item_dynamo("clients", "ClientId_uuid", id);
+	const nlohmann::json j = DynamoDB::get_item_dynamo("clients", "ClientId_uuid", id);
 	return j.dump();
 #elif DB_MYSQL
 	Client p;
@@ -18,9 +17,8 @@ std::string Client_wrapper::get_client(const std::string& id_or_uuid) {
 
 bool Client_wrapper::update_client(const std::string& id_or_uuid, const std::string& request_body) {
 #ifdef DB_DYNAMO
-	DynamoDB dyn;
 	const Aws::String id(id_or_uuid.c_str());
-	return dyn.update_item_dynamo("clients", "ClientId_uuid", id_or_uuid.c_str(), request_body);
+	return DynamoDB::update_item_dynamo("clients", "ClientId_uuid", id_or_uuid.c_str(), request_body);
 #elif DB_MYSQL
 	Client p;
 	p.from_json(request_body, p);
@@ -30,9 +28,8 @@ bool Client_wrapper::update_client(const std::string& id_or_uuid, const std::str
 
 bool Client_wrapper::delete_client(const std::string& id_or_uuid) {
 #ifdef DB_DYNAMO
-	DynamoDB dyn;
 	const Aws::String id(id_or_uuid.c_str());
-	return dyn.delete_item_dynamo("clients", "ClientId_uuid", id_or_uuid.c_str());
+	return DynamoDB::delete_item_dynamo("clients", "ClientId_uuid", id_or_uuid.c_str());
 #elif DB_MYSQL
 	Client p;
 	return p.delete_client(id_or_uuid);
@@ -42,10 +39,9 @@ bool Client_wrapper::delete_client(const std::string& id_or_uuid) {
 bool Client_wrapper::new_client(const std::string& request_body) {
 #ifdef DB_DYNAMO
 	/* ---------UUID Generation -----------------*/
-	boost::uuids::uuid uuid = boost::uuids::random_generator()();
+	const auto uuid = boost::uuids::random_generator()();
 	const std::string id = boost::uuids::to_string(uuid);
-	DynamoDB dyn;
-	return dyn.new_item_dynamo("clients", "ClientId_uuid", id.c_str(), request_body);
+	return DynamoDB::new_item_dynamo("clients", "ClientId_uuid", id.c_str(), request_body);
 #elif DB_MYSQL
 	Client p;
 	p.from_json(request_body, p);
@@ -55,8 +51,7 @@ bool Client_wrapper::new_client(const std::string& request_body) {
 
 std::string Client_wrapper::get_all_clients() {
 #ifdef DB_DYNAMO
-	DynamoDB dyn;
-	return dyn.scan_table_items_dynamo("clients");
+	return DynamoDB::scan_table_items_dynamo("clients");
 #elif DB_MYSQL
 	// TODO: implement mysql method for getting all clients
 	//Client p;
