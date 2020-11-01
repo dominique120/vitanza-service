@@ -40,6 +40,11 @@ before_install:
     - cmake ../aws-sdk-cpp -DBUILD_ONLY="dynamodb" -DENABLE_TESTING=OFF -DCUSTOM_MEMORY_MANAGEMENT=OFF  -DBUILD_SHARED_LIBS=OFF
     - sudo make && sudo make install
     - cd ..
+    - git clone https://github.com/Thalhammer/jwt-cpp.git
+    - mkdir jwt-cpp.build && cd jwt-cpp.build
+    - cmake3 -DBUILD_TESTS=OFF -DBUILD_EXAMPLES=OFF ../jwt-cpp
+    - make && sudo make install    
+    - cd ..
     - git clone https://github.com/meltwater/served.git
     - mkdir served.build && cd served.build
     - cmake ../served -DSERVED_BUILD_EXAMPLES=OFF -DSERVED_BUILD_TESTS=OFF -DSERVED_BUILD_SHARED=ON -DSERVED_BUILD_STATIC=ON

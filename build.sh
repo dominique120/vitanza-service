@@ -29,6 +29,13 @@ mkdir json.build && cd json.build
 cmake3 -DJSON_BuildTests=OFF ../json
 make && sudo make install
 
+cd .. 
+
+git clone https://github.com/Thalhammer/jwt-cpp.git
+mkdir jwt-cpp.build && cd jwt-cpp.build
+cmake3 -DBUILD_TESTS=OFF -DBUILD_EXAMPLES=OFF ../jwt-cpp
+make && sudo make install
+
 cd ..
 
 git clone https://github.com/dominique120/vitanza-service.git

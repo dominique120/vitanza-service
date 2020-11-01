@@ -37,6 +37,8 @@ if(DB_MYSQL AND DB_DYNAMO)
 	message(FATAL_ERROR "Specify only one database, you are using multiple options." )
 endif(DB_MYSQL AND DB_DYNAMO)
 
+find_path(JWT_CPP_INCLUDE_DIRS "jwt-cpp/base.h")
+
 include(FetchContent)
 LINK_DIRECTORIES(/usr/local/lib)
 
@@ -64,7 +66,7 @@ find_package(AWSSDK REQUIRED COMPONENTS dynamodb)
 find_package(MySQL REQUIRED)
 find_package(Boost 1.53.0 REQUIRED COMPONENTS system )
 
-include_directories(${Boost_INCLUDE_DIRS} ${MYSQL_INCLUDE_DIR} ${json_SOURCE_DIR})
+target_include_directories(vts PRIVATE ${JWT_CPP_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${MYSQL_INCLUDE_DIR} ${json_SOURCE_DIR})
 
 target_link_libraries(vts PRIVATE
         Boost::system
