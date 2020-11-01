@@ -91,6 +91,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Auth.cpp" />
+    <ClCompile Include="auth_wrapper.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="client_wrapper.cpp" />
     <ClCompile Include="config.cpp" />
@@ -107,6 +109,8 @@
     <ClCompile Include="vtspch.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Auth.h" />
+    <ClInclude Include="auth_wrapper.h" />
     <ClInclude Include="client_wrapper.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="db_dynamo.h" />

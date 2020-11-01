@@ -50,6 +50,29 @@ void register_handlers(served::multiplexer& mux) {
 	// "/customers" prefix will be routed to "/customers" handlers
 
 
+	/*----------------- Authentication -------------------------------*/
+	// later on add support for creating new password, deleting user, etc
+	mux.handle(g_config [ "API_BASE_URL" ] + "/auth/users")
+		.post([](served::response& res, const served::request& req) {
+			// new user
+			if (true) {
+				res.set_status(201);
+			} else {
+				res.set_status(400);
+			}
+		});
+	mux.handle(g_config [ "API_BASE_URL" ] + "/auth")
+		.post([](served::response& res, const served::request& req) {
+			const auto j = nlohmann::json::parse(req.body());
+			std::map<std::string, std::string> user = j;			
+			if (auth_wrapper::authenticate(user["username"], user["password"])) {
+				res << Auth::generate_token(user [ "username" ], user [ "password" ]);
+				res.set_status(200);
+			} else {
+				res.set_status(403);
+			}
+		});
+
 	/*--------------- Customers ---------------------------*/
 	mux.handle(g_config [ "API_BASE_URL" ] + "/customers/{id}")
 		.get([](served::response& res, const served::request& req) {

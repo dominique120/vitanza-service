@@ -23,6 +23,9 @@
 
 #include "config.h"
 
+#include "Auth.h"
+#include "auth_wrapper.h"
+
 #include "Client.h"
 #include "Product.h"
 #include "Order.h"
