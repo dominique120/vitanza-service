@@ -125,7 +125,11 @@ bool DynamoDB::update_item_dynamo(const Aws::String& table_name, const Aws::Stri
 
 	for (const auto& i : json_map) {
 		Aws::DynamoDB::Model::AttributeValue attribute_updated_value;
-		attribute_updated_value.SetS(i.second.c_str());//need to pass here the value to be updated
+		if (i.first == "Paid" || i.first == "Delivered" || i.first == "Stock" || i.first == "Price") {
+			attribute_updated_value.SetN(i.second.c_str());//need to pass here the value to be updated
+		} else {
+			attribute_updated_value.SetS(i.second.c_str());//need to pass here the value to be updated
+		}
 		Aws::OStringStream ostr;
 		ostr << ":" << i.first.c_str();
 		expression_attribute_values [ ostr.str() ] = attribute_updated_value;
@@ -169,7 +173,11 @@ bool DynamoDB::new_item_dynamo(const Aws::String& table_name, const Aws::String&
 	// Add body
 	for (const auto& i : items) {
 		Aws::DynamoDB::Model::AttributeValue attribute_value;
-		attribute_value.SetS(i.second.c_str());
+		if (i.first == "Paid" || i.first == "Delivered" || i.first == "Stock" || i.first == "Price") {
+			attribute_value.SetN(i.second.c_str());
+		} else {
+			attribute_value.SetS(i.second.c_str());
+		}
 		pir.AddItem(i.first.c_str(), attribute_value);
 	}
 
