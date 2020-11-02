@@ -1,5 +1,7 @@
 #!/bin/bash
-sudo dnf install epel-release -y
+sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+ARCH=$( /bin/arch )
+sudo subscription-manager repos --enable "codeready-builder-for-rhel-8-${ARCH}-rpms"
 sudo dnf update -y && sudo dnf upgrade -y
 sudo dnf install -y git boost-devel make cmake3 gcc-c++ mariadb-devel libcurl-devel openssl-devel libuuid-devel pulseaudio-libs-devel nano cryptopp-devel
 
