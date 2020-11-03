@@ -227,8 +227,7 @@ bool DynamoDB::delete_item_dynamo(const Aws::String& table_name, const Aws::Stri
 	}
 }
 
-// TODO: method not working for some reason, use SCAN for the moment
-std::string DynamoDB::query_table_items_dynamo(const Aws::String& table_name, const std::map<std::string, std::string>& index_condition_map) {
+std::string DynamoDB::query_index(const Aws::String& table_name, const Aws::String& partition_key, const Aws::String& match) {
 	Aws::Auth::AWSCredentials credentials;
 	credentials.SetAWSAccessKeyId(Aws::String(g_config [ "AWS_ACCESS_KEY" ].c_str()));
 	credentials.SetAWSSecretKey(Aws::String(g_config [ "AWS_SECRET_KEY" ].c_str()));
@@ -237,7 +236,7 @@ std::string DynamoDB::query_table_items_dynamo(const Aws::String& table_name, co
 	if (use_token) {
 		credentials.SetSessionToken(Aws::String(g_config [ "AWS_SESSION_TOKEN" ].c_str()));
 	}
-
+	std::cout << "in query \n";
 	Aws::Client::ClientConfiguration client_config;
 	client_config.region = g_config [ "AWS_REGION" ].c_str();
 	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
@@ -245,33 +244,24 @@ std::string DynamoDB::query_table_items_dynamo(const Aws::String& table_name, co
 	const Aws::String endpoint(g_config [ "AWS_DYNAMODB_ENDPOINT" ].c_str());
 	dynamo_client.OverrideEndpoint(endpoint);
 
-	/* Build condition expression */
-	Aws::OStringStream ss;
-	size_t counter = 0;
-	for (const auto& i : index_condition_map) {
-		ss << i.first << " = :" << i.first;
-		++counter;
-		if (counter != index_condition_map.size()) {
-			ss << " and ";
-		}
-	}
-	Aws::String query_expression(ss.str());
+
+
+	const Aws::String query_expression(partition_key + " = :" + partition_key);
+	std::cout << query_expression.c_str() << std::endl;
 
 	// Construct attribute value argument
 	Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue> expression_attribute_values;
-	/* Add parameters to expression */
-	for (const auto& i : index_condition_map) {
-		Aws::DynamoDB::Model::AttributeValue attribute_query_value;
-		attribute_query_value.SetS(i.second.c_str());//need to pass here the condition of the query
-		Aws::OStringStream ostr;
-		ostr << ":" << i.first.c_str();
-		expression_attribute_values [ ostr.str() ] = attribute_query_value;
-	}
+	Aws::DynamoDB::Model::AttributeValue attribute_query_value;
+	attribute_query_value.SetS(match.c_str());
+	expression_attribute_values [ ":" + partition_key ] = attribute_query_value;
 
 	Aws::DynamoDB::Model::QueryRequest query_request;
 	query_request.SetTableName(table_name);
+	query_request.SetIndexName(partition_key);
+
 	query_request.SetKeyConditionExpression(query_expression);
 	query_request.SetExpressionAttributeValues(expression_attribute_values);
+
 
 	// run the query
 	const Aws::DynamoDB::Model::QueryOutcome& result = dynamo_client.Query(query_request);
@@ -283,12 +273,15 @@ std::string DynamoDB::query_table_items_dynamo(const Aws::String& table_name, co
 	const Aws::Vector<Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue>> query_result = result.GetResult().GetItems();
 
 	// convert to json
-	size_t cntr = 0;
+	// TODO: I absolutely don't like the way I use an inner counter and an outer counter. I'd like to replace that.
+	// Either way it "seems" to work
+	size_t inner_cntr = 0;
+	size_t outer_cntr = 0;
 	Aws::OStringStream j_ss;
 	j_ss << "[";
 	for (size_t i = 0; i < query_result.size(); ++i) {
 		j_ss << "{";
-		for (auto j : query_result.at(i)) {
+		for (auto& j : query_result.at(i)) {
 			j_ss << "\"" << j.first << "\" : \"";
 
 			if (j.second.GetType() == Aws::DynamoDB::Model::ValueType::STRING) {
@@ -298,19 +291,24 @@ std::string DynamoDB::query_table_items_dynamo(const Aws::String& table_name, co
 			} else if (j.second.GetType() == Aws::DynamoDB::Model::ValueType::BOOL) {
 				j_ss << j.second.GetBool();
 			}
-			j_ss << "\"";
+			++inner_cntr;
+			inner_cntr != query_result.at(i).size() ? j_ss << "\", \n" : j_ss << "\" \n";
 		}
-		if (cntr != query_result.size()) {
-			j_ss << "}, ";
-		} else {
-			j_ss << "}";
-		}
+		inner_cntr = 0;
+		++outer_cntr;
+		outer_cntr != query_result.size() ? j_ss << "}, " : j_ss << "}";
 	}
 	j_ss << "]";
-	Aws::String json_result_aws = j_ss.str();
 
-	return json_result_aws.c_str();
+	return j_ss.str().c_str();
 }
+
+
+
+
+
+
+
 
 std::string DynamoDB::scan_table_items_dynamo(const Aws::String& table_name) {
 	Aws::Auth::AWSCredentials credentials;
@@ -415,7 +413,7 @@ std::string DynamoDB::scan_table_items_filer_dynamo(const Aws::String& table_nam
 	// TODO: Need to filter for the type of the conditional to use
 	for (const auto& i : conditions_and_values) {
 		Aws::DynamoDB::Model::AttributeValue attribute_updated_value;
-		attribute_updated_value.SetN(std::stoi(i.second));//need to pass here the value to be updated
+		attribute_updated_value.SetN(i.second.c_str());//need to pass here the value to be updated
 		Aws::OStringStream ostr;
 		ostr << ":" << i.first.c_str();
 		expression_attribute_values [ ostr.str() ] = attribute_updated_value;
@@ -440,7 +438,7 @@ std::string DynamoDB::scan_table_items_filer_dynamo(const Aws::String& table_nam
 	j_ss << "[";
 	for (size_t i = 0; i < query_result.size(); ++i) {
 		j_ss << "{";
-		for (auto& j : query_result.at(i)) {
+		for (const auto& j : query_result.at(i)) {
 			j_ss << "\"" << j.first << "\" : \"";
 
 			if (j.second.GetType() == Aws::DynamoDB::Model::ValueType::STRING) {

@@ -12,6 +12,7 @@ public:
 	static bool update_order(const std::string& id_or_uuid, const std::string& request_body);
 	static std::string get_all_orders();
 	static std::string get_outstanding_orders();
+	static std::string get_order_by_client(const std::string& client_uuid);
 };
 
 #endif

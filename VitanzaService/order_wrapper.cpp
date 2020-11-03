@@ -3,8 +3,7 @@
 
 std::string Order_wrapper::get_order(const std::string& id_or_uuid) {
 #ifdef DB_DYNAMO
-	const Aws::String id(id_or_uuid.c_str());
-	const nlohmann::json j = DynamoDB::get_item_dynamo("orders", "OrderId_uuid", id);
+	const nlohmann::json j = DynamoDB::get_item_dynamo("orders", "OrderId_uuid", id_or_uuid.c_str());
 	return j.dump();
 #elif DB_MYSQL
 	Order o;
@@ -17,7 +16,6 @@ std::string Order_wrapper::get_order(const std::string& id_or_uuid) {
 
 bool Order_wrapper::update_order(const std::string& id_or_uuid, const std::string& request_body) {
 #ifdef DB_DYNAMO
-	const Aws::String id(id_or_uuid.c_str());
 	return DynamoDB::update_item_dynamo("orders", "OrderId_uuid", id_or_uuid.c_str(), request_body);
 #elif DB_MYSQL
 	Order o;
@@ -28,7 +26,6 @@ bool Order_wrapper::update_order(const std::string& id_or_uuid, const std::strin
 
 bool Order_wrapper::delete_order(const std::string& id_or_uuid) {
 #ifdef DB_DYNAMO
-	const Aws::String id(id_or_uuid.c_str());
 	return DynamoDB::delete_item_dynamo("orders", "OrderId_uuid", id_or_uuid.c_str());
 #elif DB_MYSQL
 	Order o;
@@ -72,6 +69,19 @@ std::string Order_wrapper::get_outstanding_orders() {
 	return DynamoDB::scan_table_items_filer_dynamo("orders", conditions);
 #elif DB_MYSQL
 	// TODO: implement mysql method for getting all clients
+	//Client p;
+	//p.from_json(request_body, p);
+	//return p.new_client(p);
+	return "";
+#endif
+}
+
+
+std::string Order_wrapper::get_order_by_client(const std::string& client_uuid) {
+#ifdef DB_DYNAMO
+	return DynamoDB::query_index("orders", "ClientId_uuid", client_uuid.c_str());
+#elif DB_MYSQL
+	// TODO: implement mysql method for getting an order by client
 	//Client p;
 	//p.from_json(request_body, p);
 	//return p.new_client(p);

@@ -234,13 +234,31 @@ void register_handlers(served::multiplexer& mux) {
 		});
 
 	/*--------------- Orders ---------------------------*/
+	mux.handle(g_config [ "API_BASE_URL" ] + "/orders/by_client/{id}/")
+		.get([](served::response& res, const served::request& req) {
+			if (!Auth::validate_token(req.header("Authorization"))) {
+				res.set_status(403);
+				return;
+			}
+
+			res.set_header("Content-type", "application/json");
+			res.set_header("Access-control-allow-origin", "*");
+			const std::string response = Order_wrapper::get_order_by_client(req.params [ "id" ]);
+			if (response.empty()) {
+				res.set_status(204);
+			} else {
+				res.set_status(200);
+				res << response;
+			}
+		});
+	
 	mux.handle(g_config [ "API_BASE_URL" ] + "/orders/outstanding/")
 		.get([](served::response& res, const served::request& req) {
 			if (!Auth::validate_token(req.header("Authorization"))) {
 				res.set_status(403);
 				return;
 			}
-			
+
 			res.set_header("Content-type", "application/json");
 			res.set_header("Access-control-allow-origin", "*");
 			const std::string response = Order_wrapper::get_outstanding_orders();
@@ -258,7 +276,7 @@ void register_handlers(served::multiplexer& mux) {
 				res.set_status(403);
 				return;
 			}
-			
+
 			res.set_header("Content-type", "application/json");
 			res.set_header("Access-control-allow-origin", "*");
 			const std::string response = Order_wrapper::get_order(req.params [ "id" ]);
@@ -292,7 +310,7 @@ void register_handlers(served::multiplexer& mux) {
 			} else {
 				res.set_status(400);
 			}
-		 });
+		});
 
 	mux.handle(g_config [ "API_BASE_URL" ] + "/orders")
 		.get([](served::response& res, const served::request& req) {
@@ -300,7 +318,8 @@ void register_handlers(served::multiplexer& mux) {
 				res.set_status(403);
 				return;
 			}
-			
+
+			res.set_header("Access-control-allow-origin", "*");
 			res.set_header("Content-type", "application/json");
 			const std::string response = Order_wrapper::get_all_orders();
 			if (response.empty()) {
