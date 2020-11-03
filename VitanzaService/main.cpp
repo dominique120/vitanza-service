@@ -37,7 +37,7 @@ int main() {
 	register_handlers(mux);
 
 	
-	served::net::server server(g_config [ "SERVER_IP" ], g_config [ "SERVER_PORT" ], mux);
+	served::net::server server(g_config [ "SERVER_IP" ], g_config [ "SERVER_PORT" ], mux, true);
 	std::cout << "Init done - Local address: " << g_config [ "SERVER_IP" ] << " bound using port " << g_config [ "SERVER_PORT" ] <<std::endl;
 	server.run(10);
 	
