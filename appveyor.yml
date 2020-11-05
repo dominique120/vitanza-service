@@ -29,8 +29,9 @@ install:
   
 before_build:
     - git clone https://github.com/meltwater/served.git
-    - cd served 
-    - cmake .
+    - mkdir served.build && cd served.build
+    - cmake ../served -DCMAKE_TOOLCHAIN_FILE=c:\tools\vcpkg\scripts\buildsystems\vcpkg.cmake
+
 
 build:
   parallel: true
