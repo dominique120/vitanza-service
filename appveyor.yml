@@ -1,0 +1,41 @@
+image: Visual Studio 2019
+
+shallow_clone: true
+
+platform:
+  - x64
+
+configuration:
+  - Debug
+  - Release
+
+matrix:
+  fast_finish: true
+
+only_commits:
+  files:
+    - VitanzaService/
+    - appveyor.yml
+    - VitanzaService.sln
+
+install:
+  - cmd : vcpkg install boost-asio:x64-windows
+  - cmd : vcpkg install boost-system:x64-windows
+  - cmd : vcpkg install cryptopp:x64-windows
+  - cmd : vcpkg install libmariadb:x64-windows
+  - cmd : vcpkg install aws-sdk-cpp:x64-windows
+  - cmd : vcpkg install jwt-cpp:x64-windows
+  - cmd : vcpkg install nlohmann-json:x64-windows
+  
+before_build:
+    - git pull https://github.com/meltwater/served.git
+    - cd served 
+    - cmake .
+
+build:
+  parallel: true
+
+cache:
+  - c:\tools\vcpkg\installed\
+
+

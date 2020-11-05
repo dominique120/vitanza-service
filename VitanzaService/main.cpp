@@ -39,7 +39,7 @@ int main() {
 	
 	served::net::server server(g_config [ "SERVER_IP" ], g_config [ "SERVER_PORT" ], mux, true);
 	std::cout << "Init done - Local address: " << g_config [ "SERVER_IP" ] << " bound using port " << g_config [ "SERVER_PORT" ] <<std::endl;
-	server.run(10);
+	server.run(10, false);
 	
 	Aws::ShutdownAPI(options);
 	return (EXIT_SUCCESS);
