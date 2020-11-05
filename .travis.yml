@@ -3,13 +3,6 @@ language: cpp
 os: linux
 dist: focal
 
-env:
-  global:
-   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
-   #   via the "travis encrypt" command using the project repo's public key
-   - secure: secure: "sey40oov301o7ugfcxxWp503t56X5zP5gMqEdz0EOkTC7WMP+ih/hBUXd9z+LDbmeq5k9/G9CFOKPvdci1eITRASGFspxB0PTYFeDN3Eh0qMhz0wsRgKJzDR71W7bggQs0A26SRRiqo0X9hxY/QoYyHDtodq3hfiGWC+JGoy2UI+owHk7FqrRzzC//3saJ1JvTHqMecCojfjs3YFsJjPOkbLq+/n0dC6VcAnDaWlourd89e2ixI9jF+6mIbQhsczJLRoIpvqg0MxOHFda/6ijYobkbtruJDZ/BRDsOwCCQbJ+iBzoxuLuybthUo0webGJQN/gM2hR6ferCYtDJ0TBFrnXLUELZbljPnenxP7/JxkRsqGALqWQxH4CuDFDjbhQoUcNUocyGK8lLSz4hljVGGfst/HxvIPyLBSXmV+m4Ybl1PuPGejkZ5XsLkApE6XhVJnrUA65Za4v1K68QUG1zASNzBeyoxHQuaSL3Gfjf86J4p2/g/Lv1oLTIP1TC6GzcqFqH2DTm9JlASEXqt5ZkyCkdCs/Xuy1Slv3wtgy+RdTnO1INRspQOt7O5iTNgsHHdFDRlyiXhlBv0fDpLGCvC3GsPrOkdMOFoSlvoNwn1uE2GFe7str6S8+azZ1jfvL+Uab4B4WQRjUzjUqHsevR5XdDyix8wdnjMiHFY0XRM="
-
-
 jobs:
    include:
         
@@ -40,17 +33,6 @@ addons:
       - uuid-dev
       - zlib1g-dev
       - libpulse-dev
-      
-  coverity_scan:
-    project:
-      name: "dominique120/vitanza-service"
-      description: "microservice implementation for dynbamodb"
-    notification_email: dominique120@live.com
-    build_command_prepend: "cmake -DDB_DYNAMO=ON  ../vitanza-service"
-    build_command: make -j2
-    branch_pattern: coverity_scan
-   
-  
 
 before_install: 
     - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
@@ -76,4 +58,3 @@ before_install:
     - if [ "$DB" = "mysql" ]; then cmake -DDB_MYSQL=ON -DDB_DYNAMO=OFF ../vitanza-service; fi
        
 script: make -j2
-
