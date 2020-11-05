@@ -28,7 +28,7 @@ install:
   - cmd : vcpkg install nlohmann-json:x64-windows
   
 before_build:
-    - git pull https://github.com/meltwater/served.git
+    - git clone https://github.com/meltwater/served.git
     - cd served 
     - cmake .
 
