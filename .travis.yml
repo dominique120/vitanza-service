@@ -40,6 +40,15 @@ addons:
       - uuid-dev
       - zlib1g-dev
       - libpulse-dev
+      
+  coverity_scan:
+    project:
+      name: "dominique120/vitanza-service"
+      description: "microservice implementation for dynbamodb"
+    notification_email: dominique120@live.com
+    build_command_prepend: "cmake -DDB_DYNAMO=ON  ../vitanza-service"
+    build_command: make -j2
+    branch_pattern: main
    
   
 
@@ -68,12 +77,3 @@ before_install:
        
 script: make -j2
 
-addons:
-  coverity_scan:
-    project:
-      name: "dominique120/vitanza-service"
-      description: "microservice implementation for dynbamodb"
-    notification_email: dominique120@live.com
-    build_command_prepend: "cmake -DDB_DYNAMO=ON  ../vitanza-service"
-    build_command: make -j2
-    branch_pattern: main
