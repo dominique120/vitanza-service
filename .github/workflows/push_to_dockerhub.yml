@@ -26,6 +26,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
+          tags: dominique120/vitanza-service:latest
 
       -
         name: Image digest
