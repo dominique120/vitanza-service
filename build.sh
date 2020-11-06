@@ -1,5 +1,5 @@
 #!/bin/bash
-sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
 ARCH=$( /bin/arch )
 sudo subscription-manager repos --enable "codeready-builder-for-rhel-8-${ARCH}-rpms"
 sudo dnf update -y && sudo dnf upgrade -y
