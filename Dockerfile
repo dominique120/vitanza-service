@@ -4,6 +4,7 @@ RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.n
 RUN dnf update -y &&  dnf upgrade -y
 RUN dnf install -y git boost-devel make cmake3 gcc-c++ mariadb-devel libcurl-devel openssl-devel libuuid-devel pulseaudio-libs-devel nano cryptopp-devel jq
 
+WORKDIR /usr/vts_workdir
 
 RUN git clone https://github.com/aws/aws-sdk-cpp.git
 RUN mkdir aws-sdk-cpp.build && cd aws-sdk-cpp.build
