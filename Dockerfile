@@ -6,7 +6,7 @@ RUN dnf install -y git boost-devel make cmake3 gcc-c++ mariadb-devel libcurl-dev
 
 RUN git clone https://github.com/aws/aws-sdk-cpp.git /usr/vts_work/aws-sdk-cpp
 WORKDIR /usr/vts_work/aws-sdk-cpp/build
-RUN cmake3 -DBUILD_ONLY="dynamodb" -DENABLE_TESTING=OFF -DCUSTOM_MEMORY_MANAGEMENT=OFF  ..
+RUN cmake3 -DBUILD_ONLY="dynamodb" -DENABLE_TESTING=OFF -DCUSTOM_MEMORY_MANAGEMENT=OFF -DBUILD_SHARED_LIBS=OFF ..
 RUN make &&  make install
 
 RUN git clone https://github.com/meltwater/served.git /usr/vts_work/served
