@@ -32,7 +32,7 @@ RUN make
 
 RUN mkdir /bin_vitanza
 RUN mv /usr/vts_work/vitanza-service/build/vts /bin_vitanza/vts
-RUN cp /usr/vts_work/vitanza-service/config.json bin_vitanza/config.json
+RUN cp /usr/vts_work/vitanza-service/config.json /bin_vitanza/config.json
 
 EXPOSE 8123
 ENTRYPOINT ["/bin_vitanza/vts"]
