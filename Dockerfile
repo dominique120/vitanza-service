@@ -15,22 +15,18 @@ RUN git clone https://github.com/aws/aws-sdk-cpp.git /usr/vts_work/aws-sdk-cpp &
     make &&  make install && \
 	rm -rf /usr/vts_work/aws-sdk-cpp
 	
-
 # Clone, build and install served
 RUN git clone https://github.com/meltwater/served.git /usr/vts_work/served && \
-	mkdir /usr/vts_work/served/build && \
 	mkdir /usr/vts_work/served/build && cd /usr/vts_work/served/build && \
 	cmake3 -DSERVED_BUILD_EXAMPLES=OFF -DSERVED_BUILD_TESTS=OFF -DSERVED_BUILD_SHARED=ON /usr/vts_work/served && \
 	make &&  make install && rm -rf /usr/vts_work/served
 RUN ln /usr/local/lib/libserved.so.1.4 /usr/lib64/libserved.so.1.4
-
 
 # Clone, build and install json
 RUN git clone https://github.com/nlohmann/json.git /usr/vts_work/json && \
 	mkdir /usr/vts_work/json/build && cd /usr/vts_work/json/build && \
 	cmake3 -DJSON_BuildTests=OFF /usr/vts_work/json && \
 	make &&  make install && rm -rf /usr/vts_work/json
-
 
 # Clone, build and install jwt-cpp
 RUN git clone https://github.com/Thalhammer/jwt-cpp.git /usr/vts_work/jwt-cpp && \
