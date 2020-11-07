@@ -45,5 +45,5 @@ RUN git clone https://github.com/dominique120/vitanza-service.git /usr/vts_work/
 	cp /usr/vts_work/vitanza-service/config.json /bin_vitanza/config.json && \
 	rm -rf /usr/vts_work/vitanza-service
 
-EXPOSE 8123
+EXPOSE 8123 80
 ENTRYPOINT ["/bin_vitanza/vts"]
