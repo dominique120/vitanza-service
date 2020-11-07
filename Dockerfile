@@ -5,8 +5,9 @@ ARG AWS_SESSION_TOKEN
 
 # Update and install dependencies
 RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
-RUN dnf update -y &&  dnf upgrade -y
-RUN dnf install -y git boost-devel make cmake3 gcc-c++ mariadb-devel libcurl-devel openssl-devel libuuid-devel pulseaudio-libs-devel nano cryptopp-devel jq
+RUN dnf install -y --no-install-recommends git boost-devel make cmake3 gcc-c++ mariadb-devel libcurl-devel openssl-devel libuuid-devel pulseaudio-libs-devel nano cryptopp-devel jq 
+RUN dnf -y --enablerepo=PowerTools install moreutils
+RUN dnf clean all
 
 # Clone, build and install aws-skd-cpp
 RUN git clone https://github.com/aws/aws-sdk-cpp.git /usr/vts_work/aws-sdk-cpp
