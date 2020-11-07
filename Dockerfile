@@ -5,7 +5,7 @@ ARG AWS_SESSION_TOKEN
 
 # Update and install dependencies
 RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
-RUN dnf install -y --no-install-recommends git boost-devel make cmake3 gcc-c++ mariadb-devel libcurl-devel openssl-devel libuuid-devel pulseaudio-libs-devel nano cryptopp-devel jq 
+RUN dnf install -y git boost-devel make cmake3 gcc-c++ mariadb-devel libcurl-devel openssl-devel libuuid-devel pulseaudio-libs-devel nano cryptopp-devel jq 
 RUN dnf -y --enablerepo=PowerTools install moreutils
 RUN dnf clean all
 
