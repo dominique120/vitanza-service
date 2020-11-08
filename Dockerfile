@@ -1,11 +1,8 @@
 FROM centos:8
-ARG AWS_ACCES_KEY
-ARG AWS_SECRET_KEY
-ARG AWS_SESSION_TOKEN
 
 # Update and install dependencies
 RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
-RUN dnf install -y git boost-devel make cmake3 gcc-c++ mariadb-devel libcurl-devel openssl-devel libuuid-devel pulseaudio-libs-devel nano cryptopp-devel jq && dnf clean all
+RUN dnf install -y git boost-devel make cmake3 gcc-c++ mariadb-devel libcurl-devel openssl-devel libuuid-devel pulseaudio-libs-devel cryptopp-devel jq && dnf clean all
 RUN dnf -y --enablerepo=PowerTools install moreutils && dnf clean all
 
 # Clone, build and install aws-skd-cpp
@@ -43,9 +40,10 @@ RUN git clone https://github.com/dominique120/vitanza-service.git /usr/vts_work/
 	make && \
 	mv /usr/vts_work/vitanza-service/build/vts /bin_vitanza/vts && \
 	cp /usr/vts_work/vitanza-service/config.json /bin_vitanza/config.json && \
+	cp /usr/vts_work/vitanza-service/launch.sh /bin_vitanza/launch.sh && \
 	rm -rf /usr/vts_work/vitanza-service
 	
-EXPOSE 8123 80
+EXPOSE 80
 WORKDIR /bin_vitanza
 VOLUME /bin_vitanza
-ENTRYPOINT ["/bin_vitanza/vts"]
+ENTRYPOINT ["/bin_vitanza/launch.sh"]

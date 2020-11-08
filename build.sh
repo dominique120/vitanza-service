@@ -49,3 +49,4 @@ make
 mv vts ../vts/vts
 cd ..
 cp vitanza-service/config.json vts/config.json
+cp vitanza-service/launch.sh vts/launch.sh

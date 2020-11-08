@@ -4,7 +4,8 @@
 class ConfigurationManager {
 public:
 
-	bool load();
+	bool load(const int argc, const char* argv[]);
+	bool reload(const std::string& new_configuration);
 
 	std::string operator [] (const std::string& config_name) {
 		return this->configuration_table.at(config_name);

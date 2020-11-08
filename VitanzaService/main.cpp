@@ -3,51 +3,73 @@
 
 ConfigurationManager g_config;
 
-int main() {
-	std::cout << "Vitanza Service - Version 0.4a" << std::endl;
-	std::cout << "Compiled with " << BOOST_COMPILER << std::endl;
-	std::cout << "Compiled on " << __DATE__ << ' ' << __TIME__ << " for platform ";
-	std::cout << BOOST_PLATFORM << "." << std::endl;
+int main(const int argc, const char* argv[]){
+		std::cout << "Vitanza Service - Version 0.4a" << std::endl;
+		std::cout << "Compiled with " << BOOST_COMPILER << std::endl;
+		std::cout << "Compiled on " << __DATE__ << ' ' << __TIME__ << " for platform ";
+		std::cout << BOOST_PLATFORM << "." << std::endl;
 
 
-	std::cout << "Compiled for: "
+		std::cout << "Compiled for: "
 #if defined(DB_DYNAMO)
-		<< "DynamoDB." << std::endl;
-	std::cout << "Aws sdk version: " << AWS_SDK_VERSION_STRING << std::endl;
+			<< "DynamoDB." << std::endl;
+		std::cout << "Aws sdk version: " << AWS_SDK_VERSION_STRING << std::endl;
 #elif defined(DB_MYSQL)
-		<< "MySQL." << std::endl;
+			<< "MySQL." << std::endl;
 #endif
-		
-	std::cout << "A microservice written by Dominique Verellen." << std::endl;
-	std::cout << "Contact: dominique120@live.com." << std::endl;
-	std::cout << std::endl;
 
-	
-	std::cout << "Initializing - Loading Configuration." << std::endl;
-	g_config.load();
-	
-
-	std::cout << "Initializing - Setting up AWS SDK." << std::endl;
-	const Aws::SDKOptions options;
-	Aws::InitAPI(options);
+		std::cout << "A microservice written by Dominique Verellen." << std::endl;
+		std::cout << "Contact: dominique120@live.com." << std::endl;
+		std::cout << std::endl;
 
 
-	std::cout << "Initializing - Setting up multiplexer and registering handlers." << std::endl;
-	served::multiplexer mux;
-	register_handlers(mux);
+		std::cout << "Initializing - Loading Configuration." << std::endl;
+		g_config.load(argc, argv);
 
-	
+
+		std::cout << "Initializing - Setting up AWS SDK." << std::endl;
+		const Aws::SDKOptions options;
+		Aws::InitAPI(options);
+
+
+		std::cout << "Initializing - Setting up multiplexer and registering handlers." << std::endl;
+		served::multiplexer mux;
+		register_handlers(mux);
+
+		std::cout << "Init done - Local address: " << g_config [ "SERVER_IP" ] << " bound using port " << g_config [ "SERVER_PORT" ] << std::endl;
+		start_server(mux, 10, false);
+
+		Aws::ShutdownAPI(options);
+		return (EXIT_SUCCESS);
+}
+
+bool start_server(served::multiplexer& mux, const int& threads, const bool& block) {
 	served::net::server server(g_config [ "SERVER_IP" ], g_config [ "SERVER_PORT" ], mux, true);
-	std::cout << "Init done - Local address: " << g_config [ "SERVER_IP" ] << " bound using port " << g_config [ "SERVER_PORT" ] <<std::endl;
-	server.run(10, false);
-	
-	Aws::ShutdownAPI(options);
-	return (EXIT_SUCCESS);
+	try {
+		server.run(threads, block);
+	} catch (const boost::system::system_error& ex) {
+		std::cout << "Failed to start server: " << ex.what() << std::endl;
+		return false;
+	}
 }
 
 void register_handlers(served::multiplexer& mux) {
 	// register a more specialized route first, otherwise all requests with
 	// "/customers" prefix will be routed to "/customers" handlers
+
+	mux.handle(g_config [ "API_BASE_URL" ] + "/config")
+		.post([](served::response& res, const served::request& req) {
+			if (!Auth::validate_token(req.header("Authorization"))) {
+				res.set_status(403);
+				return;
+			}
+
+			if(g_config.reload(req.body())) {
+				res.set_status(201);
+			} else {
+				res.set_status(400);
+			}
+		});
 
 
 	/*----------------- Authentication -------------------------------*/
