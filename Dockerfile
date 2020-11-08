@@ -40,10 +40,9 @@ RUN git clone https://github.com/dominique120/vitanza-service.git /usr/vts_work/
 	make && \
 	mv /usr/vts_work/vitanza-service/build/vts /bin_vitanza/vts && \
 	cp /usr/vts_work/vitanza-service/config.json /bin_vitanza/config.json && \
-	cp /usr/vts_work/vitanza-service/launch.sh /bin_vitanza/launch.sh && \
 	rm -rf /usr/vts_work/vitanza-service
 	
 EXPOSE 80
 WORKDIR /bin_vitanza
 VOLUME /bin_vitanza
-ENTRYPOINT ["/bin_vitanza/vts" "(hostname -I | awk '{print $1}')" "80"]
+ENTRYPOINT ["/bin_vitanza/vts", "(hostname -I | awk '{print $1}')", "80"]
