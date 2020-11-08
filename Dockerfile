@@ -45,4 +45,4 @@ RUN git clone https://github.com/dominique120/vitanza-service.git /usr/vts_work/
 EXPOSE 8123
 WORKDIR /bin_vitanza
 VOLUME /bin_vitanza
-ENTRYPOINT ["sh", "-c", "/bin_vitanza/vts", "$(hostname -I | awk '{print $1}')", "8123"]
+ENTRYPOINT /bin_vitanza/vts $(hostname -I | awk '{print $1}') 8123
