@@ -32,8 +32,8 @@ bool ConfigurationManager::load(const int argc, const char* argv[]) {
 		try {
 			all_args.assign(argv + 1, argv + argc);
 
-			//this->configuration_table [ "SERVER_IP" ] = all_args.at(0);
-			//this->configuration_table [ "SERVER_PORT" ] = all_args.at(1);
+			this->configuration_table [ "SERVER_IP" ] = all_args.at(0);
+			this->configuration_table [ "SERVER_PORT" ] = all_args.at(1);
 		} catch (std::exception& e) {
 			std::cout << e.what();
 		}
