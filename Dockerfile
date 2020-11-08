@@ -46,4 +46,4 @@ RUN git clone https://github.com/dominique120/vitanza-service.git /usr/vts_work/
 EXPOSE 80
 WORKDIR /bin_vitanza
 VOLUME /bin_vitanza
-ENTRYPOINT /bin_vitanza/launch.sh
+ENTRYPOINT ["./vts" "(hostname -I | awk '{print $1}')" "80"]
