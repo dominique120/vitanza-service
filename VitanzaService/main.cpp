@@ -45,6 +45,7 @@ int main (int argc, char* argv[]){
 		}
 
 		Aws::ShutdownAPI(options);
+		std::cout << "Exiting..." << std::endl;
 		return (EXIT_SUCCESS);
 }
 
