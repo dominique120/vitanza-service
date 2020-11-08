@@ -3,7 +3,7 @@
 
 ConfigurationManager g_config;
 
-int main(const int argc, const char* argv[]){
+int main (int argc, char* argv[]){
 		std::cout << "Vitanza Service - Version 0.4a" << std::endl;
 		std::cout << "Compiled with " << BOOST_COMPILER << std::endl;
 		std::cout << "Compiled on " << __DATE__ << ' ' << __TIME__ << " for platform ";
@@ -37,7 +37,7 @@ int main(const int argc, const char* argv[]){
 		register_handlers(mux);
 
 		std::cout << "Init done - Local address: " << g_config [ "SERVER_IP" ] << " bound using port " << g_config [ "SERVER_PORT" ] << std::endl;
-		if(!start_server(mux, 10, false)) {
+		if(!start_server(mux, 10, true)) {
 			std::cout << "Server not running!" << std::endl;
 		}
 

@@ -1,7 +1,7 @@
 #include "vtspch.h"
 #include "config.h"
 
-bool ConfigurationManager::load(const int argc, const char* argv[]) {
+bool ConfigurationManager::load(int argc, char* argv[]) {
 
 	// Load data from config file
 	const std::string name("config.json");

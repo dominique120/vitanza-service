@@ -39,7 +39,7 @@
 #include <aws/core/Aws.h>
 #include <aws/core/VersionConfig.h>
 
-int main(const int argc, const char* argv[]);
+int main(int argc, char* argv[]);
 void register_handlers(served::multiplexer& mux);
 bool start_server(served::multiplexer& mux, const int& threads, const bool& block);
 
