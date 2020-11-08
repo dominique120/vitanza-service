@@ -37,23 +37,15 @@ int main (int argc, char* argv[]){
 		register_handlers(mux);
 
 		std::cout << "Init done - Local address: " << g_config [ "SERVER_IP" ] << " bound using port " << g_config [ "SERVER_PORT" ] << std::endl;
-		if(!start_server(mux, 10, true)) {
-			std::cout << "Server not running!" << std::endl;
+		served::net::server server(g_config [ "SERVER_IP" ], g_config [ "SERVER_PORT" ], mux, true);
+		try {
+			server.run(10);
+		} catch (const boost::system::system_error& ex) {
+			std::cout << "Failed to start server: " << ex.what() << std::endl;
 		}
 
 		Aws::ShutdownAPI(options);
 		return (EXIT_SUCCESS);
-}
-
-bool start_server(served::multiplexer& mux, const int& threads, const bool& block) {
-	served::net::server server(g_config [ "SERVER_IP" ], g_config [ "SERVER_PORT" ], mux, true);
-	try {
-		server.run(threads, block);
-		return true;
-	} catch (const boost::system::system_error& ex) {
-		std::cout << "Failed to start server: " << ex.what() << std::endl;
-		return false;
-	}
 }
 
 void register_handlers(served::multiplexer& mux) {
