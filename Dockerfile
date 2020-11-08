@@ -45,4 +45,4 @@ RUN git clone https://github.com/dominique120/vitanza-service.git /usr/vts_work/
 EXPOSE 8123
 WORKDIR /bin_vitanza
 VOLUME /bin_vitanza
-ENTRYPOINT /bin_vitanza/vts $(curl ${ECS_CONTAINER_METADATA_URI_V4} | jq '.Networks[] | .IPv4Addresses[] | .') 8123
+ENTRYPOINT /bin_vitanza/vts 127.0.0.1 8123
