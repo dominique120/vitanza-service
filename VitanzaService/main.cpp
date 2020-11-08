@@ -67,6 +67,11 @@ void register_handlers(served::multiplexer& mux) {
 			}
 		});
 
+	mux.handle("/health")
+		.post([](served::response& res, const served::request& req) {
+			res.set_status(200);
+		});
+
 
 	/*----------------- Authentication -------------------------------*/
 	// later on add support for creating new password, deleting user, etc
