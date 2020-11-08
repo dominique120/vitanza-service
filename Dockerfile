@@ -2,7 +2,7 @@ FROM centos:8
 
 # Update and install dependencies
 RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
-RUN dnf install -y git boost-devel make cmake3 gcc-c++ mariadb-devel libcurl-devel openssl-devel libuuid-devel pulseaudio-libs-devel cryptopp-devel jq && dnf clean all
+RUN dnf install -y git boost-devel make cmake3 gcc-c++ mariadb-devel libcurl-devel openssl-devel libuuid-devel pulseaudio-libs-devel cryptopp-devel jq curl && dnf clean all
 RUN dnf -y --enablerepo=PowerTools install moreutils && dnf clean all
 
 # Clone, build and install aws-skd-cpp
@@ -45,4 +45,4 @@ RUN git clone https://github.com/dominique120/vitanza-service.git /usr/vts_work/
 EXPOSE 8123
 WORKDIR /bin_vitanza
 VOLUME /bin_vitanza
-ENTRYPOINT /bin_vitanza/vts $(hostname -I | awk '{print $1}') 8123
+ENTRYPOINT /bin_vitanza/vts $(curl ${ECS_CONTAINER_METADATA_URI_V4} | jq '.Networks[] | .IPv4Addresses[] | .' 8123
