@@ -68,7 +68,7 @@ void register_handlers(served::multiplexer& mux) {
 		});
 
 	mux.handle("/health")
-		.post([](served::response& res, const served::request& req) {
+		.get([](served::response& res, const served::request& req) {
 			res.set_status(200);
 		});
 
