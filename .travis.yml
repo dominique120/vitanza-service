@@ -13,10 +13,6 @@ jobs:
       - env: DB=dynamo
         arch: amd64
         compiler: gcc
-        
-      - env: DB=dynamo
-        arch: amd64
-        compiler: clang
 
       - env: DB=dynamo
         arch: arm64-graviton2
