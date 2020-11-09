@@ -51,7 +51,7 @@ before_install:
     - cd ..
     - git clone https://github.com/yhirose/cpp-httplib.git
     - mkdir httplib.build && cd httplib.build
-    - cmake ../httplib 
+    - cmake ../cpp-httplib 
     - make && sudo make install
     - cd ..
     - git clone https://github.com/dominique120/vitanza-service.git

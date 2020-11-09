@@ -18,7 +18,7 @@ RUN systemctl enable --now snapd.socket && ln -s /var/lib/snapd/snap /snap && sn
 # Clone, build and install httplib
 RUN git clone https://github.com/yhirose/cpp-httplib.git /usr/vts_work/httplib && \
 	mkdir /usr/vts_work/httplib/build && cd /usr/vts_work/httplib/build && \
-	/snap/bin/cmake /usr/vts_work/httplib && \
+	/snap/bin/cmake /usr/vts_work/cpp-httplib && \
 	make &&  make install && rm -rf /usr/vts_work/httplib
 
 # Clone, build and install json
