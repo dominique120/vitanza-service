@@ -2,7 +2,7 @@ FROM centos:8
 
 # Update and install dependencies
 RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
-RUN dnf install -y git boost-devel make cmake3 gcc-c++ mariadb-devel libcurl-devel openssl-devel libuuid-devel pulseaudio-libs-devel cryptopp-devel snap && dnf clean all
+RUN dnf install -y git boost-devel make cmake3 gcc-c++ mariadb-devel libcurl-devel openssl-devel libuuid-devel pulseaudio-libs-devel cryptopp-devel snapd && dnf clean all
 RUN dnf -y --enablerepo=PowerTools install moreutils && dnf clean all
 
 # Clone, build and install aws-skd-cpp
