@@ -45,4 +45,4 @@ RUN git clone https://github.com/dominique120/vitanza-service.git /usr/vts_work/
 EXPOSE 8123
 WORKDIR /bin_vitanza
 VOLUME /bin_vitanza
-ENTRYPOINT /bin_vitanza/vts 127.0.0.1 8123
+ENTRYPOINT /bin_vitanza/vts 0.0.0.0 80
