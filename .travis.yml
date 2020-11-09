@@ -36,6 +36,7 @@ addons:
       - libpulse-dev
 
 before_install: 
+    - cd ..
     - git clone https://github.com/aws/aws-sdk-cpp.git
     - mkdir aws-sdk-cpp.build && cd aws-sdk-cpp.build
     - cmake ../aws-sdk-cpp -DBUILD_ONLY="dynamodb" -DENABLE_TESTING=OFF -DCUSTOM_MEMORY_MANAGEMENT=OFF  -DBUILD_SHARED_LIBS=OFF
@@ -46,13 +47,11 @@ before_install:
     - cmake -DBUILD_TESTS=OFF -DBUILD_EXAMPLES=OFF ../jwt-cpp
     - make && sudo make install    
     - cd ..
-    - git clone https://github.com/meltwater/served.git
-    - mkdir served.build && cd served.build
-    - cmake ../served -DSERVED_BUILD_EXAMPLES=OFF -DSERVED_BUILD_TESTS=OFF -DSERVED_BUILD_SHARED=ON -DSERVED_BUILD_STATIC=ON
+    - git clone https://github.com/yhirose/cpp-httplib.git
+    - mkdir httplib.build && cd httplib.build
+    - cmake ../cpp-httplib 
     - make && sudo make install
-    - sudo ln /usr/local/lib/libserved.so.1.4 /usr/lib64/libserved.so.1.4
     - cd ..
-    - git clone https://github.com/dominique120/vitanza-service.git
     - mkdir vts && mkdir vts.build && cd vts.build
     - if [ "$DB" = "dynamo" ]; then cmake -DDB_DYNAMO=ON ../vitanza-service; fi
     - if [ "$DB" = "mysql" ]; then cmake -DDB_MYSQL=ON -DDB_DYNAMO=OFF ../vitanza-service; fi

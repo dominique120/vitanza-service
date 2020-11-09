@@ -1,3 +1,7 @@
+/*
+ * Copyright The developers of The Forgotten Server. All Rights Reserved.
+ * SPDX-License-Identifier: GPL-2.0-or-later.
+ */
 #include "vtspch.h"
 #if defined(DB_MYSQL)
 #include "db_mysql.h"

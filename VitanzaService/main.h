@@ -1,3 +1,7 @@
+/*
+ * Copyright Dominique Verellen. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0.
+ */
 #ifndef MAIN_H
 #define MAIN_H
 
@@ -17,9 +21,7 @@
 #pragma warning(disable:4267) // 'var' : conversion from 'size_t' to 'type', possible loss of data
 #endif
 
-#include <served/served.hpp>
-#include <served/request_error.hpp>
-#include <served/status.hpp>
+#include <httplib.h>
 
 #include "config.h"
 
@@ -40,6 +42,6 @@
 #include <aws/core/VersionConfig.h>
 
 int main(int argc, char* argv[]);
-void register_handlers(served::multiplexer& mux);
+void register_handlers(httplib::Server& svr);
 
 #endif

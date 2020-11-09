@@ -1,4 +1,8 @@
-﻿#pragma once
+﻿/*
+ * Copyright Dominique Verellen. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0.
+ */
+#pragma once
 
 class auth_wrapper {
 public:

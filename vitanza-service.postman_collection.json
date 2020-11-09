@@ -11,18 +11,25 @@
 				{
 					"name": "get by id",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://54.210.53.36:8123/vts/api/v1/customers/4653662f-c1e0-45e2-a98b-99a2805f128b",
+							"raw": "http://{{ip}}:{{port}}/vts/api/v1/customers/4653662f-c1e0-45e2-a98b-99a2805f128b",
 							"protocol": "http",
 							"host": [
-								"54",
-								"210",
-								"53",
-								"36"
+								"{{ip}}"
 							],
-							"port": "8123",
+							"port": "{{port}}",
 							"path": [
 								"vts",
 								"api",
@@ -37,6 +44,16 @@
 				{
 					"name": "insert",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -49,15 +66,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://54.210.53.36:8123/vts/api/v1/customers",
+							"raw": "http://{{ip}}:{{port}}/vts/api/v1/customers",
 							"protocol": "http",
 							"host": [
-								"54",
-								"210",
-								"53",
-								"36"
+								"{{ip}}"
 							],
-							"port": "8123",
+							"port": "{{port}}",
 							"path": [
 								"vts",
 								"api",
@@ -71,6 +85,16 @@
 				{
 					"name": "delete",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "DELETE",
 						"header": [],
 						"body": {
@@ -78,21 +102,18 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://54.210.53.36:8123/vts/api/v1/customers/65c9a74d-9aeb-4157-815f-68cac046f5f8",
+							"raw": "http://{{ip}}:{{port}}/vts/api/v1/customers/f77bed13-bac3-4b11-8a18-d45c54427933",
 							"protocol": "http",
 							"host": [
-								"54",
-								"210",
-								"53",
-								"36"
+								"{{ip}}"
 							],
-							"port": "8123",
+							"port": "{{port}}",
 							"path": [
 								"vts",
 								"api",
 								"v1",
 								"customers",
-								"65c9a74d-9aeb-4157-815f-68cac046f5f8"
+								"f77bed13-bac3-4b11-8a18-d45c54427933"
 							]
 						}
 					},
@@ -101,6 +122,16 @@
 				{
 					"name": "update",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PUT",
 						"header": [],
 						"body": {
@@ -113,15 +144,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://54.210.53.36:8123/vts/api/v1/customers/506bfb6a-7d3f-4ff7-bdf2-f9e841d218e8",
+							"raw": "http://{{ip}}:{{port}}/vts/api/v1/customers/506bfb6a-7d3f-4ff7-bdf2-f9e841d218e8",
 							"protocol": "http",
 							"host": [
-								"54",
-								"210",
-								"53",
-								"36"
+								"{{ip}}"
 							],
-							"port": "8123",
+							"port": "{{port}}",
 							"path": [
 								"vts",
 								"api",
@@ -139,6 +167,16 @@
 						"disableBodyPruning": true
 					},
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -151,15 +189,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://54.210.53.36:8123/vts/api/v1/customers",
+							"raw": "http://{{ip}}:{{port}}/vts/api/v1/customers",
 							"protocol": "http",
 							"host": [
-								"54",
-								"210",
-								"53",
-								"36"
+								"{{ip}}"
 							],
-							"port": "8123",
+							"port": "{{port}}",
 							"path": [
 								"vts",
 								"api",
@@ -179,18 +214,25 @@
 				{
 					"name": "get outstanding ",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://54.210.53.36:8123/vts/api/v1/orders/outstanding/",
+							"raw": "http://{{ip}}:{{port}}/vts/api/v1/orders/outstanding/",
 							"protocol": "http",
 							"host": [
-								"54",
-								"210",
-								"53",
-								"36"
+								"{{ip}}"
 							],
-							"port": "8123",
+							"port": "{{port}}",
 							"path": [
 								"vts",
 								"api",
@@ -204,20 +246,103 @@
 					"response": []
 				},
 				{
-					"name": "get all",
+					"name": "get orders by client",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://54.210.53.36:8123/vts/api/v1/orders",
+							"raw": "http://{{ip}}:{{port}}/vts/api/v1/orders/by_client/4653662f-c1e0-45e2-a98b-99a2805f128b/",
 							"protocol": "http",
 							"host": [
-								"54",
-								"210",
-								"53",
-								"36"
+								"{{ip}}"
 							],
-							"port": "8123",
+							"port": "{{port}}",
+							"path": [
+								"vts",
+								"api",
+								"v1",
+								"orders",
+								"by_client",
+								"4653662f-c1e0-45e2-a98b-99a2805f128b",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{ip}}:{{port}}/vts/api/v1/orders",
+							"protocol": "http",
+							"host": [
+								"{{ip}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"vts",
+								"api",
+								"v1",
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "insert",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n        \"ClientId_uuid\": \"4653662f-c1e0-45e2-a98b-99a2805f128b\",\r\n        \"DatePlaced\": \"2020-10-05\",\r\n        \"Delivered\": \"1\",\r\n        \"Notes\": \"Deliver friday at 5pm\",        \r\n        \"Paid\": \"1\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{ip}}:{{port}}/vts/api/v1/orders",
+							"protocol": "http",
+							"host": [
+								"{{ip}}"
+							],
+							"port": "{{port}}",
 							"path": [
 								"vts",
 								"api",
@@ -237,18 +362,25 @@
 				{
 					"name": "get all",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://54.210.53.36:8123/vts/api/v1/products",
+							"raw": "http://{{ip}}:{{port}}/vts/api/v1/products",
 							"protocol": "http",
 							"host": [
-								"54",
-								"210",
-								"53",
-								"36"
+								"{{ip}}"
 							],
-							"port": "8123",
+							"port": "{{port}}",
 							"path": [
 								"vts",
 								"api",
@@ -262,6 +394,16 @@
 				{
 					"name": "insert",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -274,15 +416,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://54.210.53.36:8123/vts/api/v1/products",
+							"raw": "http://{{ip}}:{{port}}/vts/api/v1/products",
 							"protocol": "http",
 							"host": [
-								"54",
-								"210",
-								"53",
-								"36"
+								"{{ip}}"
 							],
-							"port": "8123",
+							"port": "{{port}}",
 							"path": [
 								"vts",
 								"api",
@@ -295,6 +434,164 @@
 				}
 			],
 			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "get token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\" : \"username\",\r\n    \"password\" : \"password\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{ip}}:{{port}}/vts/api/v1/auth",
+							"protocol": "http",
+							"host": [
+								"{{ip}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"vts",
+								"api",
+								"v1",
+								"auth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TEST verify token",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{ip}}:{{port}}/vts/api/v1/auth",
+							"protocol": "http",
+							"host": [
+								"{{ip}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"vts",
+								"api",
+								"v1",
+								"auth"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "add a user",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "healthcheck",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{ip}}:{{port}}/health",
+					"protocol": "http",
+					"host": [
+						"{{ip}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"health"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "config",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"MYSQL_PORT\": \"3306\",\r\n  \"MYSQL_HOST\": \"127.0.0.1\",\r\n  \"MYSQL_DATABASE\": \"vitanza\",\r\n  \"MYSQL_USER\": \"user\",\r\n  \"MYSQL_PASSWORD\": \"password\",\r\n  \"MYSQL_PROTOCOL\": \"tcp\",\r\n  \"AWS_ACCESS_KEY\": \"ASIA6BUBGRG5NQNOLONZ\",\r\n  \"AWS_SECRET_KEY\": \"eq010OwhLKbtGY9zE73iG56b3Inq5v57+m4W0lTW\",\r\n  \"AWS_SESSION_TOKEN\": \"FwoGZXIvYXdzEPr//////////wEaDF7SVo6C2EsmZCqqkCLEAbBX9c5lqvZJZRb4rY9WADjnq1QOBstgUJc4IKdD58IQ1Doe+yrxfXAX2xAkIzfFALZw3ljYOH7MWgmr1sgGhrtmuUjHh/qTEuS4zQuOKGfgQQR2zjr/sjKhbDqj54Kpw9njyI8RrGFwExfl4e1Fpf56TquQErx5ri6+6cTp+RCIiRzRIcHXhz9JGMDsDibTO+N3e2rkPNlhGTpT4Rlv8hQZ7jFYunPoDUwV+3lCn/584Uv7Rj8HbAJl7econwEaUmCwgSEolZCi/QUyLdBuzj4W6rgpvIkPeUcPY4r5+7pVtk1paye3ENu/ciUv14O7pmQHH8PFoc+bqg==\",\r\n  \"AWS_USE_SESSION_TOKEN\": \"true\",\r\n  \"AWS_REGION\": \"us-east-1\",\r\n  \"AWS_DYNAMODB_ENDPOINT\": \"dynamodb.us-east-1.amazonaws.com\",\r\n  \"SERVER_PORT\": \"80\",\r\n  \"SERVER_IP\": \"0.0.0.0\",\r\n  \"SERVER_INIT_THREAD_POOL\": \"10\",\r\n  \"API_BASE_URL\": \"/vts/api/v1\",\r\n  \"SHA512_SECRET\": \"9E590B6B427FB984C1CC5F5E0373BB163A3DD9D3C371CAEF3726D68CB3B894341E3758430154A878DE6D2E639A54B2C783365BC4219EAB2B69D490D0793D967A\",\r\n  \"JWT_ISSUER\": \"vts-testing\" \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{ip}}:{{port}}/vts/api/v1/config",
+					"protocol": "http",
+					"host": [
+						"{{ip}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"vts",
+						"api",
+						"v1",
+						"config"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"protocolProfileBehavior": {}

@@ -1,3 +1,7 @@
+/*
+ * Copyright Dominique Verellen. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0.
+ */
 #ifndef DYNAMO_H
 #define DYNAMO_H
 #if defined(DB_DYNAMO)

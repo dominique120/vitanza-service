@@ -1,3 +1,7 @@
+/*
+ * Copyright Dominique Verellen. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0.
+ */
 #include "vtspch.h"
 #include "main.h"
 
@@ -32,253 +36,258 @@ int main (int argc, char* argv[]){
 		Aws::InitAPI(options);
 
 
-		std::cout << "Initializing - Setting up multiplexer and registering handlers." << std::endl;
-		served::multiplexer mux;
-		register_handlers(mux);
+		std::cout << "Initializing - Registering handlers." << std::endl;
+		httplib::Server server;
+		register_handlers(server);
 
 		std::cout << "Init done - Local address: " << g_config [ "SERVER_IP" ] << " bound using port " << g_config [ "SERVER_PORT" ] << std::endl;
-		served::net::server server(g_config [ "SERVER_IP" ], g_config [ "SERVER_PORT" ], mux, true);
-		try {
-			server.run(10);
-		} catch (const boost::system::system_error& ex) {
-			std::cout << "Failed to start server: " << ex.what() << std::endl;
-		}
-
+		server.listen(g_config [ "SERVER_IP" ].c_str(), std::stoi(g_config [ "SERVER_PORT" ]));
+	
+	
 		Aws::ShutdownAPI(options);
 		std::cout << "Exiting..." << std::endl;
 		return (EXIT_SUCCESS);
 }
 
-void register_handlers(served::multiplexer& mux) {
-	// register a more specialized route first, otherwise all requests with
-	// "/customers" prefix will be routed to "/customers" handlers
-
-	mux.handle(g_config [ "API_BASE_URL" ] + "/config")
-		.post([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization"))) {
-				res.set_status(403);
+void register_handlers(httplib::Server& svr) {
+	svr.Get((g_config [ "API_BASE_URL" ] + "/config").c_str(), 
+	[](const httplib::Request& req, httplib::Response& res) {
+			if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+				res.status = 403;
 				return;
 			}
-
-			if(g_config.reload(req.body())) {
-				res.set_status(201);
+		
+			if (g_config.reload(req.body)) {
+				res.status = 201;
 			} else {
-				res.set_status(400);
-			}
-		});
+				res.status = 400;
+			}			
+	})
 
-	mux.handle("/health")
-		.get([](served::response& res, const served::request& req) {
-			res.set_status(200);
-		});
+	.Get("/health", [](const httplib::Request& req, httplib::Response& res) {
+		res.status = 200;
+	})
 
 
 	/*----------------- Authentication -------------------------------*/
 	// later on add support for creating new password, deleting user, etc
-	mux.handle(g_config [ "API_BASE_URL" ] + "/auth/users")
-		.post([](served::response& res, const served::request& req) {
+	.Post((g_config [ "API_BASE_URL" ] + "/auth/users").c_str(), 
+	[](const httplib::Request& req, httplib::Response& res) {
+		if (true) {
+			res.status = 201;
+		} else {
+			res.status = 400;
+		}
+	})
+	.Post((g_config [ "API_BASE_URL" ] + "/auth/users").c_str(),
+		[](const httplib::Request& req, httplib::Response& res) {
 			// new user
 			if (true) {
-				res.set_status(201);
+				res.status = 201;
 			} else {
-				res.set_status(400);
+				res.status = 400;
 			}
-		});
-	mux.handle(g_config [ "API_BASE_URL" ] + "/auth")
-		.post([](served::response& res, const served::request& req) {
-			const std::map<std::string, std::string> user = nlohmann::json::parse(req.body());
+		})
+	.Post((g_config [ "API_BASE_URL" ] + "/auth").c_str(),
+			  [](const httplib::Request& req, httplib::Response& res) {
+			const std::map<std::string, std::string> user = nlohmann::json::parse(req.body);
 			 //if (auth_wrapper::authenticate(user.at("username"), user.at("password"))) {
-				res << Auth::generate_token(user.at("username"), user.at("password"));
-				res.set_status(200);
+				res.body = Auth::generate_token(user.at("username"), user.at("password"));
+				res.status = 200;
 			//} else {
-				//res.set_status(403);
+				//res.status = 403;
 			//}
 		})
-		.get([](served::response& res, const served::request& req) {
+	.Get((g_config [ "API_BASE_URL" ] + "/auth").c_str(), 
+		 [](const httplib::Request& req, httplib::Response& res) {
 			//just a test to try to validate generated tokens
 			res.set_header("Content-type", "application/json");
 			res.set_header("Access-control-allow-origin", "*");
 
-			if(Auth::validate_token(req.header("Authorization"))) {
-				res.set_status(200);
+			if(Auth::validate_token(req.get_header_value("Authorization"))) {
+				res.status = 200;
 			} else {
-				res.set_status(403);
+				res.status = 403;
 			}
 			
-		});
+		})
 
 	/*--------------- Customers ---------------------------*/
-	mux.handle(g_config [ "API_BASE_URL" ] + "/customers/{id}")
-		.get([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization"))) {
-				res.set_status(403);
+	.Get((g_config [ "API_BASE_URL" ] + "/customers").c_str(),
+			 [](const httplib::Request& req, httplib::Response& res) {
+			if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+				res.status = 403;
 				return;
 			}
-		
+			 	
 			res.set_header("Content-type", "application/json");
 			res.set_header("Access-control-allow-origin", "*");
-			const std::string response = Client_wrapper::get_client(req.params [ "id" ]);
-			if(response.empty()) {
-				res.set_status(204);
+			 	
+			if (req.has_param("id")) {
+				const std::string response = Client_wrapper::get_client(req.get_param_value("id"));
+				if (response.empty()) {
+					res.status = 204;
+				} else {
+					res.status = 200;
+					res.body = response;
+				}
 			} else {
-				res.set_status(200);
-				res << response;
+				const std::string response = Client_wrapper::get_all_clients();
+				if (response.empty()) {
+					res.status = 204;
+				} else {
+					res.status = 200;
+					res.body = response;
+				}
 			}
 		})
-		.put([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization"))) {
-				res.set_status(403);
+	.Put((g_config [ "API_BASE_URL" ] + "/customers").c_str(), 
+			 [](const httplib::Request& req, httplib::Response& res) {
+			if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+				res.status = 403;
 				return;
 			}
-			
-			if(Client_wrapper::update_client(req.params [ "id" ], req.body())) {
-				res.set_status(204);
-			} else {
-				res.set_status(400);
-			}	
-		})
-		.del([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization"))) {
-				res.set_status(403);
-				return;
-			}
-			
-			if (!Auth::validate_token(req.header("Authorization")))
-				res.set_status(403);
-			if(Client_wrapper::delete_client(req.params [ "id" ])) {
-				res.set_status(200);
-			} else {
-				res.set_status(400);
-			}
-		});
 
-	mux.handle(g_config [ "API_BASE_URL" ] + "/customers")
-		.get([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization"))) {
-				res.set_status(403);
+			if (req.has_param("id")) {
+				if (Client_wrapper::update_client(req.get_param_value("id"), req.body)) {
+					res.status = 204;
+				} else {
+					res.status = 400;
+				}
+			} else {
+				res.status = 400;
+			}
+			 	
+		})
+	.Delete((g_config [ "API_BASE_URL" ] + "/customers").c_str(), 
+			 [](const httplib::Request& req, httplib::Response& res) {
+			if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+				res.status = 403;
 				return;
 			}
-			
-			res.set_header("Content-type", "application/json");
-			res.set_header("Access-control-allow-origin", "*");
-			const std::string response = Client_wrapper::get_all_clients();
-			if (response.empty()) {
-				res.set_status(204);
+			if (req.has_param("id")) {
+				if (Client_wrapper::delete_client(req.get_param_value("id"))) {
+					res.status = 200;
+				} else {
+					res.status = 400;
+				}
 			} else {
-				res.set_status(200);
-				res << response;
+				res.status = 400;
 			}
 		})
-		.post([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization"))) {
-				res.set_status(403);
+	.Post((g_config [ "API_BASE_URL" ] + "/customers").c_str(), 
+			  [](const httplib::Request& req, httplib::Response& res) {
+			if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+				res.status = 403;
 				return;
 			}
 			
-			if(Client_wrapper::new_client(req.body())) {
-				res.set_status(201);
+			if(Client_wrapper::new_client(req.body)) {
+				res.status = 201;
 			} else {
-				res.set_status(400);
+				res.status = 400;
 			}
-		});
+		})
 
 
 	/*--------------- Products ---------------------------*/
-	mux.handle(g_config [ "API_BASE_URL" ] + "/products/{id}")
-		.get([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization"))) {
-				res.set_status(403);
+		.Get((g_config [ "API_BASE_URL" ] + "/products").c_str(),
+			 [](const httplib::Request& req, httplib::Response& res) {
+			if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+				res.status = 403;
 				return;
 			}
 			
 			res.set_header("Content-type", "application/json");
 			res.set_header("Access-control-allow-origin", "*");
-			const std::string response = Product_wrapper::get_product(req.params [ "id" ]);
-			if(response.empty()) {
-				res.set_status(204);
-			} else {
-				res.set_status(200);
-				res << response;
-			}
-		})
-		.put([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization"))) {
-				res.set_status(403);
-				return;
-			}
-			
-			if(Product_wrapper::update_product(req.params [ "id" ], req.body())) {
-				res.set_status(200);
-			} else {
-				res.set_status(400);
-			}
-		})
-		.del([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization"))) {
-				res.set_status(403);
-				return;
-			}
-			
-			if(Product_wrapper::delete_product(req.params [ "id" ])) {
-				res.set_status(200);
-			} else {
-				res.set_status(400);
-			}
-		});
 
-	mux.handle(g_config [ "API_BASE_URL" ] + "/products")
-		.get([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization"))) {
-				res.set_status(403);
-				return;
-			}
-			
-			res.set_header("Content-type", "application/json");
-			res.set_header("Access-control-allow-origin", "*");
-			const std::string response = Product_wrapper::get_all_products();
-			if(response.empty()) {
-				res.set_status(204);
+			if (req.has_param("id")) {
+				const std::string response = Product_wrapper::get_product(req.get_param_value("id"));
+				if (response.empty()) {
+					res.status = 204;
+				} else {
+					res.status = 200;
+					res.body = response;
+				}
 			} else {
-				res.set_status(200);
-				res << response;
+				const std::string response = Product_wrapper::get_all_products();
+				if (response.empty()) {
+					res.status = 204;
+				} else {
+					res.status = 200;
+					res.body = response;
+				}
 			}
 		})
-		.post([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization"))) {
-				res.set_status(403);
+		.Put((g_config [ "API_BASE_URL" ] + "/products").c_str(),
+			[](const httplib::Request& req, httplib::Response& res) {
+			if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+				res.status = 403;
 				return;
 			}
 			
-			if(Product_wrapper::new_product(req.body())) {
-				res.set_status(201);
+			if(Product_wrapper::update_product(req.get_param_value("id"), req.body)) {
+				res.status = 200;
 			} else {
-				res.set_status(400);
+				res.status = 400;
 			}
-		});
+		})
+		.Delete((g_config [ "API_BASE_URL" ] + "/products").c_str(), 
+				[](const httplib::Request& req, httplib::Response& res) {
+			if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+				res.status = 403;
+				return;
+			}
+			
+			if(Product_wrapper::delete_product(req.get_param_value("id"))) {
+				res.status = 200;
+			} else {
+				res.status = 400;
+			}
+		})
+
+		.Post((g_config [ "API_BASE_URL" ] + "/products").c_str(),
+			  [](const httplib::Request& req, httplib::Response& res) {
+			if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+				res.status = 403;
+				return;
+			}
+			
+			if(Product_wrapper::new_product(req.body)) {
+				res.status = 201;
+			} else {
+				res.status = 400;
+			}
+		})
 
 	/*--------------- Orders ---------------------------*/
-	mux.handle(g_config [ "API_BASE_URL" ] + "/orders/by_client/{id}/")
-		.get([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization"))) {
-				res.set_status(403);
+		.Get((g_config [ "API_BASE_URL" ] + "/orders/by_client").c_str(),
+			 [](const httplib::Request& req, httplib::Response& res) {
+			if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+				res.status = 403;
 				return;
 			}
 
 			res.set_header("Content-type", "application/json");
 			res.set_header("Access-control-allow-origin", "*");
-			const std::string response = Order_wrapper::get_order_by_client(req.params [ "id" ]);
-			if (response.empty()) {
-				res.set_status(204);
+
+			if (req.has_param("id")) {
+				const std::string response = Order_wrapper::get_order_by_client(req.get_param_value("id"));
+				if (response.empty()) {
+					res.status = 204;
+				} else {
+					res.status = 200;
+					res.body = response;
+				}
 			} else {
-				res.set_status(200);
-				res << response;
+				res.status = 400;
 			}
-		});
+		})
 	
-	mux.handle(g_config [ "API_BASE_URL" ] + "/orders/outstanding/")
-		.get([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization"))) {
-				res.set_status(403);
+		.Get((g_config [ "API_BASE_URL" ] + "/orders/outstanding").c_str(),
+			 [](const httplib::Request& req, httplib::Response& res) {
+			if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+				res.status = 403;
 				return;
 			}
 
@@ -286,142 +295,153 @@ void register_handlers(served::multiplexer& mux) {
 			res.set_header("Access-control-allow-origin", "*");
 			const std::string response = Order_wrapper::get_outstanding_orders();
 			if(response.empty()) {
-				res.set_status(204);
+				res.status = 204;
 			} else {
-				res.set_status(200);
-				res << response;
+				res.status = 200;
+				res.body = response;
 			}
-		});
+		})
 	
-	mux.handle(g_config [ "API_BASE_URL" ] + "/orders/{id}")
-		.get([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization"))) {
-				res.set_status(403);
+
+		.Get((g_config [ "API_BASE_URL" ] + "/orders").c_str(),
+			 [](const httplib::Request& req, httplib::Response& res) {
+			if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+				res.status = 403;
 				return;
 			}
 
 			res.set_header("Content-type", "application/json");
 			res.set_header("Access-control-allow-origin", "*");
-			const std::string response = Order_wrapper::get_order(req.params [ "id" ]);
-			if (response.empty()) {
-				res.set_status(204);
+			if (req.has_param("id")) {
+				const std::string response = Order_wrapper::get_order(req.get_param_value("id"));
+				if (response.empty()) {
+					res.status = 204;
+				} else {
+					res.status = 200;
+					res.body = response;
+				}
 			} else {
-				res.set_status(200);
-				res << response;
+				const std::string response = Order_wrapper::get_all_orders();
+				if (response.empty()) {
+					res.status = 204;
+				} else {
+					res.status = 200;
+					res.body = response;
+				}
 			}
 		})
-		.put([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization"))) {
-				res.set_status(403);
+		.Put((g_config [ "API_BASE_URL" ] + "/orders").c_str(), 
+			 [](const httplib::Request& req, httplib::Response& res) {
+			if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+				res.status = 403;
 				return;
 			}
 			
-			if (Order_wrapper::update_order(req.params [ "id" ], req.body())) {
-				res.set_status(200);
+			if (Order_wrapper::update_order(req.get_param_value("id"), req.body)) {
+				res.status = 200;
 			} else {
-				res.set_status(400);
+				res.status = 400;
 			}			
 		})
-		.del([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization"))) {
-				res.set_status(403);
+		.Delete((g_config [ "API_BASE_URL" ] + "/orders").c_str(), 
+			 [](const httplib::Request& req, httplib::Response& res) {
+			if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+				res.status = 403;
 				return;
 			}
 			
-			if(Order_wrapper::delete_order(req.params [ "id" ])) {
-				res.set_status(200);
+			if(Order_wrapper::delete_order(req.get_param_value("id"))) {
+				res.status = 200;
 			} else {
-				res.set_status(400);
-			}
-		});
-
-	mux.handle(g_config [ "API_BASE_URL" ] + "/orders")
-		.get([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization"))) {
-				res.set_status(403);
-				return;
-			}
-
-			res.set_header("Access-control-allow-origin", "*");
-			res.set_header("Content-type", "application/json");
-			const std::string response = Order_wrapper::get_all_orders();
-			if (response.empty()) {
-				res.set_status(204);
-			} else {
-				res.set_status(200);
-				res << response;
+				res.status = 400;
 			}
 		})
-		.post([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization"))) {
-				res.set_status(403);
+
+
+		.Post((g_config [ "API_BASE_URL" ] + "/orders").c_str(), 
+			  [](const httplib::Request& req, httplib::Response& res) {
+			if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+				res.status = 403;
 				return;
 			}
 			
-			if(Order_wrapper::new_order(req.body())) {
-				res.set_status(201);
+			if(Order_wrapper::new_order(req.body)) {
+				res.status = 201;
 			} else {
-				res.set_status(400);
+				res.status = 400;
 			}			
-		 });
+		 })
 
 	/*--------------- Order Details ---------------------------*/
-	mux.handle(g_config [ "API_BASE_URL" ] + "/orderdetails/{id}")
-		.get([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization"))) {
-				res.set_status(403);
+
+		.Get((g_config [ "API_BASE_URL" ] + "/orderdetails/by_order").c_str(),
+		 [](const httplib::Request& req, httplib::Response& res) {
+				//implement a return all order details after providing a filter( order header id )
+			})
+
+		.Get((g_config [ "API_BASE_URL" ] + "/orderdetails").c_str(),
+			 [](const httplib::Request& req, httplib::Response& res) {
+			if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+				res.status = 403;
 				return;
 			}
 			
 			res.set_header("Content-type", "application/json");
 			res.set_header("Access-control-allow-origin", "*");
-			const std::string response = OrderDetail_wrapper::get_order_detail(req.params [ "id" ]);
-			if (response.empty()) {
-				res.set_status(204);
+			if (req.has_param("id")) {
+				const std::string response = OrderDetail_wrapper::get_order_detail(req.get_param_value("id"));
+				if (response.empty()) {
+					res.status = 204;
+				} else {
+					res.status = 200;
+					res.body = response;
+				}
 			} else {
-				res.set_status(200);
-				res << response;
+				res.status = 400;
 			}
 		})
-		.put([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization"))) {
-				res.set_status(403);
+		.Put((g_config [ "API_BASE_URL" ] + "/orderdetails").c_str(), 
+			 [](const httplib::Request& req, httplib::Response& res) {
+			if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+				res.status = 403;
+				return;
+			}
+			if (req.has_param("id")) {
+				if (OrderDetail_wrapper::update_order_detail(req.get_param_value("id"), req.body)) {
+					res.status = 200;
+				} else {
+					res.status = 400;
+				}
+			} else {
+				res.status = 400;
+			}
+		})
+		.Delete((g_config [ "API_BASE_URL" ] + "/orderdetails").c_str(), 
+				[](const httplib::Request& req, httplib::Response& res) {
+			if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+				res.status = 403;
 				return;
 			}
 			
-			if(OrderDetail_wrapper::update_order_detail(req.params [ "id" ], req.body())) {
-				res.set_status(200);
+			if(OrderDetail_wrapper::delete_order_detail(req.get_param_value("id"))) {
+				res.status = 200;
 			} else {
-				res.set_status(400);
-			}			
+				res.status = 400;
+			}
 		})
-		.del([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization"))) {
-				res.set_status(403);
+		.Post((g_config [ "API_BASE_URL" ] + "/orderdetails").c_str(), 
+			  [](const httplib::Request& req, httplib::Response& res) {
+			if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+				res.status = 403;
 				return;
 			}
 			
-			if(OrderDetail_wrapper::delete_order_detail(req.params [ "id" ])) {
-				res.set_status(200);
+			if(OrderDetail_wrapper::new_order_detail(req.body)) {
+				res.status = 201;
 			} else {
-				res.set_status(400);
+				res.status = 400;
 			}
 		});
 
-	mux.handle(g_config [ "API_BASE_URL" ] + "/orderdetails")
-		.get([](served::response& res, const served::request& req) {
-		//implement a return all order details after providing a filter( order header id )
-		})
-		.post([](served::response& res, const served::request& req) {
-			if (!Auth::validate_token(req.header("Authorization"))) {
-				res.set_status(403);
-				return;
-			}
-			
-			if(OrderDetail_wrapper::new_order_detail(req.body())) {
-				res.set_status(201);
-			} else {
-				res.set_status(400);
-			}
-		});
+	
 }
