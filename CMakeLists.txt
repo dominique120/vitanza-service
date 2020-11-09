@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 set(CMAKE_DISABLE_SOURCE_CHANGES ON)
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 
-option(DB_DYNAMO "Use DynamoDB" ON)
+option(DB_DYNAMO "Use DynamoDB" OFF)
 option(DB_MYSQL "Use MySQL" OFF)
 
 project(vitanza-service CXX)
@@ -37,6 +37,10 @@ if(DB_MYSQL AND DB_DYNAMO)
 	message(FATAL_ERROR "Specify only one database, you are using multiple options." )
 endif(DB_MYSQL AND DB_DYNAMO)
 
+if(!DB_MYSQL AND !DB_DYNAMO)
+	message(FATAL_ERROR "Specify a database, you are not settign any. Use cmake -DDB_DYNAMO=ON or cmake -DDB_MYSQL=ON" )
+endif(DB_MYSQL AND DB_DYNAMO)
+
 find_path(JWT_CPP_INCLUDE_DIRS "jwt-cpp/base.h")
 
 include(FetchContent)
@@ -53,19 +57,16 @@ if(NOT json_POPULATED)
 endif()
 
 if (NOT WIN32)
-    add_compile_options(-Wall -Werror -pipe -fvisibility=hidden)
+    add_compile_options(-Wall -Werror -pipe -fvisibility=hidden -Weverything)
 endif ()
 
 set(CMAKE_CXX_FLAGS_PERFORMANCE "${CMAKE_CXX_FLAGS_RELEASE} -march=native")
-
-if (CMAKE_COMPILER_IS_GNUCXX)
-    add_compile_options(-fno-strict-aliasing)
-endif ()
 
 find_package(AWSSDK REQUIRED COMPONENTS dynamodb)
 find_package(MySQL REQUIRED)
 find_package(Boost 1.53.0 REQUIRED COMPONENTS system)
 find_package(OpenSSL 1.0.2 REQUIRED)
+find_package(httplib REQUIRED)
 
 target_include_directories(vts PRIVATE ${JWT_CPP_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${MYSQL_INCLUDE_DIR} ${json_SOURCE_DIR})
 
@@ -74,5 +75,5 @@ target_link_libraries(vts PRIVATE
 		${AWSSDK_LINK_LIBRARIES}
         ${MYSQL_CLIENT_LIBS}
 		nlohmann_json::nlohmann_json
-		served libserved.so
+		httplib::httplib
         )

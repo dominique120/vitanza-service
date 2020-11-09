@@ -1,3 +1,7 @@
+/*
+ * Copyright Dominique Verellen. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0.
+ */
 #ifndef ORDER_H
 #define ORDER_H
 

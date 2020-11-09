@@ -1,4 +1,8 @@
-﻿#include "vtspch.h"
+﻿/*
+ * Copyright Dominique Verellen. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0.
+ */
+#include "vtspch.h"
 #include "Auth.h"
 
 extern ConfigurationManager g_config;

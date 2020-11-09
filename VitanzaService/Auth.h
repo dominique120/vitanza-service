@@ -1,4 +1,8 @@
-﻿#pragma once
+﻿/*
+ * Copyright Dominique Verellen. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0.
+ */
+#pragma once
 
 #include <jwt-cpp/jwt.h>
 
