@@ -1,7 +1,7 @@
 FROM alpine:edge
 
 # Update and install dependencies
-RUN apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ binutils boost-dev build-base cmake crypto++-dev gcc make mariadb-connector-c-dev libcurl4-openssl-dev libssl-dev uuid-dev zlib1g-dev libpulse-dev
+RUN apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ binutils boost-dev build-base cmake crypto++-dev gcc make mariadb-connector-c-dev curl-dev libcurl openssl-dev ossp-uuid-dev zlib-dev
 
 # Clone, build and install aws-skd-cpp
 RUN git clone https://github.com/aws/aws-sdk-cpp.git /usr/vts_work/aws-sdk-cpp && \
