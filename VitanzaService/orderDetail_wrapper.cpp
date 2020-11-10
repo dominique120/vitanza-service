@@ -54,10 +54,10 @@ bool OrderDetail_wrapper::update_order_detail(const std::string& id_or_uuid, con
 }
 
 std::string OrderDetail_wrapper::get_orderdetails_by_order(const std::string& id_or_uuid) {
-	
 #ifdef DB_DYNAMO
 	return DynamoDB::query_index("orderdetails", "OrderId_uuid", id_or_uuid.c_str());
 #elif DB_MYSQL
 	//TODO: Implement method for mysql
+	return "";
 #endif
 }
