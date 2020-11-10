@@ -41,6 +41,8 @@
 #include <aws/core/Aws.h>
 #include <aws/core/VersionConfig.h>
 
+#include "s3_file_handler.h"
+
 int main(int argc, char* argv[]);
 void register_handlers(httplib::Server& svr);
 

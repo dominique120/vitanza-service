@@ -376,7 +376,24 @@ void register_handlers(httplib::Server& svr) {
 
 		.Get((g_config [ "API_BASE_URL" ] + "/orderdetails/by_order").c_str(),
 		 [](const httplib::Request& req, httplib::Response& res) {
-				//implement a return all order details after providing a filter( order header id )
+				 if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+					 res.status = 403;
+					 return;
+				 }
+
+				 res.set_header("Content-type", "application/json");
+				 res.set_header("Access-control-allow-origin", "*");
+				 if (req.has_param("id")) {
+					 const std::string response = OrderDetail_wrapper::get_orderdetails_by_order(req.get_param_value("id"));
+					 if (response.empty()) {
+						 res.status = 204;
+					 } else {
+						 res.status = 200;
+						 res.body = response;
+					 }
+				 } else {
+					 res.status = 400;
+				 }
 			})
 
 		.Get((g_config [ "API_BASE_URL" ] + "/orderdetails").c_str(),
@@ -441,7 +458,56 @@ void register_handlers(httplib::Server& svr) {
 			} else {
 				res.status = 400;
 			}
-		});
+		})
 
+		/*--------------- Images ---------------------------*/
+		.Get((g_config [ "API_BASE_URL" ] + "/images").c_str(),
+		[](const httplib::Request& req, httplib::Response& res) {
+			if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+				res.status = 403;
+				return;
+			}
+			res.set_header("Access-control-allow-origin", "*");
+			
+			
+			std::stringstream ostr;			
+			if (S3::get_object_s3(req.get_param_value("id"), ostr)) {
+				res.set_header("Content-type", "image/jpg");
+				res.body = ostr.str();				
+			} else {
+				res.status = 400;
+			}
+		})
+		.Post((g_config [ "API_BASE_URL" ] + "/images").c_str(),
+		[](const httplib::Request& req, httplib::Response& res) {
+			if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+				res.status = 403;
+				return;
+			}
+			const auto uuid = boost::uuids::random_generator()();
+			const std::string id = boost::uuids::to_string(uuid);
+			std::stringstream ostr;
+			ostr << req.body;
+			if(S3::put_object_s3(id+".jpg", ostr)) {
+				res.status = 200;
+				res.body = id;
+			} else {
+				res.status = 400;
+			}
+			
+		})
+		.Delete((g_config [ "API_BASE_URL" ] + "/images").c_str(), 
+				[](const httplib::Request& req, httplib::Response& res) {
+			if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+				res.status = 403;
+				return;
+			}
+										
+			if(S3::delete_object_s3(req.get_param_value("id"))) {
+				res.status = 200;
+			} else {
+				res.status = 400;
+			}
+		});
 	
 }

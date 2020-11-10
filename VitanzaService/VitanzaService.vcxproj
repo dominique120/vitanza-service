@@ -59,6 +59,7 @@
       <AdditionalIncludeDirectories>E:\cpp_libs\cpp-httplib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp14</LanguageStandard>
       <PrecompiledHeaderFile>vtspch.h</PrecompiledHeaderFile>
+      <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -81,6 +82,7 @@
       <LanguageStandard>stdcpp14</LanguageStandard>
       <PrecompiledHeaderFile>vtspch.h</PrecompiledHeaderFile>
       <ObjectFileName>$(IntDir)/%(RelativeDir)/</ObjectFileName>
+      <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -107,6 +109,7 @@
     <ClCompile Include="Product.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="product_wrapper.cpp" />
+    <ClCompile Include="s3_file_handler.cpp" />
     <ClCompile Include="util.cpp" />
     <ClCompile Include="vtspch.cpp" />
   </ItemGroup>
@@ -125,6 +128,7 @@
     <ClInclude Include="order_wrapper.h" />
     <ClInclude Include="Product.h" />
     <ClInclude Include="product_wrapper.h" />
+    <ClInclude Include="s3_file_handler.h" />
     <ClInclude Include="util.h" />
     <ClInclude Include="vtspch.h" />
   </ItemGroup>

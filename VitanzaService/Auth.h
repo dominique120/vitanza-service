@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0.
  */
 #pragma once
+#ifndef AUTH_H
+#define AUTH_H
 
 #include <jwt-cpp/jwt.h>
 
@@ -19,3 +21,5 @@ public:
 	static std::string generate_token(const std::string& username, const std::string& password);
 	static bool validate_token(const std::string& token_header);
 };
+#endif
+

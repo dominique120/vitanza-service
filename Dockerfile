@@ -8,7 +8,7 @@ RUN dnf -y --enablerepo=PowerTools install moreutils && dnf clean all
 # Clone, build and install aws-skd-cpp
 RUN git clone https://github.com/aws/aws-sdk-cpp.git /usr/vts_work/aws-sdk-cpp && \
 	mkdir /usr/vts_work/aws-sdk-cpp/build && cd /usr/vts_work/aws-sdk-cpp/build && \
-	cmake3 -DBUILD_ONLY="dynamodb s3" -DENABLE_TESTING=OFF -DCUSTOM_MEMORY_MANAGEMENT=OFF -DBUILD_SHARED_LIBS=OFF /usr/vts_work/aws-sdk-cpp && \
+	cmake3 -DBUILD_ONLY="dynamodb; s3" -DENABLE_TESTING=OFF -DCUSTOM_MEMORY_MANAGEMENT=OFF -DBUILD_SHARED_LIBS=OFF /usr/vts_work/aws-sdk-cpp && \
     make &&  make install && \
 	rm -rf /usr/vts_work/aws-sdk-cpp
 	
