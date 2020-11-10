@@ -39,7 +39,7 @@ endif(DB_MYSQL AND DB_DYNAMO)
 
 if(!DB_MYSQL AND !DB_DYNAMO)
 	message(FATAL_ERROR "Specify a database, you are not settign any. Use cmake -DDB_DYNAMO=ON or cmake -DDB_MYSQL=ON" )
-endif(DB_MYSQL AND DB_DYNAMO)
+endif(!DB_MYSQL AND !DB_DYNAMO)
 
 find_path(JWT_CPP_INCLUDE_DIRS "jwt-cpp/base.h")
 
