@@ -13,7 +13,7 @@ RUN git clone https://github.com/aws/aws-sdk-cpp.git /usr/vts_work/aws-sdk-cpp &
 # Clone, build and install httplib
 RUN git clone https://github.com/yhirose/cpp-httplib.git /usr/vts_work/httplib && \
 	mkdir /usr/vts_work/httplib/build && cd /usr/vts_work/httplib/build && \
-	cmake /usr/vts_work/cpp-httplib && \
+	cmake /usr/vts_work/httplib && \
 	make &&  make install && rm -rf /usr/vts_work/httplib
 
 # Clone, build and install json
