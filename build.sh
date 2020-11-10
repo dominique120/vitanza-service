@@ -14,7 +14,7 @@ sudo /sbin/swapon /var/swap.1
 
 git clone https://github.com/aws/aws-sdk-cpp.git
 mkdir aws-sdk-cpp.build && cd aws-sdk-cpp.build
-cmake3 -DBUILD_ONLY="dynamodb; s3" -DENABLE_TESTING=OFF -DCUSTOM_MEMORY_MANAGEMENT=OFF  -DBUILD_SHARED_LIBS=OFF ../aws-sdk-cpp
+cmake3 -DBUILD_ONLY="dynamodb;s3" -DENABLE_TESTING=OFF -DCUSTOM_MEMORY_MANAGEMENT=OFF  -DBUILD_SHARED_LIBS=OFF ../aws-sdk-cpp
 sudo make && sudo make install
 
 cd ..
