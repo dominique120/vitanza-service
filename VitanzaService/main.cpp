@@ -8,7 +8,7 @@
 ConfigurationManager g_config;
 
 int main (int argc, char* argv[]){
-		std::cout << "Vitanza Service - Version 0.5.1a" << std::endl;
+		std::cout << "Vitanza Service - Version 0.5.2a" << std::endl;
 		std::cout << "Compiled with " << BOOST_COMPILER << std::endl;
 		std::cout << "Compiled on " << __DATE__ << ' ' << __TIME__ << " for platform ";
 		std::cout << BOOST_PLATFORM << "." << std::endl;
