@@ -484,6 +484,8 @@ void register_handlers(httplib::Server& svr) {
 			//	res.status = 403;
 			//	return;
 			//}
+				  res.set_header("Access-control-allow-origin", "*");
+
 			const auto uuid = boost::uuids::random_generator()();
 			const std::string id = boost::uuids::to_string(uuid);
 			std::stringstream ostr;
@@ -508,6 +510,35 @@ void register_handlers(httplib::Server& svr) {
 			} else {
 				res.status = 400;
 			}
-		});
+		})
+		.Post((g_config [ "API_BASE_URL" ] + "/images_formdata").c_str(),
+		[](const httplib::Request& req, httplib::Response& res) {
+			//if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+			//	res.status = 403;
+			//	return;
+			//}
+
+			const auto uuid = boost::uuids::random_generator()();
+			const std::string id = boost::uuids::to_string(uuid);
+
+
+			auto size = req.files.size();
+			auto ret = req.has_file("imagen");
+			const auto& file = req.get_file_value("imagen");
+			
+			
+			std::stringstream ostr;
+			
+			ostr << file.content;
+			if(S3::put_object_s3(id+".jpg", ostr)) {
+				res.status = 200;
+				res.body = id;
+			} else {
+				res.status = 400;
+			}
+			
+		})
+
+	;
 	
 }
