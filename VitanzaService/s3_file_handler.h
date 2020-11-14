@@ -14,7 +14,7 @@
 
 class S3 {
 public:
-	static bool put_object_s3(const std::string& filename, std::stringstream& image_data);
+	static bool put_object_s3(const std::string& filename, std::stringstream& image_data, const bool& set_public);
 	static bool get_object_s3(const std::string& filename, std::stringstream& stream);
 	static bool delete_object_s3(const std::string& filename);
 };

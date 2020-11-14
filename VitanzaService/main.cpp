@@ -490,7 +490,7 @@ void register_handlers(httplib::Server& svr) {
 			const std::string id = boost::uuids::to_string(uuid);
 			std::stringstream ostr;
 			ostr << req.body;
-			if(S3::put_object_s3(id+".jpg", ostr)) {
+			if(S3::put_object_s3(id+".jpg", ostr, flase)) {
 				res.status = 200;
 				res.body = id;
 			} else {
@@ -530,7 +530,7 @@ void register_handlers(httplib::Server& svr) {
 			std::stringstream ostr;
 			
 			ostr << file.content;
-			if(S3::put_object_s3(id+".jpg", ostr)) {
+			if(S3::put_object_s3(id+".jpg", ostr, true)) {
 				res.status = 200;
 				res.body = id;
 			} else {
