@@ -50,7 +50,7 @@ int main (int argc, char* argv[]){
 }
 
 void register_handlers(httplib::Server& svr) {
-	svr.Get((g_config [ "API_BASE_URL" ] + "/config").c_str(), 
+	svr.Post((g_config [ "API_BASE_URL" ] + "/config").c_str(), 
 	[](const httplib::Request& req, httplib::Response& res) {
 			if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 				res.status = 403;
