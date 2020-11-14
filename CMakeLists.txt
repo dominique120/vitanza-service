@@ -62,7 +62,7 @@ endif ()
 
 set(CMAKE_CXX_FLAGS_PERFORMANCE "${CMAKE_CXX_FLAGS_RELEASE} -march=native")
 
-find_package(AWSSDK REQUIRED COMPONENTS dynamodb s3)
+find_package(AWSSDK REQUIRED COMPONENTS dynamodb s3 sqs)
 find_package(MySQL REQUIRED)
 find_package(Boost 1.53.0 REQUIRED COMPONENTS system)
 find_package(OpenSSL 1.0.2 REQUIRED)

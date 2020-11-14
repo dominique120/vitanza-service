@@ -3,7 +3,7 @@
 
 extern ConfigurationManager g_config;
 
-bool S3::put_object_s3(const std::string& filename, std::stringstream& image_data) {
+bool S3::put_object_s3(const std::string& filename, std::stringstream& image_data, const bool& set_public) {
 	Aws::Auth::AWSCredentials credentials;
 	credentials.SetAWSAccessKeyId(Aws::String(g_config [ "AWS_ACCESS_KEY" ].c_str()));
 	credentials.SetAWSSecretKey(Aws::String(g_config [ "AWS_SECRET_KEY" ].c_str()));
@@ -22,8 +22,9 @@ bool S3::put_object_s3(const std::string& filename, std::stringstream& image_dat
 	Aws::S3::Model::PutObjectRequest request;
 	request.SetBucket(g_config [ "AWS_S3_BUCKET_NAME" ].c_str());
 	request.SetKey(filename.c_str());
-	request.SetACL(Aws::S3::Model::ObjectCannedACL::public_read);
-
+	if (set_public) {
+		request.SetACL(Aws::S3::Model::ObjectCannedACL::public_read);
+	}
 	std::shared_ptr<Aws::IOStream> input_data =
 		Aws::MakeShared<Aws::IOStream>("s3_allocation_tag",
 									   image_data.rdbuf());

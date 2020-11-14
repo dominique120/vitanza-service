@@ -15,5 +15,6 @@ set(vts_SRC
 	${CMAKE_CURRENT_LIST_DIR}/Client.cpp
 	${CMAKE_CURRENT_LIST_DIR}/client_wrapper.cpp
 	${CMAKE_CURRENT_LIST_DIR}/s3_file_handler.cpp
+	${CMAKE_CURRENT_LIST_DIR}/sqs_handler.cpp
 	PARENT_SCOPE)
 

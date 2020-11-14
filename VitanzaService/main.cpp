@@ -478,6 +478,24 @@ void register_handlers(httplib::Server& svr) {
 				res.status = 400;
 			}
 		})
+		.Get((g_config [ "API_BASE_URL" ] + "/image_list").c_str(),
+		[](const httplib::Request& req, httplib::Response& res) {
+			//if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+			//	res.status = 403;
+			//	return;
+			//}
+			res.set_header("Access-control-allow-origin", "*");
+			res.set_header("Content-type", "application/json");
+			
+			std::string result = DynamoDB::scan_table_items_dynamo("grupo6-ep4");			
+			if (!result.empty()) {
+				res.set_header("Content-type", "application/json");
+				res.body = result;
+				res.status = 200;
+			} else {
+				res.status = 204;
+			}
+		})
 		.Post((g_config [ "API_BASE_URL" ] + "/images").c_str(),
 		[](const httplib::Request& req, httplib::Response& res) {
 			//if (!Auth::validate_token(req.get_header_value("Authorization"))) {
@@ -490,7 +508,7 @@ void register_handlers(httplib::Server& svr) {
 			const std::string id = boost::uuids::to_string(uuid);
 			std::stringstream ostr;
 			ostr << req.body;
-			if(S3::put_object_s3(id+".jpg", ostr, flase)) {
+			if(S3::put_object_s3(id+".jpg", ostr, false)) {
 				res.status = 200;
 				res.body = id;
 			} else {
@@ -525,7 +543,14 @@ void register_handlers(httplib::Server& svr) {
 			auto size = req.files.size();
 			auto ret = req.has_file("imagen");
 			const auto& file = req.get_file_value("imagen");
-			
+
+			nlohmann::json j;
+			j [ "Location" ] = "https://isil-grupo6.s3.us-east-1.amazonaws.com/" + id + ".jpg";
+
+			DynamoDB::new_item_dynamo("grupo6-ep4", "FotoId", id.c_str(), j.dump());
+
+			j [ "FotoId" ] = id;
+			SQS::send_message_sqs(g_config [ "AWS_SQS_QUEUE_URL" ], j.dump());
 			
 			std::stringstream ostr;
 			
