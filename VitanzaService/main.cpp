@@ -463,10 +463,10 @@ void register_handlers(httplib::Server& svr) {
 		/*--------------- Images ---------------------------*/
 		.Get((g_config [ "API_BASE_URL" ] + "/images").c_str(),
 		[](const httplib::Request& req, httplib::Response& res) {
-			if (!Auth::validate_token(req.get_header_value("Authorization"))) {
-				res.status = 403;
-				return;
-			}
+			//if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+			//	res.status = 403;
+			//	return;
+			//}
 			res.set_header("Access-control-allow-origin", "*");
 			
 			
@@ -480,10 +480,10 @@ void register_handlers(httplib::Server& svr) {
 		})
 		.Post((g_config [ "API_BASE_URL" ] + "/images").c_str(),
 		[](const httplib::Request& req, httplib::Response& res) {
-			if (!Auth::validate_token(req.get_header_value("Authorization"))) {
-				res.status = 403;
-				return;
-			}
+			//if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+			//	res.status = 403;
+			//	return;
+			//}
 			const auto uuid = boost::uuids::random_generator()();
 			const std::string id = boost::uuids::to_string(uuid);
 			std::stringstream ostr;
@@ -498,10 +498,10 @@ void register_handlers(httplib::Server& svr) {
 		})
 		.Delete((g_config [ "API_BASE_URL" ] + "/images").c_str(), 
 				[](const httplib::Request& req, httplib::Response& res) {
-			if (!Auth::validate_token(req.get_header_value("Authorization"))) {
-				res.status = 403;
-				return;
-			}
+			//if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+			//	res.status = 403;
+			//	return;
+			//}
 										
 			if(S3::delete_object_s3(req.get_param_value("id"))) {
 				res.status = 200;
