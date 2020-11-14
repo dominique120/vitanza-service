@@ -22,7 +22,7 @@ bool S3::put_object_s3(const std::string& filename, std::stringstream& image_dat
 	Aws::S3::Model::PutObjectRequest request;
 	request.SetBucket(g_config [ "AWS_S3_BUCKET_NAME" ].c_str());
 	request.SetKey(filename.c_str());
-
+	request.SetACL(Aws::S3::Model::ObjectCannedACL::public_read);
 
 	std::shared_ptr<Aws::IOStream> input_data =
 		Aws::MakeShared<Aws::IOStream>("s3_allocation_tag",
