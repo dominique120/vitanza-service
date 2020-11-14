@@ -524,6 +524,7 @@ void register_handlers(httplib::Server& svr) {
 			//}
 										
 			if(S3::delete_object_s3(req.get_param_value("id"))) {
+				DynamoDB::delete_item_dynamo("grupo6-ep4", "FotoId", req.get_param_value("id").c_str());
 				res.status = 200;
 			} else {
 				res.status = 400;
