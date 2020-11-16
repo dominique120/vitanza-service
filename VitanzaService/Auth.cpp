@@ -70,3 +70,52 @@ bool Auth::validate_token(const std::string& token_header) {
 		return false;
 	}
 }
+
+bool Auth::create_user(const std::string& usr, const std::string& pwd) {
+	const std::string hashed_pwd = Auth::hash_password(pwd, usr);
+
+	const auto uuid = boost::uuids::random_generator()();
+	const std::string id = boost::uuids::to_string(uuid);
+
+	nlohmann::json j;
+	j [ "username" ] = usr;
+	j [ "password" ] = hashed_pwd;
+
+	
+	if(DynamoDB::new_item_dynamo("users", "user_id", id.c_str(), j.dump())) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool Auth::validate_user(const std::string& usr, const std::string& pwd) {
+	const std::string hashed_pwd = Auth::hash_password(pwd, usr);
+	nlohmann::json j;
+	std::string q_result = DynamoDB::query_index("users", "username", usr.c_str());
+	try {
+		j = nlohmann::json::parse(q_result);
+	} catch (const nlohmann::json::exception& ex) {
+		std::cout << "Error validating user: " << ex.what();
+		return false;
+	}
+
+	std::map<std::string, std::string> user = j[0];
+
+	bool valid_usr = false;
+	bool valid_pwd = false;
+	
+	if (user.at("username") == usr) {
+		valid_usr = true;
+	}
+
+	if (user.at("password") == hashed_pwd) {
+		valid_pwd = true;
+	}
+	
+	if (valid_usr && valid_pwd) {
+		return true;
+	} else {
+		return false;
+	}
+}

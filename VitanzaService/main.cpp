@@ -73,26 +73,36 @@ void register_handlers(httplib::Server& svr) {
 	// later on add support for creating new password, deleting user, etc
 	.Post((g_config [ "API_BASE_URL" ] + "/auth/users").c_str(), 
 	[](const httplib::Request& req, httplib::Response& res) {
-		if (true) {
+			if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+				res.status = 403;
+				return;
+			}
+		const std::map<std::string, std::string> user = nlohmann::json::parse(req.body);
+
+		if (Auth::create_user(user.at("username"), user.at("password"))) {
 			res.status = 201;
 		} else {
 			res.status = 400;
 		}
 	})
-	.Post((g_config [ "API_BASE_URL" ] + "/auth/users").c_str(),
-		[](const httplib::Request& req, httplib::Response& res) {
-			// new user
-			if (true) {
-				res.status = 201;
-			} else {
-				res.status = 400;
-			}
-		})
+	.Post((g_config [ "API_BASE_URL" ] + "/auth/validateuser").c_str(), 
+	[](const httplib::Request& req, httplib::Response& res) {
+	
+		const std::map<std::string, std::string> user = nlohmann::json::parse(req.body);
+
+		if (Auth::validate_user(user.at("username"), user.at("password"))) {
+			res.status = 200;
+		} else {
+			res.status = 403;
+		}
+	})
 	.Post((g_config [ "API_BASE_URL" ] + "/auth").c_str(),
-			  [](const httplib::Request& req, httplib::Response& res) {
-			const std::map<std::string, std::string> user = nlohmann::json::parse(req.body);
+		  [](const httplib::Request& req, httplib::Response& res) {
+		const std::map<std::string, std::string> user = nlohmann::json::parse(req.body);
 			 //if (auth_wrapper::authenticate(user.at("username"), user.at("password"))) {
-				res.body = Auth::generate_token(user.at("username"), user.at("password"));
+			nlohmann::json j;
+			  	j["jwt"] = Auth::generate_token(user.at("username"), user.at("password"));
+				res.body = j.dump();
 				res.status = 200;
 			//} else {
 				//res.status = 403;
@@ -489,7 +499,6 @@ void register_handlers(httplib::Server& svr) {
 			
 			std::string result = DynamoDB::scan_table_items_dynamo("grupo6-ep4");			
 			if (!result.empty()) {
-				res.set_header("Content-type", "application/json");
 				res.body = result;
 				res.status = 200;
 			} else {

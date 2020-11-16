@@ -240,7 +240,7 @@ std::string DynamoDB::query_index(const Aws::String& table_name, const Aws::Stri
 	if (use_token) {
 		credentials.SetSessionToken(Aws::String(g_config [ "AWS_SESSION_TOKEN" ].c_str()));
 	}
-	std::cout << "in query \n";
+	//std::cout << "in query \n";
 	Aws::Client::ClientConfiguration client_config;
 	client_config.region = g_config [ "AWS_REGION" ].c_str();
 	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
@@ -248,10 +248,8 @@ std::string DynamoDB::query_index(const Aws::String& table_name, const Aws::Stri
 	const Aws::String endpoint(g_config [ "AWS_DYNAMODB_ENDPOINT" ].c_str());
 	dynamo_client.OverrideEndpoint(endpoint);
 
-
-
 	const Aws::String query_expression(partition_key + " = :" + partition_key);
-	std::cout << query_expression.c_str() << std::endl;
+	//std::cout << query_expression.c_str() << std::endl;
 
 	// Construct attribute value argument
 	Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue> expression_attribute_values;
