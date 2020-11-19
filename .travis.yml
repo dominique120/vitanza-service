@@ -57,9 +57,9 @@ before_install:
     - make && sudo make install
     - cd ..
     - mkdir vts && mkdir vts.build && cd vts.build
-    - if [ "$DB" -eq "dynamo" -a "$FS" -eq "local"]; then cmake -DDB_DYNAMO=ON -DFS_LOCAL=ON ../vitanza-service; fi
-    - if [ "$DB" -eq "dynamo" -a "$FS" -eq "s3"]; then cmake -DDB_DYNAMO=ON -DFS_S3=ON ../vitanza-service; fi
-    - if [ "$DB" = "mysql" -a "$FS" -eq "local" ]; then cmake -DDB_MYSQL=ON -DDB_DYNAMO=OFF -DFS_LOCAL=ON ../vitanza-service; fi
-    - if [ "$DB" = "mysql" -a "$FS" -eq "s3" ]; then cmake -DDB_MYSQL=ON -DDB_DYNAMO=OFF -DFS_S3=ON ../vitanza-service; fi
+    - if [ "$DB" == "dynamo" ] && [ "$FS" == "local" ]; then cmake -DDB_DYNAMO=ON -DFS_LOCAL=ON ../vitanza-service; fi
+    - if [ "$DB" == "dynamo" ] && [ "$FS" == "s3" ]; then cmake -DDB_DYNAMO=ON -DFS_S3=ON ../vitanza-service; fi
+    - if [ "$DB" == "mysql" ] && [ "$FS" == "local" ]; then cmake -DDB_MYSQL=ON -DDB_DYNAMO=OFF -DFS_LOCAL=ON ../vitanza-service; fi
+    - if [ "$DB" == "mysql" ] && [ "$FS" == "s3" ]; then cmake -DDB_MYSQL=ON -DDB_DYNAMO=OFF -DFS_S3=ON ../vitanza-service; fi
        
 script: make -j2
