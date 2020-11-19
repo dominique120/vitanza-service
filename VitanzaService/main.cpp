@@ -21,6 +21,7 @@ int main (int argc, char* argv[]){
 #elif defined(DB_MYSQL)
 			<< "MySQL." << std::endl;
 #endif
+		
 
 		std::cout << "A microservice written by Dominique Verellen." << std::endl;
 		std::cout << "Contact: dominique120@live.com." << std::endl;
@@ -29,7 +30,27 @@ int main (int argc, char* argv[]){
 
 		std::cout << "Initializing - Loading Configuration." << std::endl;
 		g_config.load(argc, argv);
+	
 
+
+#if defined(FS_S3)
+		std::cout << "Using " << "S3 to store files remotely." << std::endl;
+#elif defined(FS_LOCAL)
+		if (std::filesystem::exists(g_config [ "FS_LOCAL_DIR" ])) {
+			std::cout << "Using " << "directory \"" << g_config [ "FS_LOCAL_DIR" ] + "\" to store files locally." << std::endl;
+		} else {
+			if (std::filesystem::create_directory(g_config [ "FS_LOCAL_DIR" ])) {
+				std::cout << "Created directory \"" << g_config [ "FS_LOCAL_DIR" ] + "\" to store files locally." << std::endl;
+			} else {
+				std::cout << "Could not create directory." << std::endl;
+				return EXIT_FAILURE;
+			}
+		}
+#else
+		std::cout << "No file storage defined." << std::endl;
+#endif
+
+	
 
 		std::cout << "Initializing - Setting up AWS SDK." << std::endl;
 		const Aws::SDKOptions options;
@@ -479,7 +500,7 @@ void register_handlers(httplib::Server& svr) {
 			//}
 			res.set_header("Access-control-allow-origin", "*");
 			
-			
+#if defined(FS_S3)
 			std::stringstream ostr;			
 			if (S3::get_object_s3(req.get_param_value("id"), ostr)) {
 				res.set_header("Content-type", "image/jpg");
@@ -487,6 +508,7 @@ void register_handlers(httplib::Server& svr) {
 			} else {
 				res.status = 400;
 			}
+#endif
 		})
 		.Get((g_config [ "API_BASE_URL" ] + "/image_list").c_str(),
 		[](const httplib::Request& req, httplib::Response& res) {
@@ -517,7 +539,7 @@ void register_handlers(httplib::Server& svr) {
 			const std::string id = boost::uuids::to_string(uuid);
 			std::stringstream ostr;
 			ostr << req.body;
-			if(S3::put_object_s3(id+".jpg", ostr, false)) {
+			if(File_wrapper::write_fs(id+".jpg", ostr)) {
 				res.status = 200;
 				res.body = id;
 			} else {
@@ -531,13 +553,14 @@ void register_handlers(httplib::Server& svr) {
 			//	res.status = 403;
 			//	return;
 			//}
-										
+#if defined(FS_S3)						
 			if(S3::delete_object_s3(req.get_param_value("id"))) {
 				DynamoDB::delete_item_dynamo("grupo6-ep4", "FotoId", req.get_param_value("id").c_str());
 				res.status = 200;
 			} else {
 				res.status = 400;
 			}
+#endif
 		})
 		.Post((g_config [ "API_BASE_URL" ] + "/images_formdata").c_str(),
 		[](const httplib::Request& req, httplib::Response& res) {
@@ -549,28 +572,28 @@ void register_handlers(httplib::Server& svr) {
 			const auto uuid = boost::uuids::random_generator()();
 			const std::string id = boost::uuids::to_string(uuid);
 
-
 			auto size = req.files.size();
 			auto ret = req.has_file("imagen");
 			const auto& file = req.get_file_value("imagen");
 
 			nlohmann::json j;
 			j [ "Location" ] = "https://isil-grupo6.s3.us-east-1.amazonaws.com/" + id + ".jpg";
-
 			DynamoDB::new_item_dynamo("grupo6-ep4", "FotoId", id.c_str(), j.dump());
 
 			j [ "FotoId" ] = id;
 			SQS::send_message_sqs(g_config [ "AWS_SQS_QUEUE_URL" ], j.dump());
+
 			
 			std::stringstream ostr;
-			
 			ostr << file.content;
+#if defined(FS_S3)
 			if(S3::put_object_s3(id+".jpg", ostr, true)) {
 				res.status = 200;
 				res.body = id;
 			} else {
 				res.status = 400;
 			}
+#endif
 			
 		})
 

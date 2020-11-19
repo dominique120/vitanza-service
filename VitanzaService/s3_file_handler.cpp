@@ -1,6 +1,7 @@
 #include "vtspch.h"
 #include "s3_file_handler.h"
 
+#if defined(S3_FILESTORE)
 extern ConfigurationManager g_config;
 
 bool S3::put_object_s3(const std::string& filename, std::stringstream& image_data, const bool& set_public) {
@@ -107,3 +108,4 @@ bool S3::delete_object_s3(const std::string& filename) {
 		return true;
 	}
 }
+#endif

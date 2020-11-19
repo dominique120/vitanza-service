@@ -37,6 +37,7 @@
 #include "order_wrapper.h"
 #include "orderDetail_wrapper.h"
 #include "product_wrapper.h"
+#include "file_wrapper.h"
 
 #include <aws/core/Aws.h>
 #include <aws/core/VersionConfig.h>

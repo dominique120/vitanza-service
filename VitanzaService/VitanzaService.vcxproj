@@ -54,10 +54,10 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);NOGDI;_WIN32_WINNT=0x0a00;WIN32_LEAN_AND_MEAN;DB_DYNAMO</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);NOGDI;_WIN32_WINNT=0x0a00;WIN32_LEAN_AND_MEAN;DB_DYNAMO;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;LOCAL_FILESTORE</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>E:\cpp_libs\cpp-httplib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeaderFile>vtspch.h</PrecompiledHeaderFile>
       <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
     </ClCompile>
@@ -76,10 +76,10 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);NOGDI;_WIN32_WINNT=0x0a00;WIN32_LEAN_AND_MEAN;DB_DYNAMO</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);NOGDI;_WIN32_WINNT=0x0a00;WIN32_LEAN_AND_MEAN;DB_DYNAMO;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;LOCAL_FILESTORE</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>E:\cpp_libs\cpp-httplib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeaderFile>vtspch.h</PrecompiledHeaderFile>
       <ObjectFileName>$(IntDir)/%(RelativeDir)/</ObjectFileName>
       <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
@@ -102,6 +102,8 @@
     <ClCompile Include="config.cpp" />
     <ClCompile Include="db_dynamo.cpp" />
     <ClCompile Include="db_mysql.cpp" />
+    <ClCompile Include="file_wrapper.cpp" />
+    <ClCompile Include="local_file_handler.cpp" />
     <ClCompile Include="Order.cpp" />
     <ClCompile Include="OrderDetail.cpp" />
     <ClCompile Include="orderDetail_wrapper.cpp" />
@@ -121,6 +123,8 @@
     <ClInclude Include="config.h" />
     <ClInclude Include="db_dynamo.h" />
     <ClInclude Include="db_mysql.h" />
+    <ClInclude Include="file_wrapper.h" />
+    <ClInclude Include="local_file_handler.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Order.h" />

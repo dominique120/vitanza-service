@@ -6,15 +6,19 @@ dist: focal
 jobs:
    include:
         
-      - env: DB=mysql
+      - env: DB=mysql FS=local
         arch: amd64
         compiler: gcc
        
-      - env: DB=dynamo
+      - env: DB=dynamo FS=S3
+        arch: amd64
+        compiler: gcc
+        
+      - env: DB=dynamo FS=local
         arch: amd64
         compiler: gcc
 
-      - env: DB=dynamo
+      - env: DB=dynamo FS=S3
         arch: arm64-graviton2
         compiler: gcc
 
@@ -53,7 +57,9 @@ before_install:
     - make && sudo make install
     - cd ..
     - mkdir vts && mkdir vts.build && cd vts.build
-    - if [ "$DB" = "dynamo" ]; then cmake -DDB_DYNAMO=ON ../vitanza-service; fi
-    - if [ "$DB" = "mysql" ]; then cmake -DDB_MYSQL=ON -DDB_DYNAMO=OFF ../vitanza-service; fi
+    - if [ "$DB" -eq "dynamo" -a "$FS" -eq "local"]; then cmake -DDB_DYNAMO=ON -DFS_LOCAL=ON ../vitanza-service; fi
+    - if [ "$DB" -eq "dynamo" -a "$FS" -eq "s3"]; then cmake -DDB_DYNAMO=ON -DFS_S3=ON ../vitanza-service; fi
+    - if [ "$DB" = "mysql" -a "$FS" -eq "local" ]; then cmake -DDB_MYSQL=ON -DDB_DYNAMO=OFF -DFS_LOCAL=ON ../vitanza-service; fi
+    - if [ "$DB" = "mysql" -a "$FS" -eq "s3" ]; then cmake -DDB_MYSQL=ON -DDB_DYNAMO=OFF -DFS_S3=ON ../vitanza-service; fi
        
 script: make -j2
