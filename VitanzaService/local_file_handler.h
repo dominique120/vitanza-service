@@ -2,7 +2,7 @@
 #ifndef LOCAL_FILE_HANDLER_H
 #define LOCAL_FILE_HANDLER_H
 
-#if defined(LOCAL_FILESTORE)
+#if defined(FS_LOCAL)
 #include "config.h"
 
 

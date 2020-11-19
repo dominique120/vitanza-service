@@ -518,14 +518,18 @@ void register_handlers(httplib::Server& svr) {
 			//}
 			res.set_header("Access-control-allow-origin", "*");
 			res.set_header("Content-type", "application/json");
-			
-			std::string result = DynamoDB::scan_table_items_dynamo("grupo6-ep4");			
+#if defined(DB_DYNAMO)
+			std::string result = DynamoDB::scan_table_items_dynamo("grupo6-ep4");
+
 			if (!result.empty()) {
 				res.body = result;
 				res.status = 200;
 			} else {
 				res.status = 204;
 			}
+#else
+			res.status = 204;
+#endif
 		})
 		.Post((g_config [ "API_BASE_URL" ] + "/images").c_str(),
 		[](const httplib::Request& req, httplib::Response& res) {
@@ -578,6 +582,7 @@ void register_handlers(httplib::Server& svr) {
 
 			nlohmann::json j;
 			j [ "Location" ] = "https://isil-grupo6.s3.us-east-1.amazonaws.com/" + id + ".jpg";
+#if defined(DB_DYNAMO)
 			DynamoDB::new_item_dynamo("grupo6-ep4", "FotoId", id.c_str(), j.dump());
 
 			j [ "FotoId" ] = id;
@@ -586,6 +591,9 @@ void register_handlers(httplib::Server& svr) {
 			
 			std::stringstream ostr;
 			ostr << file.content;
+#else
+			res.status = 204;
+#endif
 #if defined(FS_S3)
 			if(S3::put_object_s3(id+".jpg", ostr, true)) {
 				res.status = 200;

@@ -2,7 +2,7 @@
 #ifndef S3_FILE_HANDLER_H
 #define S3_FILE_HANDLER_H
 
-#if defined(S3_FILESTORE)
+#if defined(FS_S3)
 #include "config.h"
 
 #include <aws/core/Aws.h>
