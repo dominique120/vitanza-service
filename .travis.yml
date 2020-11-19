@@ -10,7 +10,7 @@ jobs:
         arch: amd64
         compiler: gcc
        
-      - env: DB=dynamo FS=S3
+      - env: DB=dynamo FS=s3
         arch: amd64
         compiler: gcc
         
@@ -18,7 +18,7 @@ jobs:
         arch: amd64
         compiler: gcc
 
-      - env: DB=dynamo FS=S3
+      - env: DB=dynamo FS=s3
         arch: arm64-graviton2
         compiler: gcc
 
