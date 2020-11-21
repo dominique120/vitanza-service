@@ -474,6 +474,8 @@ void register_handlers(httplib::Server& svr) {
 		//	return;
 		//}
 		res.set_header("Access-control-allow-origin", "*");
+		res.set_header("Content-Type", "image/jpeg");
+		res.set_header("Content-Disposition", "inline; filename=\"" + req.get_param_value("id") + ".jpg\"");
 
 #if defined(FS_S3)
 		std::stringstream ostr;
