@@ -474,13 +474,12 @@ void register_handlers(httplib::Server& svr) {
 		//	return;
 		//}
 		res.set_header("Access-control-allow-origin", "*");
-		res.set_header("Content-Type", "image/jpeg");
 		res.set_header("Content-Disposition", "inline; filename=\"" + req.get_param_value("id") + ".jpg\"");
 
 #if defined(FS_S3)
 		std::stringstream ostr;
 		if (S3::get_object_s3(req.get_param_value("id"), ostr)) {
-			res.set_header("Content-type", "image/jpg");
+			res.set_header("Content-type", "image/jpeg");
 			res.body = ostr.str();
 		} else {
 			res.status = 400;
@@ -533,6 +532,7 @@ void register_handlers(httplib::Server& svr) {
 		//}
 #if defined(FS_S3)						
 		if (S3::delete_object_s3(req.get_param_value("id"))) {
+			res.set_header("Access-control-allow-origin", "*");
 			DynamoDB::delete_item_dynamo("grupo6-ep4", "FotoId", req.get_param_value("id").c_str());
 			res.status = 200;
 		} else {
@@ -552,6 +552,8 @@ void register_handlers(httplib::Server& svr) {
 		auto size = req.files.size();
 		auto ret = req.has_file("imagen");
 		const auto& file = req.get_file_value("imagen");
+
+		res.set_header("Access-control-allow-origin", "*");
 
 		nlohmann::json j;
 		j [ "Location" ] = "https://isil-grupo6.s3.us-east-1.amazonaws.com/" + id + ".jpg";
