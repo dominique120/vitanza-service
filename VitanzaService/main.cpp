@@ -60,6 +60,10 @@ int main(int argc, char* argv[]) {
 	httplib::Server server;
 	register_handlers(server);
 
+	server.set_logger([](const auto& req, const auto& res) {
+		Logger::log_event(req, res);
+	});
+
 	std::cout << "Init done - Local address: " << g_config [ "SERVER_IP" ] << " bound using port " << g_config [ "SERVER_PORT" ] << std::endl;
 	server.listen(g_config [ "SERVER_IP" ].c_str(), std::stoi(g_config [ "SERVER_PORT" ]));
 
