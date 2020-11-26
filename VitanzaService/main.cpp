@@ -62,7 +62,7 @@ int main(int argc, char* argv[]) {
 
 	server.set_logger([](const auto& req, const auto& res) {
 		Logger::log_event(req, res);
-	});
+					  });
 
 	std::cout << "Init done - Local address: " << g_config [ "SERVER_IP" ] << " bound using port " << g_config [ "SERVER_PORT" ] << std::endl;
 	server.listen(g_config [ "SERVER_IP" ].c_str(), std::stoi(g_config [ "SERVER_PORT" ]));
@@ -74,6 +74,13 @@ int main(int argc, char* argv[]) {
 }
 
 void register_handlers(httplib::Server& svr) {
+	svr.Options(R"(.*)", [&](const httplib::Request& req, httplib::Response& res) {
+		res.set_header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
+		res.set_header("Access-Control-Allow-Origin", "http://" + req.remote_addr + ":" + std::to_string(req.remote_port));
+		res.set_header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+				});
+
+
 	svr.Post((g_config [ "API_BASE_URL" ] + "/config").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
@@ -121,7 +128,7 @@ void register_handlers(httplib::Server& svr) {
 		const std::map<std::string, std::string> user = nlohmann::json::parse(req.body);
 		//if (auth_wrapper::authenticate(user.at("username"), user.at("password"))) {
 		res.set_header("Content-type", "application/json");
-		res.set_header("Access-control-allow-origin", "*");
+		res.set_header("Access-Control-Allow-Origin", "*");
 		nlohmann::json j;
 		j [ "jwt" ] = Auth::generate_token(user.at("username"), user.at("password"));
 		res.body = j.dump();
@@ -133,7 +140,7 @@ void register_handlers(httplib::Server& svr) {
 	svr.Get((g_config [ "API_BASE_URL" ] + "/auth").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		//just a test to try to validate generated tokens
 		res.set_header("Content-type", "application/json");
-		res.set_header("Access-control-allow-origin", "*");
+		res.set_header("Access-Control-Allow-Origin", "*");
 
 		if (Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 200;
@@ -151,7 +158,7 @@ void register_handlers(httplib::Server& svr) {
 		}
 
 		res.set_header("Content-type", "application/json");
-		res.set_header("Access-control-allow-origin", "*");
+		res.set_header("Access-Control-Allow-Origin", "*");
 
 		if (req.has_param("id")) {
 			const std::string response = Client_wrapper::get_client(req.get_param_value("id"));
@@ -224,7 +231,7 @@ void register_handlers(httplib::Server& svr) {
 		}
 
 		res.set_header("Content-type", "application/json");
-		res.set_header("Access-control-allow-origin", "*");
+		res.set_header("Access-Control-Allow-Origin", "*");
 
 		if (req.has_param("id")) {
 			const std::string response = Product_wrapper::get_product(req.get_param_value("id"));
@@ -290,7 +297,7 @@ void register_handlers(httplib::Server& svr) {
 		}
 
 		res.set_header("Content-type", "application/json");
-		res.set_header("Access-control-allow-origin", "*");
+		res.set_header("Access-Control-Allow-Origin", "*");
 
 		if (req.has_param("id")) {
 			const std::string response = Order_wrapper::get_order_by_client(req.get_param_value("id"));
@@ -312,7 +319,7 @@ void register_handlers(httplib::Server& svr) {
 		}
 
 		res.set_header("Content-type", "application/json");
-		res.set_header("Access-control-allow-origin", "*");
+		res.set_header("Access-Control-Allow-Origin", "*");
 		const std::string response = Order_wrapper::get_outstanding_orders();
 		if (response.empty()) {
 			res.status = 204;
@@ -330,7 +337,7 @@ void register_handlers(httplib::Server& svr) {
 		}
 
 		res.set_header("Content-type", "application/json");
-		res.set_header("Access-control-allow-origin", "*");
+		res.set_header("Access-Control-Allow-Origin", "*");
 		if (req.has_param("id")) {
 			const std::string response = Order_wrapper::get_order(req.get_param_value("id"));
 			if (response.empty()) {
@@ -397,7 +404,7 @@ void register_handlers(httplib::Server& svr) {
 		}
 
 		res.set_header("Content-type", "application/json");
-		res.set_header("Access-control-allow-origin", "*");
+		res.set_header("Access-Control-Allow-Origin", "*");
 		if (req.has_param("id")) {
 			const std::string response = OrderDetail_wrapper::get_orderdetails_by_order(req.get_param_value("id"));
 			if (response.empty()) {
@@ -418,7 +425,7 @@ void register_handlers(httplib::Server& svr) {
 		}
 
 		res.set_header("Content-type", "application/json");
-		res.set_header("Access-control-allow-origin", "*");
+		res.set_header("Access-Control-Allow-Origin", "*");
 		if (req.has_param("id")) {
 			const std::string response = OrderDetail_wrapper::get_order_detail(req.get_param_value("id"));
 			if (response.empty()) {
@@ -477,7 +484,7 @@ void register_handlers(httplib::Server& svr) {
 		//	res.status = 403;
 		//	return;
 		//}
-		res.set_header("Access-control-allow-origin", "*");
+		res.set_header("Access-Control-Allow-Origin", "*");
 		res.set_header("Content-Disposition", "inline; filename=\"" + req.get_param_value("id") + ".jpg\"");
 
 #if defined(FS_S3)
@@ -495,7 +502,7 @@ void register_handlers(httplib::Server& svr) {
 		//	res.status = 403;
 		//	return;
 		//}
-		res.set_header("Access-control-allow-origin", "*");
+		res.set_header("Access-Control-Allow-Origin", "*");
 		res.set_header("Content-type", "application/json");
 #if defined(DB_DYNAMO)
 		std::string result = DynamoDB::scan_table_items_dynamo("grupo6-ep4");
@@ -515,7 +522,7 @@ void register_handlers(httplib::Server& svr) {
 		//	res.status = 403;
 		//	return;
 		//}
-		res.set_header("Access-control-allow-origin", "*");
+		res.set_header("Access-Control-Allow-Origin", "*");
 
 		const auto uuid = boost::uuids::random_generator()();
 		const std::string id = boost::uuids::to_string(uuid);
@@ -528,7 +535,7 @@ void register_handlers(httplib::Server& svr) {
 			res.status = 400;
 		}
 
-		});
+});
 	svr.Delete((g_config [ "API_BASE_URL" ] + "/images").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		//if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 		//	res.status = 403;
@@ -536,7 +543,7 @@ void register_handlers(httplib::Server& svr) {
 		//}
 #if defined(FS_S3)						
 		if (S3::delete_object_s3(req.get_param_value("id"))) {
-			res.set_header("Access-control-allow-origin", "*");
+			res.set_header("Access-Control-Allow-Origin", "*");
 			DynamoDB::delete_item_dynamo("grupo6-ep4", "FotoId", req.get_param_value("id").c_str());
 			res.status = 200;
 		} else {
@@ -557,7 +564,7 @@ void register_handlers(httplib::Server& svr) {
 		auto ret = req.has_file("imagen");
 		const auto& file = req.get_file_value("imagen");
 
-		res.set_header("Access-control-allow-origin", "*");
+		res.set_header("Access-Control-Allow-Origin", "*");
 
 		nlohmann::json j;
 		j [ "Location" ] = "https://isil-grupo6.s3.us-east-1.amazonaws.com/" + id + ".jpg";
@@ -577,11 +584,11 @@ void register_handlers(httplib::Server& svr) {
 		if (S3::put_object_s3(id + ".jpg", ostr, true)) {
 			res.status = 200;
 			res.body = id;
-		} else {
+			 } else {
 			res.status = 400;
 		}
 #endif
 
-	});
+			 });
 
 }
