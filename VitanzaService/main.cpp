@@ -76,7 +76,7 @@ int main(int argc, char* argv[]) {
 void register_handlers(httplib::Server& svr) {
 	svr.Options(R"(.*)", [&](const httplib::Request& req, httplib::Response& res) {
 		res.set_header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
-		res.set_header("Access-Control-Allow-Origin", "vts-alb-316342429.us-east-1.elb.amazonaws.com");
+		res.set_header("Access-Control-Allow-Origin", "http://vts-alb-316342429.us-east-1.elb.amazonaws.com");
 		res.set_header("Access-Control-Allow-Headers", "Content-Type, Authorization");
 				});
 
