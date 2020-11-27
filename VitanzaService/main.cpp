@@ -76,7 +76,8 @@ int main(int argc, char* argv[]) {
 void register_handlers(httplib::Server& svr) {
 	svr.Options(R"(.*)", [&](const httplib::Request& req, httplib::Response& res) {
 		res.set_header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
-		res.set_header("Access-Control-Allow-Origin", "http://" + req.remote_addr + ":" + std::to_string(req.remote_port));
+		//res.set_header("Access-Control-Allow-Origin", "http://" + req.remote_addr + ":" + std::to_string(req.remote_port));
+		res.set_header("Access-Control-Allow-Origin", "http://127.0.0.1:*");
 		res.set_header("Access-Control-Allow-Headers", "Content-Type, Authorization");
 				});
 
