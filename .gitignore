@@ -364,3 +364,4 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 VitanzaService/config.json
+VitanzaService.json

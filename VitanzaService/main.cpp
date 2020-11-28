@@ -177,7 +177,7 @@ void register_handlers(httplib::Server& svr) {
 				res.body = response;
 			}
 		}
-			});
+			});	
 	svr.Put((g_config [ "API_BASE_URL" ] + "/customers").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
@@ -216,6 +216,34 @@ void register_handlers(httplib::Server& svr) {
 		}
 
 		if (Client_wrapper::new_client(req.body)) {
+			res.status = 201;
+		} else {
+			res.status = 400;
+		}
+			 });
+
+
+	svr.Post((g_config [ "API_BASE_URL" ] + "/customersf").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		//if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+		//	res.status = 403;
+		//	return;
+		//}
+		
+		auto District = req.get_file_value("District");
+		auto FirstName = req.get_file_value("FirstName");
+		auto LastNames = req.get_file_value("LastNames");
+		auto PrimaryAddress = req.get_file_value("PrimaryAddress");
+		auto PrimaryPhone = req.get_file_value("PrimaryPhone");
+
+		nlohmann::json j;
+
+		j [ "PrimaryPhone" ] = PrimaryPhone.content;
+		j [ "PrimaryAddress" ] = PrimaryAddress.content;
+		j [ "LastNames" ] = LastNames.content;
+		j [ "FirstName" ] = FirstName.content;
+		j [ "District" ] = District.content;
+
+		if (Client_wrapper::new_client(j.dump())) {
 			res.status = 201;
 		} else {
 			res.status = 400;
@@ -563,7 +591,7 @@ void register_handlers(httplib::Server& svr) {
 		auto size = req.files.size();
 		auto ret = req.has_file("imagen");
 		const auto& file = req.get_file_value("imagen");
-
+		
 		res.set_header("Access-Control-Allow-Origin", "*");
 
 		nlohmann::json j;
