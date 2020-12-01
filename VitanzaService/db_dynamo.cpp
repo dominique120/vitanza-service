@@ -96,6 +96,7 @@ bool DynamoDB::update_item_dynamo(const Aws::String& table_name, const Aws::Stri
 	std::map<std::string, std::string> json_map = j;
 
 	// TODO: I would like to make this mode dynamic instead of manually keeping all the tables here
+	/*
 	if (table_name == "clients") {
 		json_map.erase("ClientId_uuid");
 	} else if (table_name == "orders") {
@@ -107,6 +108,8 @@ bool DynamoDB::update_item_dynamo(const Aws::String& table_name, const Aws::Stri
 	} else {
 		std::cout << "Unknown table!" << std::endl;
 	}
+	*/
+	json_map.erase(key_name.c_str());
 
 	// build SET expression
 	Aws::OStringStream ss;
@@ -129,6 +132,7 @@ bool DynamoDB::update_item_dynamo(const Aws::String& table_name, const Aws::Stri
 
 	for (const auto& i : json_map) {
 		Aws::DynamoDB::Model::AttributeValue attribute_updated_value;
+		// TODO: change this to get they type of the item instead of manually filtering keys
 		if (i.first == "Paid" || i.first == "Delivered" || i.first == "Stock" || i.first == "Price") {
 			attribute_updated_value.SetN(i.second.c_str());//need to pass here the value to be updated
 		} else {
@@ -177,6 +181,7 @@ bool DynamoDB::new_item_dynamo(const Aws::String& table_name, const Aws::String&
 	// Add body
 	for (const auto& i : items) {
 		Aws::DynamoDB::Model::AttributeValue attribute_value;
+		// TODO: change this to get they type of the item instead of manually filtering keys
 		if (i.first == "Paid" || i.first == "Delivered" || i.first == "Stock" || i.first == "Price") {
 			attribute_value.SetN(i.second.c_str());
 		} else {
@@ -280,7 +285,7 @@ std::string DynamoDB::query_index(const Aws::String& table_name, const Aws::Stri
 	size_t inner_cntr = 0;
 	size_t outer_cntr = 0;
 	Aws::OStringStream j_ss;
-	j_ss << "[";
+	query_result.empty() ? j_ss << "" : j_ss << "[";
 	for (size_t i = 0; i < query_result.size(); ++i) {
 		j_ss << "{";
 		for (auto& j : query_result.at(i)) {
@@ -300,17 +305,10 @@ std::string DynamoDB::query_index(const Aws::String& table_name, const Aws::Stri
 		++outer_cntr;
 		outer_cntr != query_result.size() ? j_ss << "}, " : j_ss << "}";
 	}
-	j_ss << "]";
+	query_result.empty() ? j_ss << "" : j_ss << "]";
 
 	return j_ss.str().c_str();
 }
-
-
-
-
-
-
-
 
 std::string DynamoDB::scan_table_items_dynamo(const Aws::String& table_name) {
 	Aws::Auth::AWSCredentials credentials;
@@ -347,10 +345,11 @@ std::string DynamoDB::scan_table_items_dynamo(const Aws::String& table_name) {
 	size_t inner_cntr = 0;
 	size_t outer_cntr = 0;
 	Aws::OStringStream j_ss;
-	j_ss << "[";
+
+	query_result.empty() ? j_ss << "" : j_ss << "[";
 	for (size_t i = 0; i < query_result.size(); ++i) {
 		j_ss << "{";
-		for (auto& j : query_result.at(i)) {
+		for (const auto& j : query_result.at(i)) {
 			j_ss << "\"" << j.first << "\" : \"";
 
 			if (j.second.GetType() == Aws::DynamoDB::Model::ValueType::STRING) {
@@ -367,7 +366,7 @@ std::string DynamoDB::scan_table_items_dynamo(const Aws::String& table_name) {
 		++outer_cntr;
 		outer_cntr != query_result.size() ? j_ss << "}, " : j_ss << "}";
 	}
-	j_ss << "]";
+	query_result.empty() ? j_ss << "" : j_ss << "]";
 
 	return j_ss.str().c_str();
 }
@@ -437,7 +436,7 @@ std::string DynamoDB::scan_table_items_filer_dynamo(const Aws::String& table_nam
 	size_t inner_cntr = 0;
 	size_t outer_cntr = 0;
 	Aws::OStringStream j_ss;
-	j_ss << "[";
+	query_result.empty() ? j_ss << "" : j_ss << "[";
 	for (size_t i = 0; i < query_result.size(); ++i) {
 		j_ss << "{";
 		for (const auto& j : query_result.at(i)) {
@@ -457,7 +456,7 @@ std::string DynamoDB::scan_table_items_filer_dynamo(const Aws::String& table_nam
 		++outer_cntr;
 		outer_cntr != query_result.size() ? j_ss << "}, " : j_ss << "}";
 	}
-	j_ss << "]";
+	query_result.empty() ? j_ss << "" : j_ss << "]";
 
 	return j_ss.str().c_str();
 }

@@ -177,7 +177,7 @@ void register_handlers(httplib::Server& svr) {
 				res.body = response;
 			}
 		}
-			});	
+			});
 	svr.Put((g_config [ "API_BASE_URL" ] + "/customers").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
@@ -228,7 +228,7 @@ void register_handlers(httplib::Server& svr) {
 		//	res.status = 403;
 		//	return;
 		//}
-		
+
 		auto District = req.get_file_value("District");
 		auto FirstName = req.get_file_value("FirstName");
 		auto LastNames = req.get_file_value("LastNames");
@@ -563,7 +563,7 @@ void register_handlers(httplib::Server& svr) {
 			res.status = 400;
 		}
 
-});
+			 });
 	svr.Delete((g_config [ "API_BASE_URL" ] + "/images").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		//if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 		//	res.status = 403;
@@ -591,7 +591,7 @@ void register_handlers(httplib::Server& svr) {
 		auto size = req.files.size();
 		auto ret = req.has_file("imagen");
 		const auto& file = req.get_file_value("imagen");
-		
+
 		res.set_header("Access-Control-Allow-Origin", "*");
 
 		nlohmann::json j;
@@ -612,11 +612,58 @@ void register_handlers(httplib::Server& svr) {
 		if (S3::put_object_s3(id + ".jpg", ostr, true)) {
 			res.status = 200;
 			res.body = id;
-			 } else {
+		} else {
 			res.status = 400;
 		}
 #endif
 
 			 });
 
+
+
+
+
+
+
+
+
+
+
+
+	// Authenticate
+	svr.Post("/isilinsta/validate_user", [](const httplib::Request& req, httplib::Response& res) {
+		try {
+			std::map<std::string, std::string> user_pass = nlohmann::json::parse(req.body);
+
+			std::string result = DynamoDB::query_index("User", "userName", user_pass.at("username").c_str());
+
+			auto query_result = nlohmann::json::parse(result);
+
+			std::map<std::string, std::string> pwd = query_result.at(0);
+
+			if (pwd.at("password") == user_pass.at("password")) {
+				res.status = 200;
+			}
+
+		} catch (const nlohmann::json::exception& e) {
+			res.status = 403;
+			res.body = e.what();
+			std::cout << e.what() << "\n";
+		}
+			 });
+
+
+	/*
+Ver publicaciones de todos los usuarios
+	Realizar una publicación
+	Dar Like a una publicación
+	Comentar una publicación
+	Visualizar comentarios realizados en una publicación
+	*/
+
+	svr.Get("/isilinsta/getposts", [](const httplib::Request& req, httplib::Response& res) {
+
+		res.body = DynamoDB::scan_table_items_dynamo("Post");
+		res.status = 200;
+			});
 }
