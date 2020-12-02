@@ -652,18 +652,65 @@ void register_handlers(httplib::Server& svr) {
 		}
 			 });
 
-
-	/*
-Ver publicaciones de todos los usuarios
-	Realizar una publicación
-	Dar Like a una publicación
-	Comentar una publicación
-	Visualizar comentarios realizados en una publicación
-	*/
-
 	svr.Get("/isilinsta/getposts", [](const httplib::Request& req, httplib::Response& res) {
 
 		res.body = DynamoDB::scan_table_items_dynamo("Post");
 		res.status = 200;
 			});
+
+	svr.Post("/isilinsta/likepost", [](const httplib::Request& req, httplib::Response& res) {
+		const auto uuid = boost::uuids::random_generator()();
+		const std::string id = boost::uuids::to_string(uuid);
+
+		nlohmann::json j_body;
+		j_body [ "postId" ] = req.get_param_value("postId");
+		j_body [ "personId" ] = req.get_param_value("personId");
+
+
+		DynamoDB::new_item_dynamo("Like", "likeId", id.c_str(), j_body.dump());
+
+
+		res.status = 201;
+			 });
+
+	svr.Post("/isilinsta/newpost", [](const httplib::Request& req, httplib::Response& res) {
+		const auto uuid = boost::uuids::random_generator()();
+		const std::string id = boost::uuids::to_string(uuid);
+
+		const nlohmann::json j_body = nlohmann::json::parse(req.body);
+
+
+		DynamoDB::new_item_dynamo("Post", "postId", id.c_str(), j_body.dump());
+
+
+		res.status = 201;
+			 });
+
+	svr.Post("/isilinsta/newcomment", [](const httplib::Request& req, httplib::Response& res) {
+		const auto uuid = boost::uuids::random_generator()();
+		const std::string id = boost::uuids::to_string(uuid);
+
+		const nlohmann::json j_body = nlohmann::json::parse(req.body);
+
+
+		DynamoDB::new_item_dynamo("Comment", "commentId", id.c_str(), j_body.dump());
+
+
+		res.status = 201;
+			 });
+
+	svr.Post("/isilinsta/getpostcomments", [](const httplib::Request& req, httplib::Response& res) {
+
+		res.body = DynamoDB::query_index("Comment", "postId", req.get_param_value("postId").c_str());
+		res.status = 200;
+			 });
+
+	/*
+DONE: Ver publicaciones de todos los usuarios
+DONE: Realizar una publicación
+DONE: Dar Like a una publicación
+DONE: Comentar una publicación
+DONE: Visualizar comentarios realizados en una publicación
+*/
+
 }
