@@ -36,12 +36,14 @@ int main(int argc, char* argv[]) {
 #if defined(FS_S3)
 	std::cout << "Using " << "S3 to store files remotely." << std::endl;
 #elif defined(FS_LOCAL)
-	if (std::filesystem::exists(g_config [ "FS_LOCAL_DIR" ])) {
-		std::cout << "Using " << "directory \"" << g_config [ "FS_LOCAL_DIR" ] + "\" to store files locally." << std::endl;
-	} else {
-		if (std::filesystem::create_directory(g_config [ "FS_LOCAL_DIR" ])) {
-			std::cout << "Created directory \"" << g_config [ "FS_LOCAL_DIR" ] + "\" to store files locally." << std::endl;
-		} else {
+	if (std::filesystem::exists(g_config["FS_LOCAL_DIR"])) {
+		std::cout << "Using " << "directory \"" << g_config["FS_LOCAL_DIR"] + "\" to store files locally." << std::endl;
+	}
+	else {
+		if (std::filesystem::create_directory(g_config["FS_LOCAL_DIR"])) {
+			std::cout << "Created directory \"" << g_config["FS_LOCAL_DIR"] + "\" to store files locally." << std::endl;
+		}
+		else {
 			std::cout << "Could not create directory." << std::endl;
 			return EXIT_FAILURE;
 		}
@@ -62,10 +64,15 @@ int main(int argc, char* argv[]) {
 
 	server.set_logger([](const auto& req, const auto& res) {
 		Logger::log_event(req, res);
-					  });
+		});
 
-	std::cout << "Init done - Local address: " << g_config [ "SERVER_IP" ] << " bound using port " << g_config [ "SERVER_PORT" ] << std::endl;
-	server.listen(g_config [ "SERVER_IP" ].c_str(), std::stoi(g_config [ "SERVER_PORT" ]));
+	const auto ret = server.set_mount_point("/img_store", "./img_store");
+	if (!ret) {
+		std::cout << "Directory does not exist \n";
+	}
+
+	std::cout << "Init done - Local address: " << g_config["SERVER_IP"] << " bound using port " << g_config["SERVER_PORT"] << std::endl;
+	server.listen(g_config["SERVER_IP"].c_str(), std::stoi(g_config["SERVER_PORT"]));
 
 
 	Aws::ShutdownAPI(options);
@@ -78,10 +85,10 @@ void register_handlers(httplib::Server& svr) {
 		res.set_header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
 		res.set_header("Access-Control-Allow-Origin", "http://vts-alb-316342429.us-east-1.elb.amazonaws.com");
 		res.set_header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-				});
+		});
 
 
-	svr.Post((g_config [ "API_BASE_URL" ] + "/config").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Post((g_config["API_BASE_URL"] + "/config").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -89,19 +96,20 @@ void register_handlers(httplib::Server& svr) {
 
 		if (g_config.reload(req.body)) {
 			res.status = 201;
-		} else {
+		}
+		else {
 			res.status = 400;
 		}
-			 });
+		});
 
 	svr.Get("/health", [](const httplib::Request& req, httplib::Response& res) {
 		res.status = 200;
-			});
+		});
 
 
 	/*----------------- Authentication -------------------------------*/
 	// later on add support for creating new password, deleting user, etc
-	svr.Post((g_config [ "API_BASE_URL" ] + "/auth/users").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Post((g_config["API_BASE_URL"] + "/auth/users").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -110,48 +118,51 @@ void register_handlers(httplib::Server& svr) {
 
 		if (Auth::create_user(user.at("username"), user.at("password"))) {
 			res.status = 201;
-		} else {
+		}
+		else {
 			res.status = 400;
 		}
-			 });
-	svr.Post((g_config [ "API_BASE_URL" ] + "/auth/validateuser").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		});
+	svr.Post((g_config["API_BASE_URL"] + "/auth/validateuser").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 
 		const std::map<std::string, std::string> user = nlohmann::json::parse(req.body);
 
 		if (Auth::validate_user(user.at("username"), user.at("password"))) {
 			res.status = 200;
-		} else {
+		}
+		else {
 			res.status = 403;
 		}
-			 });
-	svr.Post((g_config [ "API_BASE_URL" ] + "/auth").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		});
+	svr.Post((g_config["API_BASE_URL"] + "/auth").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		const std::map<std::string, std::string> user = nlohmann::json::parse(req.body);
 		//if (auth_wrapper::authenticate(user.at("username"), user.at("password"))) {
 		res.set_header("Content-type", "application/json");
 		res.set_header("Access-Control-Allow-Origin", "*");
 		nlohmann::json j;
-		j [ "jwt" ] = Auth::generate_token(user.at("username"), user.at("password"));
+		j["jwt"] = Auth::generate_token(user.at("username"), user.at("password"));
 		res.body = j.dump();
 		res.status = 200;
 		//} else {
 			//res.status = 403;
 		//}
-			 });
-	svr.Get((g_config [ "API_BASE_URL" ] + "/auth").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		});
+	svr.Get((g_config["API_BASE_URL"] + "/auth").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		//just a test to try to validate generated tokens
 		res.set_header("Content-type", "application/json");
 		res.set_header("Access-Control-Allow-Origin", "*");
 
 		if (Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 200;
-		} else {
+		}
+		else {
 			res.status = 403;
 		}
 
-			});
+		});
 
 	/*--------------- Customers ---------------------------*/
-	svr.Get((g_config [ "API_BASE_URL" ] + "/customers").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Get((g_config["API_BASE_URL"] + "/customers").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -164,21 +175,24 @@ void register_handlers(httplib::Server& svr) {
 			const std::string response = Client_wrapper::get_client(req.get_param_value("id"));
 			if (response.empty()) {
 				res.status = 204;
-			} else {
-				res.status = 200;
-				res.body = response;
 			}
-		} else {
-			const std::string response = Client_wrapper::get_all_clients();
-			if (response.empty()) {
-				res.status = 204;
-			} else {
+			else {
 				res.status = 200;
 				res.body = response;
 			}
 		}
-			});
-	svr.Put((g_config [ "API_BASE_URL" ] + "/customers").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		else {
+			const std::string response = Client_wrapper::get_all_clients();
+			if (response.empty()) {
+				res.status = 204;
+			}
+			else {
+				res.status = 200;
+				res.body = response;
+			}
+		}
+		});
+	svr.Put((g_config["API_BASE_URL"] + "/customers").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -187,14 +201,16 @@ void register_handlers(httplib::Server& svr) {
 		if (req.has_param("id")) {
 			if (Client_wrapper::update_client(req.get_param_value("id"), req.body)) {
 				res.status = 204;
-			} else {
+			}
+			else {
 				res.status = 400;
 			}
-		} else {
+		}
+		else {
 			res.status = 400;
 		}
-			});
-	svr.Delete((g_config [ "API_BASE_URL" ] + "/customers").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		});
+	svr.Delete((g_config["API_BASE_URL"] + "/customers").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -202,14 +218,16 @@ void register_handlers(httplib::Server& svr) {
 		if (req.has_param("id")) {
 			if (Client_wrapper::delete_client(req.get_param_value("id"))) {
 				res.status = 200;
-			} else {
+			}
+			else {
 				res.status = 400;
 			}
-		} else {
+		}
+		else {
 			res.status = 400;
 		}
-			   });
-	svr.Post((g_config [ "API_BASE_URL" ] + "/customers").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		});
+	svr.Post((g_config["API_BASE_URL"] + "/customers").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -217,13 +235,14 @@ void register_handlers(httplib::Server& svr) {
 
 		if (Client_wrapper::new_client(req.body)) {
 			res.status = 201;
-		} else {
+		}
+		else {
 			res.status = 400;
 		}
-			 });
+		});
 
 
-	svr.Post((g_config [ "API_BASE_URL" ] + "/customersf").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Post((g_config["API_BASE_URL"] + "/customersf").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		//if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 		//	res.status = 403;
 		//	return;
@@ -237,22 +256,23 @@ void register_handlers(httplib::Server& svr) {
 
 		nlohmann::json j;
 
-		j [ "PrimaryPhone" ] = PrimaryPhone.content;
-		j [ "PrimaryAddress" ] = PrimaryAddress.content;
-		j [ "LastNames" ] = LastNames.content;
-		j [ "FirstName" ] = FirstName.content;
-		j [ "District" ] = District.content;
+		j["PrimaryPhone"] = PrimaryPhone.content;
+		j["PrimaryAddress"] = PrimaryAddress.content;
+		j["LastNames"] = LastNames.content;
+		j["FirstName"] = FirstName.content;
+		j["District"] = District.content;
 
 		if (Client_wrapper::new_client(j.dump())) {
 			res.status = 201;
-		} else {
+		}
+		else {
 			res.status = 400;
 		}
-			 });
+		});
 
 
 	/*--------------- Products ---------------------------*/
-	svr.Get((g_config [ "API_BASE_URL" ] + "/products").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Get((g_config["API_BASE_URL"] + "/products").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -265,21 +285,24 @@ void register_handlers(httplib::Server& svr) {
 			const std::string response = Product_wrapper::get_product(req.get_param_value("id"));
 			if (response.empty()) {
 				res.status = 204;
-			} else {
-				res.status = 200;
-				res.body = response;
 			}
-		} else {
-			const std::string response = Product_wrapper::get_all_products();
-			if (response.empty()) {
-				res.status = 204;
-			} else {
+			else {
 				res.status = 200;
 				res.body = response;
 			}
 		}
-			});
-	svr.Put((g_config [ "API_BASE_URL" ] + "/products").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		else {
+			const std::string response = Product_wrapper::get_all_products();
+			if (response.empty()) {
+				res.status = 204;
+			}
+			else {
+				res.status = 200;
+				res.body = response;
+			}
+		}
+		});
+	svr.Put((g_config["API_BASE_URL"] + "/products").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -287,11 +310,12 @@ void register_handlers(httplib::Server& svr) {
 
 		if (Product_wrapper::update_product(req.get_param_value("id"), req.body)) {
 			res.status = 200;
-		} else {
+		}
+		else {
 			res.status = 400;
 		}
-			});
-	svr.Delete((g_config [ "API_BASE_URL" ] + "/products").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		});
+	svr.Delete((g_config["API_BASE_URL"] + "/products").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -299,12 +323,13 @@ void register_handlers(httplib::Server& svr) {
 
 		if (Product_wrapper::delete_product(req.get_param_value("id"))) {
 			res.status = 200;
-		} else {
+		}
+		else {
 			res.status = 400;
 		}
-			   });
+		});
 
-	svr.Post((g_config [ "API_BASE_URL" ] + "/products").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Post((g_config["API_BASE_URL"] + "/products").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -312,13 +337,14 @@ void register_handlers(httplib::Server& svr) {
 
 		if (Product_wrapper::new_product(req.body)) {
 			res.status = 201;
-		} else {
+		}
+		else {
 			res.status = 400;
 		}
-			 });
+		});
 
 	/*--------------- Orders ---------------------------*/
-	svr.Get((g_config [ "API_BASE_URL" ] + "/orders/by_client").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Get((g_config["API_BASE_URL"] + "/orders/by_client").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -331,16 +357,18 @@ void register_handlers(httplib::Server& svr) {
 			const std::string response = Order_wrapper::get_order_by_client(req.get_param_value("id"));
 			if (response.empty()) {
 				res.status = 204;
-			} else {
+			}
+			else {
 				res.status = 200;
 				res.body = response;
 			}
-		} else {
+		}
+		else {
 			res.status = 400;
 		}
-			});
+		});
 
-	svr.Get((g_config [ "API_BASE_URL" ] + "/orders/outstanding").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Get((g_config["API_BASE_URL"] + "/orders/outstanding").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -351,14 +379,15 @@ void register_handlers(httplib::Server& svr) {
 		const std::string response = Order_wrapper::get_outstanding_orders();
 		if (response.empty()) {
 			res.status = 204;
-		} else {
+		}
+		else {
 			res.status = 200;
 			res.body = response;
 		}
-			});
+		});
 
 
-	svr.Get((g_config [ "API_BASE_URL" ] + "/orders").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Get((g_config["API_BASE_URL"] + "/orders").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -370,21 +399,24 @@ void register_handlers(httplib::Server& svr) {
 			const std::string response = Order_wrapper::get_order(req.get_param_value("id"));
 			if (response.empty()) {
 				res.status = 204;
-			} else {
-				res.status = 200;
-				res.body = response;
 			}
-		} else {
-			const std::string response = Order_wrapper::get_all_orders();
-			if (response.empty()) {
-				res.status = 204;
-			} else {
+			else {
 				res.status = 200;
 				res.body = response;
 			}
 		}
-			});
-	svr.Put((g_config [ "API_BASE_URL" ] + "/orders").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		else {
+			const std::string response = Order_wrapper::get_all_orders();
+			if (response.empty()) {
+				res.status = 204;
+			}
+			else {
+				res.status = 200;
+				res.body = response;
+			}
+		}
+		});
+	svr.Put((g_config["API_BASE_URL"] + "/orders").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -392,11 +424,12 @@ void register_handlers(httplib::Server& svr) {
 
 		if (Order_wrapper::update_order(req.get_param_value("id"), req.body)) {
 			res.status = 200;
-		} else {
+		}
+		else {
 			res.status = 400;
 		}
-			});
-	svr.Delete((g_config [ "API_BASE_URL" ] + "/orders").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		});
+	svr.Delete((g_config["API_BASE_URL"] + "/orders").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -404,13 +437,14 @@ void register_handlers(httplib::Server& svr) {
 
 		if (Order_wrapper::delete_order(req.get_param_value("id"))) {
 			res.status = 200;
-		} else {
+		}
+		else {
 			res.status = 400;
 		}
-			   });
+		});
 
 
-	svr.Post((g_config [ "API_BASE_URL" ] + "/orders").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Post((g_config["API_BASE_URL"] + "/orders").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -418,14 +452,15 @@ void register_handlers(httplib::Server& svr) {
 
 		if (Order_wrapper::new_order(req.body)) {
 			res.status = 201;
-		} else {
+		}
+		else {
 			res.status = 400;
 		}
-			 });
+		});
 
 	/*--------------- Order Details ---------------------------*/
 
-	svr.Get((g_config [ "API_BASE_URL" ] + "/orderdetails/by_order").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Get((g_config["API_BASE_URL"] + "/orderdetails/by_order").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -437,16 +472,18 @@ void register_handlers(httplib::Server& svr) {
 			const std::string response = OrderDetail_wrapper::get_orderdetails_by_order(req.get_param_value("id"));
 			if (response.empty()) {
 				res.status = 204;
-			} else {
+			}
+			else {
 				res.status = 200;
 				res.body = response;
 			}
-		} else {
+		}
+		else {
 			res.status = 400;
 		}
-			});
+		});
 
-	svr.Get((g_config [ "API_BASE_URL" ] + "/orderdetails").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Get((g_config["API_BASE_URL"] + "/orderdetails").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -458,15 +495,17 @@ void register_handlers(httplib::Server& svr) {
 			const std::string response = OrderDetail_wrapper::get_order_detail(req.get_param_value("id"));
 			if (response.empty()) {
 				res.status = 204;
-			} else {
+			}
+			else {
 				res.status = 200;
 				res.body = response;
 			}
-		} else {
+		}
+		else {
 			res.status = 400;
 		}
-			});
-	svr.Put((g_config [ "API_BASE_URL" ] + "/orderdetails").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		});
+	svr.Put((g_config["API_BASE_URL"] + "/orderdetails").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -474,14 +513,16 @@ void register_handlers(httplib::Server& svr) {
 		if (req.has_param("id")) {
 			if (OrderDetail_wrapper::update_order_detail(req.get_param_value("id"), req.body)) {
 				res.status = 200;
-			} else {
+			}
+			else {
 				res.status = 400;
 			}
-		} else {
+		}
+		else {
 			res.status = 400;
 		}
-			});
-	svr.Delete((g_config [ "API_BASE_URL" ] + "/orderdetails").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		});
+	svr.Delete((g_config["API_BASE_URL"] + "/orderdetails").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -489,11 +530,12 @@ void register_handlers(httplib::Server& svr) {
 
 		if (OrderDetail_wrapper::delete_order_detail(req.get_param_value("id"))) {
 			res.status = 200;
-		} else {
+		}
+		else {
 			res.status = 400;
 		}
-			   });
-	svr.Post((g_config [ "API_BASE_URL" ] + "/orderdetails").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		});
+	svr.Post((g_config["API_BASE_URL"] + "/orderdetails").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -501,13 +543,14 @@ void register_handlers(httplib::Server& svr) {
 
 		if (OrderDetail_wrapper::new_order_detail(req.body)) {
 			res.status = 201;
-		} else {
+		}
+		else {
 			res.status = 400;
 		}
-			 });
+		});
 
 	/*--------------- Images ---------------------------*/
-	svr.Get((g_config [ "API_BASE_URL" ] + "/images").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Get((g_config["API_BASE_URL"] + "/images").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		//if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 		//	res.status = 403;
 		//	return;
@@ -520,12 +563,13 @@ void register_handlers(httplib::Server& svr) {
 		if (S3::get_object_s3(req.get_param_value("id"), ostr)) {
 			res.set_header("Content-type", "image/jpeg");
 			res.body = ostr.str();
-		} else {
+		}
+		else {
 			res.status = 400;
 		}
 #endif
-			});
-	svr.Get((g_config [ "API_BASE_URL" ] + "/image_list").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		});
+	svr.Get((g_config["API_BASE_URL"] + "/image_list").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		//if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 		//	res.status = 403;
 		//	return;
@@ -538,14 +582,15 @@ void register_handlers(httplib::Server& svr) {
 		if (!result.empty()) {
 			res.body = result;
 			res.status = 200;
-		} else {
+		}
+		else {
 			res.status = 204;
 		}
 #else
 		res.status = 204;
 #endif
-			});
-	svr.Post((g_config [ "API_BASE_URL" ] + "/images").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		});
+	svr.Post((g_config["API_BASE_URL"] + "/images").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		//if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 		//	res.status = 403;
 		//	return;
@@ -559,12 +604,13 @@ void register_handlers(httplib::Server& svr) {
 		if (File_wrapper::write_fs(id + ".jpg", ostr)) {
 			res.status = 200;
 			res.body = id;
-		} else {
+		}
+		else {
 			res.status = 400;
 		}
 
-			 });
-	svr.Delete((g_config [ "API_BASE_URL" ] + "/images").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		});
+	svr.Delete((g_config["API_BASE_URL"] + "/images").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		//if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 		//	res.status = 403;
 		//	return;
@@ -574,12 +620,13 @@ void register_handlers(httplib::Server& svr) {
 			res.set_header("Access-Control-Allow-Origin", "*");
 			DynamoDB::delete_item_dynamo("grupo6-ep4", "FotoId", req.get_param_value("id").c_str());
 			res.status = 200;
-		} else {
+		}
+		else {
 			res.status = 400;
 		}
 #endif
-			   });
-	svr.Post((g_config [ "API_BASE_URL" ] + "/images_formdata").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		});
+	svr.Post((g_config["API_BASE_URL"] + "/images_formdata").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		//if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 		//	res.status = 403;
 		//	return;
@@ -595,12 +642,12 @@ void register_handlers(httplib::Server& svr) {
 		res.set_header("Access-Control-Allow-Origin", "*");
 
 		nlohmann::json j;
-		j [ "Location" ] = "https://isil-grupo6.s3.us-east-1.amazonaws.com/" + id + ".jpg";
+		j["Location"] = "https://isil-grupo6.s3.us-east-1.amazonaws.com/" + id + ".jpg";
 #if defined(DB_DYNAMO)
 		DynamoDB::new_item_dynamo("grupo6-ep4", "FotoId", id.c_str(), j.dump());
 
-		j [ "FotoId" ] = id;
-		SQS::send_message_sqs(g_config [ "AWS_SQS_QUEUE_URL" ], j.dump());
+		j["FotoId"] = id;
+		SQS::send_message_sqs(g_config["AWS_SQS_QUEUE_URL"], j.dump());
 
 
 		std::stringstream ostr;
@@ -612,12 +659,13 @@ void register_handlers(httplib::Server& svr) {
 		if (S3::put_object_s3(id + ".jpg", ostr, true)) {
 			res.status = 200;
 			res.body = id;
-		} else {
+		}
+		else {
 			res.status = 400;
 		}
 #endif
 
-			 });
+		});
 
 
 
@@ -634,44 +682,67 @@ void register_handlers(httplib::Server& svr) {
 	svr.Post("/isilinsta/validate_user", [](const httplib::Request& req, httplib::Response& res) {
 		try {
 			std::map<std::string, std::string> user_pass = nlohmann::json::parse(req.body);
-
 			std::string result = DynamoDB::query_index("User", "userName", user_pass.at("username").c_str());
-
-			auto query_result = nlohmann::json::parse(result);
-
-			std::map<std::string, std::string> pwd = query_result.at(0);
-
-			if (pwd.at("password") == user_pass.at("password")) {
-				res.status = 200;
+			if (!result.empty()) {
+				auto query_result = nlohmann::json::parse(result);
+				std::map<std::string, std::string> pwd = query_result.at(0);
+				if (pwd.at("password") == user_pass.at("password")) {
+					res.status = 200;
+					res.body = query_result.dump();
+				}
+				else {
+					res.status = 403;
+					return;
+				}
 			}
 
-		} catch (const nlohmann::json::exception& e) {
+			res.set_header("Content-type", "application/json");
+			res.set_header("Access-Control-Allow-Origin", "*");
+			
+
+		}
+		catch (const nlohmann::json::exception& e) {
 			res.status = 403;
-			res.body = e.what();
+			//res.body = e.what();
 			std::cout << e.what() << "\n";
 		}
-			 });
+		});
 
 	svr.Get("/isilinsta/getposts", [](const httplib::Request& req, httplib::Response& res) {
-
+		res.set_header("Content-type", "application/json");
+		res.set_header("Access-Control-Allow-Origin", "*");
 		res.body = DynamoDB::scan_table_items_dynamo("Post");
 		res.status = 200;
-			});
+		});
+
+	svr.Get("/isilinsta/personbyuser", [](const httplib::Request& req, httplib::Response& res) {
+		res.set_header("Content-type", "application/json");
+		res.set_header("Access-Control-Allow-Origin", "*");
+
+		res.body = DynamoDB::query_index("Person", "personId", req.get_param_value("id").c_str());		
+		res.status = 200;
+		});
+
+	svr.Get("/isilinsta/personbyid", [](const httplib::Request& req, httplib::Response& res) {
+		res.set_header("Content-type", "application/json");
+		res.set_header("Access-Control-Allow-Origin", "*");
+
+		res.body = DynamoDB::query_index("Person", "personId", req.get_param_value("id").c_str());
+		res.status = 200;
+		});
 
 	svr.Post("/isilinsta/likepost", [](const httplib::Request& req, httplib::Response& res) {
 		const auto uuid = boost::uuids::random_generator()();
 		const std::string id = boost::uuids::to_string(uuid);
 
 		nlohmann::json j_body;
-		j_body [ "postId" ] = req.get_param_value("postId");
-		j_body [ "personId" ] = req.get_param_value("personId");
-
+		j_body["postId"] = req.get_param_value("postId");
+		j_body["personId"] = req.get_param_value("personId");
 
 		DynamoDB::new_item_dynamo("Like", "likeId", id.c_str(), j_body.dump());
 
-
 		res.status = 201;
-			 });
+		});
 
 	svr.Post("/isilinsta/newpost", [](const httplib::Request& req, httplib::Response& res) {
 		const auto uuid = boost::uuids::random_generator()();
@@ -684,7 +755,7 @@ void register_handlers(httplib::Server& svr) {
 
 
 		res.status = 201;
-			 });
+		});
 
 	svr.Post("/isilinsta/newcomment", [](const httplib::Request& req, httplib::Response& res) {
 		const auto uuid = boost::uuids::random_generator()();
@@ -697,20 +768,20 @@ void register_handlers(httplib::Server& svr) {
 
 
 		res.status = 201;
-			 });
+		});
 
 	svr.Post("/isilinsta/getpostcomments", [](const httplib::Request& req, httplib::Response& res) {
 
-		res.body = DynamoDB::query_index("Comment", "postId", req.get_param_value("postId").c_str());
+		res.body = DynamoDB::query_index("Comment", "postId", req.get_param_value("id").c_str());
 		res.status = 200;
-			 });
+		});
 
 	/*
-DONE: Ver publicaciones de todos los usuarios
-DONE: Realizar una publicación
-DONE: Dar Like a una publicación
-DONE: Comentar una publicación
-DONE: Visualizar comentarios realizados en una publicación
-*/
+		DONE: Ver publicaciones de todos los usuarios
+		DONE: Realizar una publicación
+		DONE: Dar Like a una publicación
+		DONE: Comentar una publicación
+		DONE: Visualizar comentarios realizados en una publicación
+	*/
 
 }

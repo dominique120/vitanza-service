@@ -6,16 +6,9 @@ extern ConfigurationManager g_config;
 
 bool S3::put_object_s3(const std::string& filename, std::stringstream& image_data, const bool& set_public) {
 	Aws::Auth::AWSCredentials credentials;
-	credentials.SetAWSAccessKeyId(Aws::String(g_config [ "AWS_ACCESS_KEY" ].c_str()));
-	credentials.SetAWSSecretKey(Aws::String(g_config [ "AWS_SECRET_KEY" ].c_str()));
-	bool use_token;
-	std::istringstream(g_config [ "AWS_USE_SESSION_TOKEN" ]) >> std::boolalpha >> use_token;
-	if (use_token) {
-		credentials.SetSessionToken(Aws::String(g_config [ "AWS_SESSION_TOKEN" ].c_str()));
-	}
-
 	Aws::Client::ClientConfiguration client_config;
-	client_config.region = g_config [ "AWS_REGION" ].c_str();
+	AWSUtil::client_config(credentials, client_config);
+
 
 	Aws::S3::S3Client s3_client(credentials, client_config);
 
@@ -45,16 +38,8 @@ bool S3::put_object_s3(const std::string& filename, std::stringstream& image_dat
 
 bool S3::get_object_s3(const std::string& filename, std::stringstream& stream) {
 	Aws::Auth::AWSCredentials credentials;
-	credentials.SetAWSAccessKeyId(Aws::String(g_config [ "AWS_ACCESS_KEY" ].c_str()));
-	credentials.SetAWSSecretKey(Aws::String(g_config [ "AWS_SECRET_KEY" ].c_str()));
-	bool use_token;
-	std::istringstream(g_config [ "AWS_USE_SESSION_TOKEN" ]) >> std::boolalpha >> use_token;
-	if (use_token) {
-		credentials.SetSessionToken(Aws::String(g_config [ "AWS_SESSION_TOKEN" ].c_str()));
-	}
-
 	Aws::Client::ClientConfiguration client_config;
-	client_config.region = g_config [ "AWS_REGION" ].c_str();
+	AWSUtil::client_config(credentials, client_config);
 
 	Aws::S3::S3Client s3_client(credentials, client_config);
 
@@ -80,16 +65,8 @@ bool S3::get_object_s3(const std::string& filename, std::stringstream& stream) {
 
 bool S3::delete_object_s3(const std::string& filename) {
 	Aws::Auth::AWSCredentials credentials;
-	credentials.SetAWSAccessKeyId(Aws::String(g_config [ "AWS_ACCESS_KEY" ].c_str()));
-	credentials.SetAWSSecretKey(Aws::String(g_config [ "AWS_SECRET_KEY" ].c_str()));
-	bool use_token;
-	std::istringstream(g_config [ "AWS_USE_SESSION_TOKEN" ]) >> std::boolalpha >> use_token;
-	if (use_token) {
-		credentials.SetSessionToken(Aws::String(g_config [ "AWS_SESSION_TOKEN" ].c_str()));
-	}
-
 	Aws::Client::ClientConfiguration client_config;
-	client_config.region = g_config [ "AWS_REGION" ].c_str();
+	AWSUtil::client_config(credentials, client_config);
 
 	Aws::S3::S3Client s3_client(credentials, client_config);
 

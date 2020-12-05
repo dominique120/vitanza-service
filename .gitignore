@@ -365,3 +365,5 @@ MigrationBackup/
 .ionide/
 VitanzaService/config.json
 VitanzaService.json
+*.jpg
+*.PNG

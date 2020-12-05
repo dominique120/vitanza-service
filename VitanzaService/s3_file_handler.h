@@ -5,6 +5,8 @@
 #if defined(FS_S3)
 #include "config.h"
 
+#include "aws_util.h"
+
 #include <aws/core/Aws.h>
 #include <aws/core/auth/AWSCredentials.h>
 #include <aws/s3/S3Client.h>
