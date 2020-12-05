@@ -10,9 +10,16 @@ extern ConfigurationManager g_config;
 
 std::map<std::string, std::string> DynamoDB::get_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value) {
 	Aws::Auth::AWSCredentials credentials;
-	Aws::Client::ClientConfiguration client_config;
-	AWSUtil::client_config(credentials, client_config);
+	credentials.SetAWSAccessKeyId(Aws::String(g_config [ "AWS_ACCESS_KEY" ].c_str()));
+	credentials.SetAWSSecretKey(Aws::String(g_config [ "AWS_SECRET_KEY" ].c_str()));
+	bool use_token;
+	std::istringstream(g_config [ "AWS_USE_SESSION_TOKEN" ]) >> std::boolalpha >> use_token;
+	if (use_token) {
+		credentials.SetSessionToken(Aws::String(g_config [ "AWS_SESSION_TOKEN" ].c_str()));
+	}
 
+	Aws::Client::ClientConfiguration client_config;
+	client_config.region = g_config [ "AWS_REGION" ].c_str();
 	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
 
 	const Aws::String endpoint(g_config [ "AWS_DYNAMODB_ENDPOINT" ].c_str());
@@ -58,9 +65,16 @@ std::map<std::string, std::string> DynamoDB::get_item_dynamo(const Aws::String& 
 
 bool DynamoDB::update_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, const std::string& request_body) {
 	Aws::Auth::AWSCredentials credentials;
-	Aws::Client::ClientConfiguration client_config;
-	AWSUtil::client_config(credentials, client_config);
+	credentials.SetAWSAccessKeyId(Aws::String(g_config [ "AWS_ACCESS_KEY" ].c_str()));
+	credentials.SetAWSSecretKey(Aws::String(g_config [ "AWS_SECRET_KEY" ].c_str()));
+	bool use_token;
+	std::istringstream(g_config [ "AWS_USE_SESSION_TOKEN" ]) >> std::boolalpha >> use_token;
+	if (use_token) {
+		credentials.SetSessionToken(Aws::String(g_config [ "AWS_SESSION_TOKEN" ].c_str()));
+	}
 
+	Aws::Client::ClientConfiguration client_config;
+	client_config.region = g_config [ "AWS_REGION" ].c_str();
 	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
 
 	const Aws::String endpoint(g_config [ "AWS_DYNAMODB_ENDPOINT" ].c_str());
@@ -142,9 +156,16 @@ bool DynamoDB::update_item_dynamo(const Aws::String& table_name, const Aws::Stri
 
 bool DynamoDB::new_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, const std::string& request_body) {
 	Aws::Auth::AWSCredentials credentials;
-	Aws::Client::ClientConfiguration client_config;
-	AWSUtil::client_config(credentials, client_config);
+	credentials.SetAWSAccessKeyId(Aws::String(g_config [ "AWS_ACCESS_KEY" ].c_str()));
+	credentials.SetAWSSecretKey(Aws::String(g_config [ "AWS_SECRET_KEY" ].c_str()));
+	bool use_token;
+	std::istringstream(g_config [ "AWS_USE_SESSION_TOKEN" ]) >> std::boolalpha >> use_token;
+	if (use_token) {
+		credentials.SetSessionToken(Aws::String(g_config [ "AWS_SESSION_TOKEN" ].c_str()));
+	}
 
+	Aws::Client::ClientConfiguration client_config;
+	client_config.region = g_config [ "AWS_REGION" ].c_str();
 	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
 
 	const Aws::String endpoint(g_config [ "AWS_DYNAMODB_ENDPOINT" ].c_str());
@@ -184,9 +205,16 @@ bool DynamoDB::new_item_dynamo(const Aws::String& table_name, const Aws::String&
 
 bool DynamoDB::delete_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value) {
 	Aws::Auth::AWSCredentials credentials;
-	Aws::Client::ClientConfiguration client_config;
-	AWSUtil::client_config(credentials, client_config);
+	credentials.SetAWSAccessKeyId(Aws::String(g_config [ "AWS_ACCESS_KEY" ].c_str()));
+	credentials.SetAWSSecretKey(Aws::String(g_config [ "AWS_SECRET_KEY" ].c_str()));
+	bool use_token;
+	std::istringstream(g_config [ "AWS_USE_SESSION_TOKEN" ]) >> std::boolalpha >> use_token;
+	if (use_token) {
+		credentials.SetSessionToken(Aws::String(g_config [ "AWS_SESSION_TOKEN" ].c_str()));
+	}
 
+	Aws::Client::ClientConfiguration client_config;
+	client_config.region = g_config [ "AWS_REGION" ].c_str();
 	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
 
 	const Aws::String endpoint(g_config [ "AWS_DYNAMODB_ENDPOINT" ].c_str());
@@ -210,15 +238,23 @@ bool DynamoDB::delete_item_dynamo(const Aws::String& table_name, const Aws::Stri
 
 std::string DynamoDB::query_index(const Aws::String& table_name, const Aws::String& partition_key, const Aws::String& match) {
 	Aws::Auth::AWSCredentials credentials;
+	credentials.SetAWSAccessKeyId(Aws::String(g_config [ "AWS_ACCESS_KEY" ].c_str()));
+	credentials.SetAWSSecretKey(Aws::String(g_config [ "AWS_SECRET_KEY" ].c_str()));
+	bool use_token;
+	std::istringstream(g_config [ "AWS_USE_SESSION_TOKEN" ]) >> std::boolalpha >> use_token;
+	if (use_token) {
+		credentials.SetSessionToken(Aws::String(g_config [ "AWS_SESSION_TOKEN" ].c_str()));
+	}
+	//std::cout << "in query \n";
 	Aws::Client::ClientConfiguration client_config;
-	AWSUtil::client_config(credentials, client_config);
-
+	client_config.region = g_config [ "AWS_REGION" ].c_str();
 	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
 
 	const Aws::String endpoint(g_config [ "AWS_DYNAMODB_ENDPOINT" ].c_str());
 	dynamo_client.OverrideEndpoint(endpoint);
 
 	const Aws::String query_expression(partition_key + " = :" + partition_key);
+	//std::cout << query_expression.c_str() << std::endl;
 
 	// Construct attribute value argument
 	Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue> expression_attribute_values;
@@ -233,6 +269,7 @@ std::string DynamoDB::query_index(const Aws::String& table_name, const Aws::Stri
 	query_request.SetKeyConditionExpression(query_expression);
 	query_request.SetExpressionAttributeValues(expression_attribute_values);
 
+
 	// run the query
 	const Aws::DynamoDB::Model::QueryOutcome& result = dynamo_client.Query(query_request);
 	if (!result.IsSuccess()) {
@@ -242,14 +279,49 @@ std::string DynamoDB::query_index(const Aws::String& table_name, const Aws::Stri
 
 	const Aws::Vector<Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue>> query_result = result.GetResult().GetItems();
 
-	return AWSUtil::dynamo_result_to_json(query_result);
+	// convert to json
+	// TODO: I absolutely don't like the way I use an inner counter and an outer counter. I'd like to replace that.
+	// Either way it "seems" to work
+	size_t inner_cntr = 0;
+	size_t outer_cntr = 0;
+	Aws::OStringStream j_ss;
+	query_result.empty() ? j_ss << "" : j_ss << "[";
+	for (size_t i = 0; i < query_result.size(); ++i) {
+		j_ss << "{";
+		for (auto& j : query_result.at(i)) {
+			j_ss << "\"" << j.first << "\" : \"";
+
+			if (j.second.GetType() == Aws::DynamoDB::Model::ValueType::STRING) {
+				j_ss << j.second.GetS().c_str();
+			} else if (j.second.GetType() == Aws::DynamoDB::Model::ValueType::NUMBER) {
+				j_ss << j.second.GetN().c_str();
+			} else if (j.second.GetType() == Aws::DynamoDB::Model::ValueType::BOOL) {
+				j_ss << j.second.GetBool();
+			}
+			++inner_cntr;
+			inner_cntr != query_result.at(i).size() ? j_ss << "\", \n" : j_ss << "\" \n";
+		}
+		inner_cntr = 0;
+		++outer_cntr;
+		outer_cntr != query_result.size() ? j_ss << "}, " : j_ss << "}";
+	}
+	query_result.empty() ? j_ss << "" : j_ss << "]";
+
+	return j_ss.str().c_str();
 }
 
 std::string DynamoDB::scan_table_items_dynamo(const Aws::String& table_name) {
 	Aws::Auth::AWSCredentials credentials;
-	Aws::Client::ClientConfiguration client_config;
-	AWSUtil::client_config(credentials, client_config);
+	credentials.SetAWSAccessKeyId(Aws::String(g_config [ "AWS_ACCESS_KEY" ].c_str()));
+	credentials.SetAWSSecretKey(Aws::String(g_config [ "AWS_SECRET_KEY" ].c_str()));
+	bool use_token;
+	std::istringstream(g_config [ "AWS_USE_SESSION_TOKEN" ]) >> std::boolalpha >> use_token;
+	if (use_token) {
+		credentials.SetSessionToken(Aws::String(g_config [ "AWS_SESSION_TOKEN" ].c_str()));
+	}
 
+	Aws::Client::ClientConfiguration client_config;
+	client_config.region = g_config [ "AWS_REGION" ].c_str();
 	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
 
 	const Aws::String endpoint(g_config [ "AWS_DYNAMODB_ENDPOINT" ].c_str());
@@ -267,15 +339,51 @@ std::string DynamoDB::scan_table_items_dynamo(const Aws::String& table_name) {
 
 	const Aws::Vector<Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue>> query_result = result.GetResult().GetItems();
 
-	return AWSUtil::dynamo_result_to_json(query_result);
+	// convert to json
+	// TODO: I absolutely don't like the way I use an inner counter and an outer counter. I'd like to replace that.
+	// Either way it "seems" to work
+	size_t inner_cntr = 0;
+	size_t outer_cntr = 0;
+	Aws::OStringStream j_ss;
+
+	query_result.empty() ? j_ss << "" : j_ss << "[";
+	for (size_t i = 0; i < query_result.size(); ++i) {
+		j_ss << "{";
+		for (const auto& j : query_result.at(i)) {
+			j_ss << "\"" << j.first << "\" : \"";
+
+			if (j.second.GetType() == Aws::DynamoDB::Model::ValueType::STRING) {
+				j_ss << j.second.GetS().c_str();
+			} else if (j.second.GetType() == Aws::DynamoDB::Model::ValueType::NUMBER) {
+				j_ss << j.second.GetN().c_str();
+			} else if (j.second.GetType() == Aws::DynamoDB::Model::ValueType::BOOL) {
+				j_ss << j.second.GetBool();
+			}
+			++inner_cntr;
+			inner_cntr != query_result.at(i).size() ? j_ss << "\", \n" : j_ss << "\" \n";
+		}
+		inner_cntr = 0;
+		++outer_cntr;
+		outer_cntr != query_result.size() ? j_ss << "}, " : j_ss << "}";
+	}
+	query_result.empty() ? j_ss << "" : j_ss << "]";
+
+	return j_ss.str().c_str();
 }
 
 // Currently only tests for equality
 std::string DynamoDB::scan_table_items_filer_dynamo(const Aws::String& table_name, const std::map<std::string, std::string>& conditions_and_values) {
 	Aws::Auth::AWSCredentials credentials;
-	Aws::Client::ClientConfiguration client_config;
-	AWSUtil::client_config(credentials, client_config);
+	credentials.SetAWSAccessKeyId(Aws::String(g_config [ "AWS_ACCESS_KEY" ].c_str()));
+	credentials.SetAWSSecretKey(Aws::String(g_config [ "AWS_SECRET_KEY" ].c_str()));
+	bool use_token;
+	std::istringstream(g_config [ "AWS_USE_SESSION_TOKEN" ]) >> std::boolalpha >> use_token;
+	if (use_token) {
+		credentials.SetSessionToken(Aws::String(g_config [ "AWS_SESSION_TOKEN" ].c_str()));
+	}
 
+	Aws::Client::ClientConfiguration client_config;
+	client_config.region = g_config [ "AWS_REGION" ].c_str();
 	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
 
 	const Aws::String endpoint(g_config [ "AWS_DYNAMODB_ENDPOINT" ].c_str());
@@ -294,6 +402,7 @@ std::string DynamoDB::scan_table_items_filer_dynamo(const Aws::String& table_nam
 			ss << " or ";
 		}
 	}
+	//std::cout << ss.str() << std::endl;
 
 	// Construct the expression argument
 	Aws::String scan_expression(ss.str());
@@ -321,7 +430,35 @@ std::string DynamoDB::scan_table_items_filer_dynamo(const Aws::String& table_nam
 
 	const Aws::Vector<Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue>> query_result = result.GetResult().GetItems();
 
-	return AWSUtil::dynamo_result_to_json(query_result);
+	// convert to json
+	// TODO: I absolutely don't like the way I use an inner counter and an outer counter. I'd like to replace that.
+	// Either way it "seems" to work
+	size_t inner_cntr = 0;
+	size_t outer_cntr = 0;
+	Aws::OStringStream j_ss;
+	query_result.empty() ? j_ss << "" : j_ss << "[";
+	for (size_t i = 0; i < query_result.size(); ++i) {
+		j_ss << "{";
+		for (const auto& j : query_result.at(i)) {
+			j_ss << "\"" << j.first << "\" : \"";
+
+			if (j.second.GetType() == Aws::DynamoDB::Model::ValueType::STRING) {
+				j_ss << j.second.GetS().c_str();
+			} else if (j.second.GetType() == Aws::DynamoDB::Model::ValueType::NUMBER) {
+				j_ss << j.second.GetN().c_str();
+			} else if (j.second.GetType() == Aws::DynamoDB::Model::ValueType::BOOL) {
+				j_ss << j.second.GetBool();
+			}
+			++inner_cntr;
+			inner_cntr != query_result.at(i).size() ? j_ss << "\", \n" : j_ss << "\" \n";
+		}
+		inner_cntr = 0;
+		++outer_cntr;
+		outer_cntr != query_result.size() ? j_ss << "}, " : j_ss << "}";
+	}
+	query_result.empty() ? j_ss << "" : j_ss << "]";
+
+	return j_ss.str().c_str();
 }
 
 #endif

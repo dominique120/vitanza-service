@@ -23,7 +23,6 @@
 #include <aws/dynamodb/model/ScanResult.h>
 
 #include "config.h"
-#include "aws_util.h"
 
 class DynamoDB {
 public:
