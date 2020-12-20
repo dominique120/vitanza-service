@@ -47,8 +47,6 @@
 #include "db_dynamo.h"
 #include "sqs_handler.h"
 
-#include "logger.h"
-
 int main(int argc, char* argv[]);
 void register_handlers(httplib::Server& svr);
 
