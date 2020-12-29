@@ -45,7 +45,6 @@
 
 #include "s3_file_handler.h"
 #include "db_dynamo.h"
-#include "sqs_handler.h"
 
 int main(int argc, char* argv[]);
 void register_handlers(httplib::Server& svr);

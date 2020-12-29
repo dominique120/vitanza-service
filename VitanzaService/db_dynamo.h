@@ -33,6 +33,10 @@ public:
 	static std::string scan_table_items_dynamo(const Aws::String& table_name);
 	static std::string scan_table_items_filer_dynamo(const Aws::String& table_name, const std::map<std::string, std::string>& conditions_and_values);
 	static std::string query_index(const Aws::String& table_name, const Aws::String& partition_key, const Aws::String& match);
+
+private:
+	static void client_config(Aws::Auth::AWSCredentials& aws_credentials, Aws::Client::ClientConfiguration& client_config);
+	static std::string dynamo_result_to_json_string(const Aws::Vector<Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue>>& dynamo_result);
 };
 #endif
 
