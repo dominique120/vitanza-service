@@ -2,13 +2,12 @@
  * Copyright Dominique Verellen. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0.
  */
-#ifndef ORDERDETAIL_WRAPPER_H
-#define ORDERDETAIL_WRAPPER_H
+#ifndef CHEMICAL_ORDERDETAIL_WRAPPER_H
+#define CHEMICAL_ORDERDETAIL_WRAPPER_H
 
-#include "OrderDetail.h"
 #include "db_dynamo.h"
 
-class OrderDetail_wrapper {
+class Chemical_Order_Detail_Wrapper {
 public:
 	static std::string get_order_detail(const std::string& id_or_uuid);
 	static bool delete_order_detail(const std::string& id_or_uuid);

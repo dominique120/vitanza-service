@@ -5,7 +5,6 @@
 #ifndef CLIENT_WRAPPER_H
 #define CLIENT_WRAPPER_H
 
-#include "Client.h"
 #include "db_dynamo.h"
 
 class Client_wrapper {

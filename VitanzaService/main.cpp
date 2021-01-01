@@ -58,11 +58,6 @@ int main(int argc, char* argv[]) {
 		Logger::log_event(req, res);
 		});
 
-	const auto ret = server.set_mount_point("/img_store", "./img_store");
-	if (!ret) {
-		std::cout << "Directory does not exist \n";
-	}
-
 	std::cout << "Init done - Local address: " << g_config.SERVER_IP() << " bound using port " << g_config.SERVER_PORT() << std::endl;
 	server.listen(g_config.SERVER_IP().c_str(), g_config.SERVER_PORT());
 
@@ -239,7 +234,7 @@ void register_handlers(httplib::Server& svr) {
 		});
 
 	/*--------------- Products ---------------------------*/
-	svr.Get((g_config.API_BASE_URL() + "/products").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Get((g_config.API_BASE_URL() + "/chemicals/products").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -249,7 +244,7 @@ void register_handlers(httplib::Server& svr) {
 		res.set_header("Access-Control-Allow-Origin", "*");
 
 		if (req.has_param("id")) {
-			const std::string response = Product_wrapper::get_product(req.get_param_value("id"));
+			const std::string response = Chemical_Product_Wrapper::get_product(req.get_param_value("id"));
 			if (response.empty()) {
 				res.status = 204;
 			}
@@ -259,7 +254,7 @@ void register_handlers(httplib::Server& svr) {
 			}
 		}
 		else {
-			const std::string response = Product_wrapper::get_all_products();
+			const std::string response = Chemical_Product_Wrapper::get_all_products();
 			if (response.empty()) {
 				res.status = 204;
 			}
@@ -270,13 +265,13 @@ void register_handlers(httplib::Server& svr) {
 		}
 		});
 
-	svr.Put((g_config.API_BASE_URL() + "/products").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Put((g_config.API_BASE_URL() + "/chemicals/products").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
 		}
 
-		if (Product_wrapper::update_product(req.get_param_value("id"), req.body)) {
+		if (Chemical_Product_Wrapper::update_product(req.get_param_value("id"), req.body)) {
 			res.status = 200;
 		}
 		else {
@@ -284,13 +279,13 @@ void register_handlers(httplib::Server& svr) {
 		}
 		});
 
-	svr.Delete((g_config.API_BASE_URL() + "/products").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Delete((g_config.API_BASE_URL() + "/chemicals/products").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
 		}
 
-		if (Product_wrapper::delete_product(req.get_param_value("id"))) {
+		if (Chemical_Product_Wrapper::delete_product(req.get_param_value("id"))) {
 			res.status = 200;
 		}
 		else {
@@ -298,13 +293,13 @@ void register_handlers(httplib::Server& svr) {
 		}
 		});
 
-	svr.Post((g_config.API_BASE_URL() + "/products").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Post((g_config.API_BASE_URL() + "/chemicals/products").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
 		}
 
-		if (Product_wrapper::new_product(req.body)) {
+		if (Chemical_Product_Wrapper::new_product(req.body)) {
 			res.status = 201;
 		}
 		else {
@@ -313,7 +308,7 @@ void register_handlers(httplib::Server& svr) {
 		});
 
 	/*--------------- Orders ---------------------------*/
-	svr.Get((g_config.API_BASE_URL() + "/orders/by_client").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Get((g_config.API_BASE_URL() + "/chemicals/orders/by_client").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -323,7 +318,7 @@ void register_handlers(httplib::Server& svr) {
 		res.set_header("Access-Control-Allow-Origin", "*");
 
 		if (req.has_param("id")) {
-			const std::string response = Order_wrapper::get_order_by_client(req.get_param_value("id"));
+			const std::string response = Chemical_Order_Wrapper::get_order_by_client(req.get_param_value("id"));
 			if (response.empty()) {
 				res.status = 204;
 			}
@@ -337,7 +332,7 @@ void register_handlers(httplib::Server& svr) {
 		}
 		});
 
-	svr.Get((g_config.API_BASE_URL() + "/orders/outstanding").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Get((g_config.API_BASE_URL() + "/chemicals/orders/outstanding").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -345,7 +340,7 @@ void register_handlers(httplib::Server& svr) {
 
 		res.set_header("Content-type", "application/json");
 		res.set_header("Access-Control-Allow-Origin", "*");
-		const std::string response = Order_wrapper::get_outstanding_orders();
+		const std::string response = Chemical_Order_Wrapper::get_outstanding_orders();
 		if (response.empty()) {
 			res.status = 204;
 		}
@@ -355,7 +350,7 @@ void register_handlers(httplib::Server& svr) {
 		}
 		});
 
-	svr.Get((g_config.API_BASE_URL() + "/orders").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Get((g_config.API_BASE_URL() + "/chemicals/orders").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -364,7 +359,7 @@ void register_handlers(httplib::Server& svr) {
 		res.set_header("Content-type", "application/json");
 		res.set_header("Access-Control-Allow-Origin", "*");
 		if (req.has_param("id")) {
-			const std::string response = Order_wrapper::get_order(req.get_param_value("id"));
+			const std::string response = Chemical_Order_Wrapper::get_order(req.get_param_value("id"));
 			if (response.empty()) {
 				res.status = 204;
 			}
@@ -374,7 +369,7 @@ void register_handlers(httplib::Server& svr) {
 			}
 		}
 		else {
-			const std::string response = Order_wrapper::get_all_orders();
+			const std::string response = Chemical_Order_Wrapper::get_all_orders();
 			if (response.empty()) {
 				res.status = 204;
 			}
@@ -385,13 +380,13 @@ void register_handlers(httplib::Server& svr) {
 		}
 		});
 
-	svr.Put((g_config.API_BASE_URL() + "/orders").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Put((g_config.API_BASE_URL() + "/chemicals/orders").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
 		}
 
-		if (Order_wrapper::update_order(req.get_param_value("id"), req.body)) {
+		if (Chemical_Order_Wrapper::update_order(req.get_param_value("id"), req.body)) {
 			res.status = 200;
 		}
 		else {
@@ -399,13 +394,13 @@ void register_handlers(httplib::Server& svr) {
 		}
 		});
 
-	svr.Delete((g_config.API_BASE_URL() + "/orders").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Delete((g_config.API_BASE_URL() + "/chemicals/orders").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
 		}
 
-		if (Order_wrapper::delete_order(req.get_param_value("id"))) {
+		if (Chemical_Order_Wrapper::delete_order(req.get_param_value("id"))) {
 			res.status = 200;
 		}
 		else {
@@ -413,13 +408,13 @@ void register_handlers(httplib::Server& svr) {
 		}
 		});
 
-	svr.Post((g_config.API_BASE_URL() + "/orders").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Post((g_config.API_BASE_URL() + "/chemicals/orders").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
 		}
 
-		if (Order_wrapper::new_order(req.body)) {
+		if (Chemical_Order_Wrapper::new_order(req.body)) {
 			res.status = 201;
 		}
 		else {
@@ -428,7 +423,7 @@ void register_handlers(httplib::Server& svr) {
 		});
 
 	/*--------------- Order Details ---------------------------*/
-	svr.Get((g_config.API_BASE_URL() + "/orderdetails/by_order").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Get((g_config.API_BASE_URL() + "/chemicals/orderdetails/by_order").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -437,7 +432,7 @@ void register_handlers(httplib::Server& svr) {
 		res.set_header("Content-type", "application/json");
 		res.set_header("Access-Control-Allow-Origin", "*");
 		if (req.has_param("id")) {
-			const std::string response = OrderDetail_wrapper::get_orderdetails_by_order(req.get_param_value("id"));
+			const std::string response = Chemical_Order_Detail_Wrapper::get_orderdetails_by_order(req.get_param_value("id"));
 			if (response.empty()) {
 				res.status = 204;
 			}
@@ -451,7 +446,7 @@ void register_handlers(httplib::Server& svr) {
 		}
 		});
 
-	svr.Get((g_config.API_BASE_URL() + "/orderdetails").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Get((g_config.API_BASE_URL() + "/chemicals/orderdetails").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -460,7 +455,7 @@ void register_handlers(httplib::Server& svr) {
 		res.set_header("Content-type", "application/json");
 		res.set_header("Access-Control-Allow-Origin", "*");
 		if (req.has_param("id")) {
-			const std::string response = OrderDetail_wrapper::get_order_detail(req.get_param_value("id"));
+			const std::string response = Chemical_Order_Detail_Wrapper::get_order_detail(req.get_param_value("id"));
 			if (response.empty()) {
 				res.status = 204;
 			}
@@ -474,13 +469,13 @@ void register_handlers(httplib::Server& svr) {
 		}
 		});
 
-	svr.Put((g_config.API_BASE_URL() + "/orderdetails").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Put((g_config.API_BASE_URL() + "/chemicals/orderdetails").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
 		}
 		if (req.has_param("id")) {
-			if (OrderDetail_wrapper::update_order_detail(req.get_param_value("id"), req.body)) {
+			if (Chemical_Order_Detail_Wrapper::update_order_detail(req.get_param_value("id"), req.body)) {
 				res.status = 200;
 			}
 			else {
@@ -492,13 +487,13 @@ void register_handlers(httplib::Server& svr) {
 		}
 		});
 
-	svr.Delete((g_config.API_BASE_URL() + "/orderdetails").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Delete((g_config.API_BASE_URL() + "/chemicals/orderdetails").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
 		}
 
-		if (OrderDetail_wrapper::delete_order_detail(req.get_param_value("id"))) {
+		if (Chemical_Order_Detail_Wrapper::delete_order_detail(req.get_param_value("id"))) {
 			res.status = 200;
 		}
 		else {
@@ -506,13 +501,13 @@ void register_handlers(httplib::Server& svr) {
 		}
 		});
 
-	svr.Post((g_config.API_BASE_URL() + "/orderdetails").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Post((g_config.API_BASE_URL() + "/chemicals/orderdetails").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
 		}
 
-		if (OrderDetail_wrapper::new_order_detail(req.body)) {
+		if (Chemical_Order_Detail_Wrapper::new_order_detail(req.body)) {
 			res.status = 201;
 		}
 		else {

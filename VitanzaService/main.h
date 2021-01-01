@@ -21,15 +21,10 @@
 #include "Auth.h"
 #include "auth_wrapper.h"
 
-#include "Client.h"
-#include "Product.h"
-#include "Order.h"
-#include "OrderDetail.h"
-
 #include "client_wrapper.h"
-#include "order_wrapper.h"
-#include "orderDetail_wrapper.h"
-#include "product_wrapper.h"
+#include "chemical_order_wrapper.h"
+#include "chemical_orderDetail_wrapper.h"
+#include "chemical_product_wrapper.h"
 #include "file_wrapper.h"
 
 #include <aws/core/Aws.h>

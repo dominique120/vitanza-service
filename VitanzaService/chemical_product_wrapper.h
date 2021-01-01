@@ -2,13 +2,12 @@
  * Copyright Dominique Verellen. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0.
  */
-#ifndef PRODUCT_WRAPPER_H
-#define PRODUCT_WRAPPER_H
+#ifndef CHEMICAL_PRODUCT_WRAPPER_H
+#define CHEMICAL_PRODUCT_WRAPPER_H
 
-#include "Product.h"
 #include "db_dynamo.h"
 
-class Product_wrapper {
+class Chemical_Product_Wrapper {
 public:
 	static std::string get_product(const std::string& id_or_uuid);
 	static bool delete_product(const std::string& id_or_uuid);
