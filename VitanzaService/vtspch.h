@@ -4,8 +4,6 @@
  */
 #pragma once
 
-#include <nlohmann/json.hpp>
-
 #include <cstdint>
 #include <chrono>
 #include <filesystem>
@@ -22,5 +20,7 @@
 
 #include <time.h>
 #include <stdio.h>
+
+#include <nlohmann/json.hpp>
 
 #include "aws/core/utils/UUID.h"

@@ -8,7 +8,7 @@
 ConfigurationManager g_config;
 
 int main(int argc, char* argv[]) {
-	std::cout << "Vitanza Service - Version 0.5.2a" << std::endl;	
+	std::cout << "Vitanza Service - Version 0.5.2a" << std::endl;
 	std::cout << "Compiled on " << __DATE__ << ' ' << __TIME__ << "\n";
 
 
@@ -28,12 +28,12 @@ int main(int argc, char* argv[]) {
 #if defined(FS_S3)
 	std::cout << "Using " << "S3 to store files remotely." << std::endl;
 #elif defined(FS_LOCAL)
-	if (std::filesystem::exists(g_config["FS_LOCAL_DIR"])) {
-		std::cout << "Using " << "directory \"" << g_config["FS_LOCAL_DIR"] + "\" to store files locally." << std::endl;
+	if (std::filesystem::exists(g_config.FS_LOCAL_DIR())) {
+		std::cout << "Using " << "directory \"" << g_config.FS_LOCAL_DIR() + "\" to store files locally." << std::endl;
 	}
 	else {
-		if (std::filesystem::create_directory(g_config["FS_LOCAL_DIR"])) {
-			std::cout << "Created directory \"" << g_config["FS_LOCAL_DIR"] + "\" to store files locally." << std::endl;
+		if (std::filesystem::create_directory(g_config.FS_LOCAL_DIR())) {
+			std::cout << "Created directory \"" << g_config.FS_LOCAL_DIR() + "\" to store files locally." << std::endl;
 		}
 		else {
 			std::cout << "Could not create directory." << std::endl;
@@ -63,8 +63,8 @@ int main(int argc, char* argv[]) {
 		std::cout << "Directory does not exist \n";
 	}
 
-	std::cout << "Init done - Local address: " << g_config["SERVER_IP"] << " bound using port " << g_config["SERVER_PORT"] << std::endl;
-	server.listen(g_config["SERVER_IP"].c_str(), std::stoi(g_config["SERVER_PORT"]));
+	std::cout << "Init done - Local address: " << g_config.SERVER_IP() << " bound using port " << g_config.SERVER_PORT() << std::endl;
+	server.listen(g_config.SERVER_IP().c_str(), g_config.SERVER_PORT());
 
 
 	Aws::ShutdownAPI(options);
@@ -79,7 +79,7 @@ void register_handlers(httplib::Server& svr) {
 		res.set_header("Access-Control-Allow-Headers", "Content-Type, Authorization");
 		});
 
-	svr.Post((g_config["API_BASE_URL"] + "/config").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Post((g_config.API_BASE_URL() + "/config").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -99,7 +99,7 @@ void register_handlers(httplib::Server& svr) {
 
 	/*----------------- Authentication -------------------------------*/
 	// later on add support for creating new password, deleting user, etc
-	svr.Post((g_config["API_BASE_URL"] + "/auth/users").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Post((g_config.API_BASE_URL() + "/auth/users").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -114,7 +114,7 @@ void register_handlers(httplib::Server& svr) {
 		}
 		});
 
-	svr.Post((g_config["API_BASE_URL"] + "/auth/validateuser").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Post((g_config.API_BASE_URL() + "/auth/validateuser").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 
 		const std::map<std::string, std::string> user = nlohmann::json::parse(req.body);
 
@@ -126,7 +126,7 @@ void register_handlers(httplib::Server& svr) {
 		}
 		});
 
-	svr.Post((g_config["API_BASE_URL"] + "/auth").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Post((g_config.API_BASE_URL() + "/auth").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		const std::map<std::string, std::string> user = nlohmann::json::parse(req.body);
 		if (auth_wrapper::authenticate(user.at("username"), user.at("password"))) {
 			res.set_header("Content-type", "application/json");
@@ -141,7 +141,7 @@ void register_handlers(httplib::Server& svr) {
 		}
 		});
 
-	svr.Get((g_config["API_BASE_URL"] + "/auth").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Get((g_config.API_BASE_URL() + "/auth").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		//just a test to try to validate generated tokens
 		res.set_header("Content-type", "application/json");
 		res.set_header("Access-Control-Allow-Origin", "*");
@@ -156,7 +156,7 @@ void register_handlers(httplib::Server& svr) {
 		});
 
 	/*--------------- Customers ---------------------------*/
-	svr.Get((g_config["API_BASE_URL"] + "/customers").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Get((g_config.API_BASE_URL() + "/customers").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -187,7 +187,7 @@ void register_handlers(httplib::Server& svr) {
 		}
 		});
 
-	svr.Put((g_config["API_BASE_URL"] + "/customers").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Put((g_config.API_BASE_URL() + "/customers").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -206,7 +206,7 @@ void register_handlers(httplib::Server& svr) {
 		}
 		});
 
-	svr.Delete((g_config["API_BASE_URL"] + "/customers").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Delete((g_config.API_BASE_URL() + "/customers").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -224,7 +224,7 @@ void register_handlers(httplib::Server& svr) {
 		}
 		});
 
-	svr.Post((g_config["API_BASE_URL"] + "/customers").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Post((g_config.API_BASE_URL() + "/customers").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -239,7 +239,7 @@ void register_handlers(httplib::Server& svr) {
 		});
 
 	/*--------------- Products ---------------------------*/
-	svr.Get((g_config["API_BASE_URL"] + "/products").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Get((g_config.API_BASE_URL() + "/products").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -270,7 +270,7 @@ void register_handlers(httplib::Server& svr) {
 		}
 		});
 
-	svr.Put((g_config["API_BASE_URL"] + "/products").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Put((g_config.API_BASE_URL() + "/products").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -284,7 +284,7 @@ void register_handlers(httplib::Server& svr) {
 		}
 		});
 
-	svr.Delete((g_config["API_BASE_URL"] + "/products").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Delete((g_config.API_BASE_URL() + "/products").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -298,7 +298,7 @@ void register_handlers(httplib::Server& svr) {
 		}
 		});
 
-	svr.Post((g_config["API_BASE_URL"] + "/products").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Post((g_config.API_BASE_URL() + "/products").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -313,7 +313,7 @@ void register_handlers(httplib::Server& svr) {
 		});
 
 	/*--------------- Orders ---------------------------*/
-	svr.Get((g_config["API_BASE_URL"] + "/orders/by_client").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Get((g_config.API_BASE_URL() + "/orders/by_client").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -337,7 +337,7 @@ void register_handlers(httplib::Server& svr) {
 		}
 		});
 
-	svr.Get((g_config["API_BASE_URL"] + "/orders/outstanding").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Get((g_config.API_BASE_URL() + "/orders/outstanding").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -355,7 +355,7 @@ void register_handlers(httplib::Server& svr) {
 		}
 		});
 
-	svr.Get((g_config["API_BASE_URL"] + "/orders").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Get((g_config.API_BASE_URL() + "/orders").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -385,7 +385,7 @@ void register_handlers(httplib::Server& svr) {
 		}
 		});
 
-	svr.Put((g_config["API_BASE_URL"] + "/orders").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Put((g_config.API_BASE_URL() + "/orders").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -399,7 +399,7 @@ void register_handlers(httplib::Server& svr) {
 		}
 		});
 
-	svr.Delete((g_config["API_BASE_URL"] + "/orders").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Delete((g_config.API_BASE_URL() + "/orders").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -413,7 +413,7 @@ void register_handlers(httplib::Server& svr) {
 		}
 		});
 
-	svr.Post((g_config["API_BASE_URL"] + "/orders").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Post((g_config.API_BASE_URL() + "/orders").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -428,7 +428,7 @@ void register_handlers(httplib::Server& svr) {
 		});
 
 	/*--------------- Order Details ---------------------------*/
-	svr.Get((g_config["API_BASE_URL"] + "/orderdetails/by_order").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Get((g_config.API_BASE_URL() + "/orderdetails/by_order").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -451,7 +451,7 @@ void register_handlers(httplib::Server& svr) {
 		}
 		});
 
-	svr.Get((g_config["API_BASE_URL"] + "/orderdetails").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Get((g_config.API_BASE_URL() + "/orderdetails").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -474,7 +474,7 @@ void register_handlers(httplib::Server& svr) {
 		}
 		});
 
-	svr.Put((g_config["API_BASE_URL"] + "/orderdetails").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Put((g_config.API_BASE_URL() + "/orderdetails").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -492,7 +492,7 @@ void register_handlers(httplib::Server& svr) {
 		}
 		});
 
-	svr.Delete((g_config["API_BASE_URL"] + "/orderdetails").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Delete((g_config.API_BASE_URL() + "/orderdetails").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
@@ -506,7 +506,7 @@ void register_handlers(httplib::Server& svr) {
 		}
 		});
 
-	svr.Post((g_config["API_BASE_URL"] + "/orderdetails").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+	svr.Post((g_config.API_BASE_URL() + "/orderdetails").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;

@@ -6,7 +6,7 @@ RUN apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/test
 # Clone, build and install aws-skd-cpp
 RUN git clone https://github.com/aws/aws-sdk-cpp.git /usr/vts_work/aws-sdk-cpp && \
 	mkdir /usr/vts_work/aws-sdk-cpp/build && cd /usr/vts_work/aws-sdk-cpp/build && \
-	cmake -DBUILD_ONLY="dynamodb;s3;sqs" -DENABLE_TESTING=OFF -DCUSTOM_MEMORY_MANAGEMENT=OFF -DBUILD_SHARED_LIBS=OFF /usr/vts_work/aws-sdk-cpp && \
+	cmake -DBUILD_ONLY="dynamodb;s3" -DENABLE_TESTING=OFF -DCUSTOM_MEMORY_MANAGEMENT=OFF -DBUILD_SHARED_LIBS=OFF /usr/vts_work/aws-sdk-cpp && \
     make &&  make install && \
 	rm -rf /usr/vts_work/aws-sdk-cpp
 		
@@ -33,7 +33,7 @@ RUN mkdir /bin_vitanza
 # Clone, build and install vitanza
 RUN git clone https://github.com/dominique120/vitanza-service.git /usr/vts_work/vitanza-service && \
 	mkdir /usr/vts_work/vitanza-service/build && cd /usr/vts_work/vitanza-service/build && \
-	cmake -DDB_DYNAMO=ON -DFS_S3=ON /usr/vts_work/vitanza-service && \
+	cmake -DFS_S3=ON /usr/vts_work/vitanza-service && \
 	make && \
 	mv /usr/vts_work/vitanza-service/build/vts /bin_vitanza/vts && \
 	cp /usr/vts_work/vitanza-service/config.json /bin_vitanza/config.json && \

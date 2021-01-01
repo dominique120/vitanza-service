@@ -14,7 +14,7 @@ bool Client_wrapper::update_client(const std::string& id_or_uuid, const std::str
 	return DynamoDB::update_item_dynamo("clients", "ClientId_uuid", id_or_uuid.c_str(), request_body);
 }
 
-bool Client_wrapper::delete_client(const std::string& id_or_uuid) {	
+bool Client_wrapper::delete_client(const std::string& id_or_uuid) {
 	return DynamoDB::delete_item_dynamo("clients", "ClientId_uuid", id_or_uuid.c_str());
 }
 

@@ -12,7 +12,7 @@
   "SHA512_SECRET": "9E590B6B427FB984C1CC5F5E0373BB163A3DD9D3C371CAEF3726D68CB3B894341E3758430154A878DE6D2E639A54B2C783365BC4219EAB2B69D490D0793D967A",
   "JWT_ISSUER": "vts-testing",
   "FS_LOCAL_DIR": "img_store",
-  "log_to_console": "true",
-  "log_to_file":  "true", 
-  "log_file":  "logfile.log" 
+  "LOG_TO_CONSOLE": "true",
+  "LOG_TO_FILE": "true",
+  "LOG_FILE": "logfile.log"
 }

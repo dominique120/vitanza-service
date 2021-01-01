@@ -17,20 +17,20 @@ std::string Order::to_json_array(const OrderList& order) {
 			{ "Delivered", i.delivered},
 			{ "Paid", i.paid},
 			{ "DateDelivered", i.date_delivered}
-					});
+			});
 	}
 	return j.dump();
 }
 
 void Order::to_json(nlohmann::json& j, const Order& s) {
-	j [ "OrderId" ] = s.order_id;
-	j [ "ClientId" ] = s.client_id;
-	j [ "DatePlaced" ] = s.date_placed;
-	j [ "Notes" ] = s.notes;
-	j [ "Delivered" ] = s.delivered;
-	j [ "Paid" ] = s.paid;
-	j [ "DateDelivered" ] = s.date_delivered;
-	j [ "OrderId_uuid" ] = s.order_id_uuid;
+	j["OrderId"] = s.order_id;
+	j["ClientId"] = s.client_id;
+	j["DatePlaced"] = s.date_placed;
+	j["Notes"] = s.notes;
+	j["Delivered"] = s.delivered;
+	j["Paid"] = s.paid;
+	j["DateDelivered"] = s.date_delivered;
+	j["OrderId_uuid"] = s.order_id_uuid;
 }
 
 void Order::from_json(const nlohmann::json& j, Order& s) {
@@ -38,7 +38,8 @@ void Order::from_json(const nlohmann::json& j, Order& s) {
 		s.order_id = j.at("OrderId").get<int32_t>();
 		s.order_id_uuid = j.at("OrderId_uuid").get<std::string>();
 		s.date_delivered = j.at("DateDelivered").get<time_t>();
-	} catch (nlohmann::json::exception&) {
+	}
+	catch (nlohmann::json::exception&) {
 		// Expected behavior
 	}
 
@@ -48,7 +49,8 @@ void Order::from_json(const nlohmann::json& j, Order& s) {
 		s.notes = j.at("Notes").get<std::string>();
 		s.delivered = j.at("Delivered").get<bool>();
 		s.paid = j.at("Paid").get<bool>();
-	} catch (nlohmann::json::exception&) {
+	}
+	catch (nlohmann::json::exception&) {
 		std::cout << "Order sent with missing mandatory data" << std::endl;
 	}
 }

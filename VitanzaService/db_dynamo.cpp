@@ -15,7 +15,7 @@ std::map<std::string, std::string> DynamoDB::get_item_dynamo(const Aws::String& 
 
 	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
 
-	const Aws::String endpoint(g_config [ "AWS_DYNAMODB_ENDPOINT" ].c_str());
+	const Aws::String endpoint(g_config.AWS_DYNAMODB_ENDPOINT().c_str());
 	dynamo_client.OverrideEndpoint(endpoint);
 
 	std::map<std::string, std::string> new_map;
@@ -40,17 +40,21 @@ std::map<std::string, std::string> DynamoDB::get_item_dynamo(const Aws::String& 
 
 				if (i.second.GetType() == Aws::DynamoDB::Model::ValueType::STRING) {
 					p.second = i.second.GetS().c_str();
-				} else if (i.second.GetType() == Aws::DynamoDB::Model::ValueType::NUMBER) {
+				}
+				else if (i.second.GetType() == Aws::DynamoDB::Model::ValueType::NUMBER) {
 					p.second = i.second.GetN().c_str();
-				} else if (i.second.GetType() == Aws::DynamoDB::Model::ValueType::BOOL) {
+				}
+				else if (i.second.GetType() == Aws::DynamoDB::Model::ValueType::BOOL) {
 					p.second = i.second.GetBool();
 				}
 				new_map.insert(p);
 			}
-		} else {
+		}
+		else {
 			std::cout << "No item found with the key " << key_name << std::endl;
 		}
-	} else {
+	}
+	else {
 		std::cout << "Failed to get item: " << result.GetError().GetMessage() << std::endl;
 	}
 	return new_map;
@@ -64,7 +68,7 @@ bool DynamoDB::update_item_dynamo(const Aws::String& table_name, const Aws::Stri
 
 	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
 
-	const Aws::String endpoint(g_config["AWS_DYNAMODB_ENDPOINT"].c_str());
+	const Aws::String endpoint(g_config.AWS_DYNAMODB_ENDPOINT().c_str());
 	dynamo_client.OverrideEndpoint(endpoint);
 
 	// *** Define UpdateItem request arguments
@@ -108,12 +112,13 @@ bool DynamoDB::update_item_dynamo(const Aws::String& table_name, const Aws::Stri
 		// TODO: change this to get they type of the item instead of manually filtering keys
 		if (i.first == "Paid" || i.first == "Delivered" || i.first == "Stock" || i.first == "Price") {
 			attribute_updated_value.SetN(i.second.c_str());//need to pass here the value to be updated
-		} else {
+		}
+		else {
 			attribute_updated_value.SetS(i.second.c_str());//need to pass here the value to be updated
 		}
 		Aws::OStringStream ostr;
 		ostr << ":" << i.first.c_str();
-		expression_attribute_values [ ostr.str() ] = attribute_updated_value;
+		expression_attribute_values[ostr.str()] = attribute_updated_value;
 	}
 	request.SetExpressionAttributeValues(expression_attribute_values);
 
@@ -135,7 +140,7 @@ bool DynamoDB::new_item_dynamo(const Aws::String& table_name, const Aws::String&
 
 	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
 
-	const Aws::String endpoint(g_config["AWS_DYNAMODB_ENDPOINT"].c_str());
+	const Aws::String endpoint(g_config.AWS_DYNAMODB_ENDPOINT().c_str());
 	dynamo_client.OverrideEndpoint(endpoint);
 
 	nlohmann::json j = nlohmann::json::parse(request_body);
@@ -151,7 +156,8 @@ bool DynamoDB::new_item_dynamo(const Aws::String& table_name, const Aws::String&
 		// TODO: change this to get they type of the item instead of manually filtering keys
 		if (i.first == "Paid" || i.first == "Delivered" || i.first == "Stock" || i.first == "Price") {
 			attribute_value.SetN(i.second.c_str());
-		} else {
+		}
+		else {
 			attribute_value.SetS(i.second.c_str());
 		}
 		pir.AddItem(i.first.c_str(), attribute_value);
@@ -178,7 +184,7 @@ bool DynamoDB::delete_item_dynamo(const Aws::String& table_name, const Aws::Stri
 
 	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
 
-	const Aws::String endpoint(g_config["AWS_DYNAMODB_ENDPOINT"].c_str());
+	const Aws::String endpoint(g_config.AWS_DYNAMODB_ENDPOINT().c_str());
 	dynamo_client.OverrideEndpoint(endpoint);
 
 	Aws::DynamoDB::Model::DeleteItemRequest req;
@@ -191,7 +197,8 @@ bool DynamoDB::delete_item_dynamo(const Aws::String& table_name, const Aws::Stri
 	const Aws::DynamoDB::Model::DeleteItemOutcome& result = dynamo_client.DeleteItem(req);
 	if (result.IsSuccess()) {
 		return true;
-	} else {
+	}
+	else {
 		std::cout << "Failed to delete item: " << result.GetError().GetMessage();
 		return false;
 	}
@@ -205,7 +212,7 @@ std::string DynamoDB::query_index(const Aws::String& table_name, const Aws::Stri
 
 	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
 
-	const Aws::String endpoint(g_config["AWS_DYNAMODB_ENDPOINT"].c_str());
+	const Aws::String endpoint(g_config.AWS_DYNAMODB_ENDPOINT().c_str());
 	dynamo_client.OverrideEndpoint(endpoint);
 
 	const Aws::String query_expression(partition_key + " = :" + partition_key);
@@ -215,7 +222,7 @@ std::string DynamoDB::query_index(const Aws::String& table_name, const Aws::Stri
 	Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue> expression_attribute_values;
 	Aws::DynamoDB::Model::AttributeValue attribute_query_value;
 	attribute_query_value.SetS(match.c_str());
-	expression_attribute_values [ ":" + partition_key ] = attribute_query_value;
+	expression_attribute_values[":" + partition_key] = attribute_query_value;
 
 	Aws::DynamoDB::Model::QueryRequest query_request;
 	query_request.SetTableName(table_name);
@@ -245,7 +252,7 @@ std::string DynamoDB::scan_table_items_dynamo(const Aws::String& table_name) {
 
 	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
 
-	const Aws::String endpoint(g_config["AWS_DYNAMODB_ENDPOINT"].c_str());
+	const Aws::String endpoint(g_config.AWS_DYNAMODB_ENDPOINT().c_str());
 	dynamo_client.OverrideEndpoint(endpoint);
 
 	Aws::DynamoDB::Model::ScanRequest scan_request;
@@ -272,7 +279,7 @@ std::string DynamoDB::scan_table_items_filer_dynamo(const Aws::String& table_nam
 
 	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
 
-	const Aws::String endpoint(g_config["AWS_DYNAMODB_ENDPOINT"].c_str());
+	const Aws::String endpoint(g_config.AWS_DYNAMODB_ENDPOINT().c_str());
 	dynamo_client.OverrideEndpoint(endpoint);
 
 	Aws::DynamoDB::Model::ScanRequest scan_request;
@@ -303,7 +310,7 @@ std::string DynamoDB::scan_table_items_filer_dynamo(const Aws::String& table_nam
 		attribute_updated_value.SetN(i.second.c_str());//need to pass here the value to be updated
 		Aws::OStringStream ostr;
 		ostr << ":" << i.first.c_str();
-		expression_attribute_values [ ostr.str() ] = attribute_updated_value;
+		expression_attribute_values[ostr.str()] = attribute_updated_value;
 	}
 	scan_request.SetExpressionAttributeValues(expression_attribute_values);
 
@@ -320,15 +327,14 @@ std::string DynamoDB::scan_table_items_filer_dynamo(const Aws::String& table_nam
 }
 
 void DynamoDB::client_config(Aws::Auth::AWSCredentials& aws_credentials, Aws::Client::ClientConfiguration& client_config) {
-	aws_credentials.SetAWSAccessKeyId(Aws::String(g_config["AWS_ACCESS_KEY"].c_str()));
-	aws_credentials.SetAWSSecretKey(Aws::String(g_config["AWS_SECRET_KEY"].c_str()));
-	bool use_token;
-	std::istringstream(g_config["AWS_USE_SESSION_TOKEN"]) >> std::boolalpha >> use_token;
-	if (use_token) {
-		aws_credentials.SetSessionToken(Aws::String(g_config["AWS_SESSION_TOKEN"].c_str()));
+	aws_credentials.SetAWSAccessKeyId(Aws::String(g_config.AWS_ACCESS_KEY().c_str()));
+	aws_credentials.SetAWSSecretKey(Aws::String(g_config.AWS_SECRET_KEY().c_str()));
+
+	if (g_config.AWS_USE_SESSION_TOKEN()) {
+		aws_credentials.SetSessionToken(Aws::String(g_config.AWS_SESSION_TOKEN().c_str()));
 	}
 
-	client_config.region = g_config["AWS_REGION"].c_str();
+	client_config.region = g_config.AWS_REGION().c_str();
 }
 
 std::string DynamoDB::dynamo_result_to_json_string(const Aws::Vector<Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue>>& dynamo_result) {

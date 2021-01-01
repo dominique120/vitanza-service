@@ -9,7 +9,7 @@ extern ConfigurationManager g_config;
 
 std::string Auth::hash_password(const std::string& plain_password, const std::string& salt) {
 	const std::string pwd_with_salt = plain_password + salt;
-	unsigned char hash [ SHA512_DIGEST_LENGTH ];
+	unsigned char hash[SHA512_DIGEST_LENGTH];
 	SHA512_CTX sha512;
 	SHA512_Init(&sha512);
 	SHA512_Update(&sha512, pwd_with_salt.c_str(), pwd_with_salt.size());
@@ -26,13 +26,13 @@ std::string Auth::generate_token(const std::string& username, const std::string&
 	const jwt::claim pwd(password);
 
 	auto token = jwt::create()
-		.set_issuer(g_config [ "JWT_ISSUER" ])
+		.set_issuer(g_config.JWT_ISSUER())
 		.set_type("JWS")
 		.set_payload_claim("username", user)
 		.set_payload_claim("password", pwd)
 		.set_issued_at(std::chrono::system_clock::now())
 		.set_expires_at(std::chrono::system_clock::now() + std::chrono::seconds{ 36000 })
-		.sign(jwt::algorithm::hs512{ g_config [ "SHA512_SECRET" ] });
+		.sign(jwt::algorithm::hs512{ g_config.SHA512_SECRET() });
 
 	return token;
 }
@@ -40,7 +40,7 @@ std::string Auth::generate_token(const std::string& username, const std::string&
 bool Auth::validate_token(const std::string& token_header) {
 	try {
 		std::string token = token_header;
-		
+
 		// Remove the "Bearer " section of the header
 		token.erase(0, 7);
 
@@ -52,38 +52,43 @@ bool Auth::validate_token(const std::string& token_header) {
 		const jwt::claim pwd(jwt_payload.at("password").get<std::string>());
 
 		const auto verifier = jwt::verify()
-			.allow_algorithm(jwt::algorithm::hs512{ g_config [ "SHA512_SECRET" ] })
-			.with_issuer(g_config [ "JWT_ISSUER" ])
+			.allow_algorithm(jwt::algorithm::hs512{ g_config.SHA512_SECRET() })
+			.with_issuer(g_config.JWT_ISSUER())
 			.with_claim("username", user)
 			.with_claim("password", pwd);
 
 		verifier.verify(decoded);
 		return true;
-		
-	} catch (jwt::token_verification_exception&) {
+
+	}
+	catch (jwt::token_verification_exception&) {
 		return false;
-	} catch (nlohmann::json::exception&) {
+	}
+	catch (nlohmann::json::exception&) {
 		return false;
-	} catch (std::invalid_argument&) {
+	}
+	catch (std::invalid_argument&) {
 		return false;
-	} catch (std::runtime_error&) {
+	}
+	catch (std::runtime_error&) {
 		return false;
 	}
 }
 
 bool Auth::create_user(const std::string& usr, const std::string& pwd) {
 	const std::string hashed_pwd = Auth::hash_password(pwd, usr);
-	
+
 	Aws::String id = Aws::Utils::UUID::RandomUUID();
 
 	nlohmann::json j;
-	j [ "username" ] = usr;
-	j [ "password" ] = hashed_pwd;
+	j["username"] = usr;
+	j["password"] = hashed_pwd;
 
 	// Move Dynamo implementation to its own file
-	if(DynamoDB::new_item_dynamo("users", "user_id", id, j.dump())) {
+	if (DynamoDB::new_item_dynamo("users", "user_id", id, j.dump())) {
 		return true;
-	} else {
+	}
+	else {
 		return false;
 	}
 }
@@ -97,7 +102,8 @@ bool Auth::validate_user(const std::string& usr, const std::string& pwd) {
 
 	try {
 		j = nlohmann::json::parse(q_result);
-	} catch (const nlohmann::json::exception& ex) {
+	}
+	catch (const nlohmann::json::exception& ex) {
 		std::cout << "Error validating user: " << ex.what();
 		return false;
 	}
@@ -106,7 +112,7 @@ bool Auth::validate_user(const std::string& usr, const std::string& pwd) {
 
 	bool valid_usr = false;
 	bool valid_pwd = false;
-	
+
 	if (user.at("username") == usr) {
 		valid_usr = true;
 	}
@@ -114,10 +120,11 @@ bool Auth::validate_user(const std::string& usr, const std::string& pwd) {
 	if (user.at("password") == hashed_pwd) {
 		valid_pwd = true;
 	}
-	
+
 	if (valid_usr && valid_pwd) {
 		return true;
-	} else {
+	}
+	else {
 		return false;
 	}
 }
