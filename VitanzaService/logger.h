@@ -9,9 +9,7 @@
 
 class Logger {
 public:
-
 	static void log_event(const httplib::Request& req, const httplib::Response& res);
-
 };
 
 #endif

@@ -54,7 +54,7 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_WIN32_WINNT=0x0a00;WIN32_LEAN_AND_MEAN;DB_DYNAMO;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;FS_LOCAL;_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_WIN32_WINNT=0x0a00;WIN32_LEAN_AND_MEAN;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;FS_LOCAL;_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>E:\cpp_libs\cpp-httplib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -76,7 +76,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_WIN32_WINNT=0x0a00;WIN32_LEAN_AND_MEAN;DB_DYNAMO;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;FS_LOCAL;_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_WIN32_WINNT=0x0a00;WIN32_LEAN_AND_MEAN;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;FS_LOCAL;_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>E:\cpp_libs\cpp-httplib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -101,7 +101,6 @@
     <ClCompile Include="client_wrapper.cpp" />
     <ClCompile Include="config.cpp" />
     <ClCompile Include="db_dynamo.cpp" />
-    <ClCompile Include="db_mysql.cpp" />
     <ClCompile Include="file_wrapper.cpp" />
     <ClCompile Include="local_file_handler.cpp" />
     <ClCompile Include="logger.cpp" />
@@ -122,7 +121,6 @@
     <ClInclude Include="client_wrapper.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="db_dynamo.h" />
-    <ClInclude Include="db_mysql.h" />
     <ClInclude Include="file_wrapper.h" />
     <ClInclude Include="local_file_handler.h" />
     <ClInclude Include="logger.h" />

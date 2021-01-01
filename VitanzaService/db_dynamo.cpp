@@ -5,7 +5,6 @@
 #include "vtspch.h"
 #include "db_dynamo.h"
 
-#if defined(DB_DYNAMO)
 extern ConfigurationManager g_config;
 
 std::map<std::string, std::string> DynamoDB::get_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value) {
@@ -366,5 +365,3 @@ std::string DynamoDB::dynamo_result_to_json_string(const Aws::Vector<Aws::Map<Aw
 
 	return j_ss.str().c_str();
 }
-
-#endif

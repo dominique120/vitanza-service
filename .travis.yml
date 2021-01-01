@@ -5,19 +5,6 @@ dist: focal
 
 jobs:
    include:
-        
-      - env: DB=mysql FS=local
-        arch: amd64
-        compiler: gcc
-       
-      - env: DB=dynamo FS=s3
-        arch: amd64
-        compiler: gcc
-        
-      - env: DB=dynamo FS=local
-        arch: amd64
-        compiler: gcc
-
       - env: DB=dynamo FS=s3
         arch: arm64-graviton2
         compiler: gcc
@@ -25,14 +12,11 @@ jobs:
 branches:
     only:
         - main
-        - move-to-httplib 
 
 cache: apt
 addons:
   apt:
     packages:
-      - libboost-system-dev
-      - libmysqlclient-dev
       - libcurl4-openssl-dev
       - libssl-dev
       - uuid-dev
@@ -43,7 +27,7 @@ before_install:
     - cd ..
     - git clone https://github.com/aws/aws-sdk-cpp.git
     - mkdir aws-sdk-cpp.build && cd aws-sdk-cpp.build
-    - cmake ../aws-sdk-cpp -DBUILD_ONLY="dynamodb;s3;sqs" -DENABLE_TESTING=OFF -DCUSTOM_MEMORY_MANAGEMENT=OFF  -DBUILD_SHARED_LIBS=OFF
+    - cmake ../aws-sdk-cpp -DBUILD_ONLY="dynamodb;s3" -DENABLE_TESTING=OFF -DCUSTOM_MEMORY_MANAGEMENT=OFF  -DBUILD_SHARED_LIBS=OFF
     - sudo make && sudo make install
     - cd ..
     - git clone https://github.com/Thalhammer/jwt-cpp.git
@@ -57,9 +41,6 @@ before_install:
     - make && sudo make install
     - cd ..
     - mkdir vts && mkdir vts.build && cd vts.build
-    - if [ "$DB" == "dynamo" ] && [ "$FS" == "local" ]; then cmake -DDB_DYNAMO=ON -DFS_LOCAL=ON ../vitanza-service; fi
-    - if [ "$DB" == "dynamo" ] && [ "$FS" == "s3" ]; then cmake -DDB_DYNAMO=ON -DFS_S3=ON ../vitanza-service; fi
-    - if [ "$DB" == "mysql" ] && [ "$FS" == "local" ]; then cmake -DDB_MYSQL=ON -DDB_DYNAMO=OFF -DFS_LOCAL=ON ../vitanza-service; fi
-    - if [ "$DB" == "mysql" ] && [ "$FS" == "s3" ]; then cmake -DDB_MYSQL=ON -DDB_DYNAMO=OFF -DFS_S3=ON ../vitanza-service; fi
+    - cmake -DDB_MYSQL=ON -DDB_DYNAMO=OFF -DFS_S3=ON ../vitanza-service; fi
        
-script: make -j2
+script: make -j4

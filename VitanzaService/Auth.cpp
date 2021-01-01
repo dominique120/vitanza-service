@@ -73,24 +73,19 @@ bool Auth::validate_token(const std::string& token_header) {
 
 bool Auth::create_user(const std::string& usr, const std::string& pwd) {
 	const std::string hashed_pwd = Auth::hash_password(pwd, usr);
-
-	const auto uuid = boost::uuids::random_generator()();
-	const std::string id = boost::uuids::to_string(uuid);
+	
+	Aws::String id = Aws::Utils::UUID::RandomUUID();
 
 	nlohmann::json j;
 	j [ "username" ] = usr;
 	j [ "password" ] = hashed_pwd;
 
 	// Move Dynamo implementation to its own file
-#if defined(DB_DYNAMO)
-	if(DynamoDB::new_item_dynamo("users", "user_id", id.c_str(), j.dump())) {
+	if(DynamoDB::new_item_dynamo("users", "user_id", id, j.dump())) {
 		return true;
 	} else {
 		return false;
 	}
-#else
-	return true;
-#endif
 }
 
 bool Auth::validate_user(const std::string& usr, const std::string& pwd) {
@@ -98,12 +93,8 @@ bool Auth::validate_user(const std::string& usr, const std::string& pwd) {
 	nlohmann::json j;
 
 	// Move Dynamo implementation to its own file
-#if defined(DB_DYNAMO)
 	std::string q_result = DynamoDB::query_index("users", "username", usr.c_str());
-#else
-	std::string q_result = "";
-	return true;
-#endif	
+
 	try {
 		j = nlohmann::json::parse(q_result);
 	} catch (const nlohmann::json::exception& ex) {

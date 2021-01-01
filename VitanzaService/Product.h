@@ -5,8 +5,6 @@
 #ifndef PRODUCT_H
 #define PRODUCT_H
 
-#include "db_mysql.h"
-
 class Product {
 public:
 	int32_t product_id;
@@ -18,26 +16,6 @@ public:
 	std::string product_id_uuid;
 
 	using ProductList = std::list<Product>;
-
-	//db access
-#if defined(DB_MYSQL)
-	// select all OrderDetails
-	static ProductList select_products();
-
-	//select OrderDetail by ID
-	static Product select_product_by_id(const int32_t& id);
-	static Product select_product_by_id(const std::string& uuid);
-
-	//update OrderDetail
-	static bool update_product(const Product& product);
-
-	//new OrderDetail
-	static bool new_product(const Product& product);
-
-	//delete OrderDetail
-	static bool delete_product(int32_t id);
-	static bool delete_product(const std::string& uuid);
-#endif
 
 	/* ----------- Json methods ---------------*/
 	static std::string to_json_array(const ProductList& product);

@@ -3,8 +3,6 @@ cmake_minimum_required(VERSION 3.10)
 set(CMAKE_DISABLE_SOURCE_CHANGES ON)
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 
-option(DB_DYNAMO "Use DynamoDB" OFF)
-option(DB_MYSQL "Use MySQL" OFF)
 option(FS_LOCAL "Save files locally" OFF)
 option(FS_S3 "Save files on S3" OFF)
 
@@ -19,15 +17,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 set_target_properties(vts PROPERTIES CXX_STANDARD 17)
 set_target_properties(vts PROPERTIES CXX_STANDARD_REQUIRED ON)
 
-if (${CMAKE_VERSION} VERSION_GREATER "3.16.0")
-    target_precompile_headers(vts PUBLIC VitanzaService/vtspch.h)
-else ()
-    include(cotire)
-    set_target_properties(vts PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "VitanzaService/vtspch.h")
-    set_target_properties(vts PROPERTIES COTIRE_ADD_UNITY_BUILD FALSE)
-    cotire(vts)
-endif ()
-
+target_precompile_headers(vts PUBLIC VitanzaService/vtspch.h)
 
 if(FS_LOCAL)
 	target_compile_definitions(vts PUBLIC -DFS_LOCAL)
@@ -36,23 +26,6 @@ endif(FS_LOCAL)
 if(FS_S3)
 	target_compile_definitions(vts PUBLIC -DFS_S3)
 endif(FS_S3)
-
-
-if(DB_DYNAMO)
-	target_compile_definitions(vts PUBLIC -DDB_DYNAMO)
-endif(DB_DYNAMO)
-
-if(DB_MYSQL)
-	target_compile_definitions(vts PUBLIC -DDB_MYSQL)
-endif(DB_MYSQL)
-
-if(DB_MYSQL AND DB_DYNAMO)
-	message(FATAL_ERROR "Specify only one database, you are using multiple options." )
-endif(DB_MYSQL AND DB_DYNAMO)
-
-if(!DB_MYSQL AND !DB_DYNAMO)
-	message(FATAL_ERROR "Specify a database, you are not settign any. Use cmake -DDB_DYNAMO=ON or cmake -DDB_MYSQL=ON" )
-endif(!DB_MYSQL AND !DB_DYNAMO)
 
 find_path(JWT_CPP_INCLUDE_DIRS "jwt-cpp/base.h")
 
@@ -76,17 +49,13 @@ endif ()
 set(CMAKE_CXX_FLAGS_PERFORMANCE "${CMAKE_CXX_FLAGS_RELEASE} -march=native")
 
 find_package(AWSSDK REQUIRED COMPONENTS dynamodb s3)
-find_package(MySQL REQUIRED)
-find_package(Boost 1.53.0 REQUIRED COMPONENTS system)
 find_package(OpenSSL 1.0.2 REQUIRED)
 find_package(httplib REQUIRED)
 
-target_include_directories(vts PRIVATE ${JWT_CPP_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${MYSQL_INCLUDE_DIR} ${json_SOURCE_DIR})
+target_include_directories(vts PRIVATE ${JWT_CPP_INCLUDE_DIRS} ${json_SOURCE_DIR})
 
-target_link_libraries(vts PRIVATE
-        Boost::system
-		${AWSSDK_LINK_LIBRARIES}
-        ${MYSQL_CLIENT_LIBS}
+target_link_libraries(vts PRIVATE        
+		${AWSSDK_LINK_LIBRARIES}        
 		nlohmann_json::nlohmann_json
 		httplib::httplib
         )

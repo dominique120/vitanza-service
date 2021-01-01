@@ -4,7 +4,7 @@
  */
 #ifndef DYNAMO_H
 #define DYNAMO_H
-#if defined(DB_DYNAMO)
+
 #include <aws/core/Aws.h>
 #include <aws/core/auth/AWSCredentials.h>
 #include <aws/core/utils/Outcome.h>
@@ -38,6 +38,4 @@ private:
 	static void client_config(Aws::Auth::AWSCredentials& aws_credentials, Aws::Client::ClientConfiguration& client_config);
 	static std::string dynamo_result_to_json_string(const Aws::Vector<Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue>>& dynamo_result);
 };
-#endif
-
 #endif
