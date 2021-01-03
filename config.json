@@ -14,5 +14,6 @@
   "FS_LOCAL_DIR": "img_store",
   "LOG_TO_CONSOLE": "true",
   "LOG_TO_FILE": "true",
-  "LOG_FILE": "logfile.log"
+  "LOG_FILE": "logfile.log",
+  "CORS_ORIGIN":  "http://127.0.0.1:4200"
 }

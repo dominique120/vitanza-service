@@ -23,6 +23,7 @@ public:
 	bool LOG_TO_CONSOLE();
 	bool LOG_TO_FILE();
 	std::string LOG_FILE();
+	std::string CORS_ORIGIN();
 
 public:
 	bool load(int argc, char* argv[]);

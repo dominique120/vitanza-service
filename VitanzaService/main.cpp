@@ -67,12 +67,18 @@ int main(int argc, char* argv[]) {
 	return (EXIT_SUCCESS);
 }
 
+void set_response_headers(httplib::Response& res) {
+	res.set_header("Content-type", "application/json");
+	res.set_header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
+	// Set port to 4200 for local angular development. Otherwise must use the domain name with the protocol.
+	res.set_header("Access-Control-Allow-Origin", g_config.CORS_ORIGIN());
+	res.set_header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+	res.set_header("Access-Control-Allow-Credentials", "true");
+}
+
 void register_handlers(httplib::Server& svr) {
 	svr.Options(R"(.*)", [&](const httplib::Request& req, httplib::Response& res) {
-		res.set_header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
-		// Set port to 4200 for local angular development. Otherwise must use the domain name with the protocol.
-		res.set_header("Access-Control-Allow-Origin", "http://127.0.0.1:4200");
-		res.set_header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+		set_response_headers(res);
 		});
 
 	svr.Post((g_config.API_BASE_URL() + "/config").c_str(), [](const httplib::Request& req, httplib::Response& res) {
@@ -102,7 +108,7 @@ void register_handlers(httplib::Server& svr) {
 		}
 		const std::map<std::string, std::string> user = nlohmann::json::parse(req.body);
 
-		if (Auth::create_user(user.at("username"), user.at("password"))) {
+		if (auth_wrapper::save_new_user(user.at("username"), user.at("password"))) {
 			res.status = 201;
 		}
 		else {
@@ -111,10 +117,9 @@ void register_handlers(httplib::Server& svr) {
 		});
 
 	svr.Post((g_config.API_BASE_URL() + "/auth/validateuser").c_str(), [](const httplib::Request& req, httplib::Response& res) {
-
 		const std::map<std::string, std::string> user = nlohmann::json::parse(req.body);
 
-		if (Auth::validate_user(user.at("username"), user.at("password"))) {
+		if (auth_wrapper::authenticate(user.at("username"), user.at("password"))) {
 			res.status = 200;
 		}
 		else {
@@ -124,9 +129,9 @@ void register_handlers(httplib::Server& svr) {
 
 	svr.Post((g_config.API_BASE_URL() + "/auth").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		const std::map<std::string, std::string> user = nlohmann::json::parse(req.body);
+		set_response_headers(res);
 		if (auth_wrapper::authenticate(user.at("username"), user.at("password"))) {
 			res.set_header("Content-type", "application/json");
-			res.set_header("Access-Control-Allow-Origin", "*");
 			nlohmann::json j;
 			j["jwt"] = Auth::generate_token(user.at("username"), user.at("password"));
 			res.body = j.dump();
@@ -139,8 +144,7 @@ void register_handlers(httplib::Server& svr) {
 
 	svr.Get((g_config.API_BASE_URL() + "/auth").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		//just a test to try to validate generated tokens
-		res.set_header("Content-type", "application/json");
-		res.set_header("Access-Control-Allow-Origin", "*");
+		set_response_headers(res);
 
 		if (Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 200;
@@ -153,13 +157,11 @@ void register_handlers(httplib::Server& svr) {
 
 	/*--------------- Customers ---------------------------*/
 	svr.Get((g_config.API_BASE_URL() + "/customers").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
 		}
-
-		res.set_header("Content-type", "application/json");
-		res.set_header("Access-Control-Allow-Origin", "*");
 
 		if (req.has_param("id")) {
 			const std::string response = Client_wrapper::get_client(req.get_param_value("id"));
@@ -236,13 +238,12 @@ void register_handlers(httplib::Server& svr) {
 
 	/*--------------- Products ---------------------------*/
 	svr.Get((g_config.API_BASE_URL() + "/chemicals/products").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		set_response_headers(res);
+
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
 		}
-
-		res.set_header("Content-type", "application/json");
-		res.set_header("Access-Control-Allow-Origin", "*");
 
 		if (req.has_param("id")) {
 			const std::string response = Chemical_Product_Wrapper::get_product(req.get_param_value("id"));
@@ -310,13 +311,12 @@ void register_handlers(httplib::Server& svr) {
 
 	/*--------------- Orders ---------------------------*/
 	svr.Get((g_config.API_BASE_URL() + "/chemicals/orders/by_client").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		set_response_headers(res);
+
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
 		}
-
-		res.set_header("Content-type", "application/json");
-		res.set_header("Access-Control-Allow-Origin", "*");
 
 		if (req.has_param("id")) {
 			const std::string response = Chemical_Order_Wrapper::get_order_by_client(req.get_param_value("id"));
@@ -334,13 +334,13 @@ void register_handlers(httplib::Server& svr) {
 		});
 
 	svr.Get((g_config.API_BASE_URL() + "/chemicals/orders/outstanding").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		set_response_headers(res);
+
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
 		}
 
-		res.set_header("Content-type", "application/json");
-		res.set_header("Access-Control-Allow-Origin", "*");
 		const std::string response = Chemical_Order_Wrapper::get_outstanding_orders();
 		if (response.empty()) {
 			res.status = 204;
@@ -352,13 +352,13 @@ void register_handlers(httplib::Server& svr) {
 		});
 
 	svr.Get((g_config.API_BASE_URL() + "/chemicals/orders").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		set_response_headers(res);
+
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
 		}
 
-		res.set_header("Content-type", "application/json");
-		res.set_header("Access-Control-Allow-Origin", "*");
 		if (req.has_param("id")) {
 			const std::string response = Chemical_Order_Wrapper::get_order(req.get_param_value("id"));
 			if (response.empty()) {
@@ -425,13 +425,13 @@ void register_handlers(httplib::Server& svr) {
 
 	/*--------------- Order Details ---------------------------*/
 	svr.Get((g_config.API_BASE_URL() + "/chemicals/orderdetails/by_order").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		set_response_headers(res);
+
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
 		}
 
-		res.set_header("Content-type", "application/json");
-		res.set_header("Access-Control-Allow-Origin", "*");
 		if (req.has_param("id")) {
 			const std::string response = Chemical_Order_Detail_Wrapper::get_orderdetails_by_order(req.get_param_value("id"));
 			if (response.empty()) {
@@ -448,13 +448,13 @@ void register_handlers(httplib::Server& svr) {
 		});
 
 	svr.Get((g_config.API_BASE_URL() + "/chemicals/orderdetails").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		set_response_headers(res);
+
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
 			return;
 		}
 
-		res.set_header("Content-type", "application/json");
-		res.set_header("Access-Control-Allow-Origin", "*");
 		if (req.has_param("id")) {
 			const std::string response = Chemical_Order_Detail_Wrapper::get_order_detail(req.get_param_value("id"));
 			if (response.empty()) {
@@ -517,3 +517,4 @@ void register_handlers(httplib::Server& svr) {
 		});
 
 }
+

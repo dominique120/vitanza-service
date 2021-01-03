@@ -35,5 +35,6 @@
 
 int main(int argc, char* argv[]);
 void register_handlers(httplib::Server& svr);
+void set_response_headers(httplib::Response& res);
 
 #endif

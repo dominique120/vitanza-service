@@ -149,3 +149,8 @@ std::string ConfigurationManager::LOG_FILE()
 {
 	return this->configuration_table.at("LOG_FILE");
 }
+
+std::string ConfigurationManager::CORS_ORIGIN()
+{
+	return this->configuration_table.at("CORS_ORIGIN");
+}
