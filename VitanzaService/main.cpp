@@ -525,5 +525,6 @@ void register_handlers(httplib::Server& svr) {
 * - Add functionality to "create order" to subtract from stock
 * - Add functionality to manage inventory(stock)
 * - Add to database order table infor for ammount of items, total price and maybe extras
+* - Add "archived" field to orders table in database 
 */
 
