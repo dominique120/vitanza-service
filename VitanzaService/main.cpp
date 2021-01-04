@@ -157,6 +157,7 @@ void register_handlers(httplib::Server& svr) {
 
 	/*--------------- Customers ---------------------------*/
 	svr.Get((g_config.API_BASE_URL() + "/customers").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		set_response_headers(res);
 
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 403;
@@ -517,4 +518,12 @@ void register_handlers(httplib::Server& svr) {
 		});
 
 }
+
+
+/* TODO:
+* - Add method for de activating a customer -> /customers/deactivate?id={id}
+* - Add functionality to "create order" to subtract from stock
+* - Add functionality to manage inventory(stock)
+* - Add to database order table infor for ammount of items, total price and maybe extras
+*/
 
