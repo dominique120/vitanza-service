@@ -6,11 +6,9 @@
 #include "client_wrapper.h"
 
 std::string Client_wrapper::get_client(const std::string& id_or_uuid) {
-	//const nlohmann::json j = DynamoDB::get_item_dynamo("clients", "ClientId_uuid", id_or_uuid.c_str());
-
-	nlohmann::json result;
-	DynamoDB::get_item_dynamo("test_table", "id", id_or_uuid.c_str(), result);
-	return result.dump();
+	nlohmann::json j;
+	DynamoDB::get_item_dynamo("clients", "ClientId_uuid", id_or_uuid.c_str(), j);
+	return j.dump();
 }
 
 bool Client_wrapper::update_client(const std::string& id_or_uuid, const std::string& request_body) {
@@ -27,5 +25,7 @@ bool Client_wrapper::new_client(const std::string& request_body) {
 }
 
 std::string Client_wrapper::get_all_clients() {
-	return DynamoDB::scan_table_items_dynamo("clients");
+	nlohmann::json j;
+	DynamoDB::scan_table_items_dynamo("clients", j);
+	return j.dump();
 }

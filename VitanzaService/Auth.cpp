@@ -98,33 +98,31 @@ bool Auth::validate_user(const std::string& usr, const std::string& pwd) {
 	nlohmann::json j;
 
 	// Move Dynamo implementation to its own file
-	std::string q_result = DynamoDB::query_index("users", "username", usr.c_str());
 
-	try {
-		j = nlohmann::json::parse(q_result);
-	}
-	catch (const nlohmann::json::exception& ex) {
-		std::cout << "Error validating user: " << ex.what();
-		return false;
-	}
+	DynamoDB::query_index("users", "username", usr.c_str(), j);
 
 	std::map<std::string, std::string> user = j[0];
 
 	bool valid_usr = false;
 	bool valid_pwd = false;
+	try {
+		if (user.at("username") == usr) {
+			valid_usr = true;
+		}
 
-	if (user.at("username") == usr) {
-		valid_usr = true;
-	}
+		if (user.at("password") == hashed_pwd) {
+			valid_pwd = true;
+		}
 
-	if (user.at("password") == hashed_pwd) {
-		valid_pwd = true;
+		if (valid_usr && valid_pwd) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
-
-	if (valid_usr && valid_pwd) {
-		return true;
-	}
-	else {
-		return false;
+	catch (const nlohmann::json::exception& ex) {
+		std::cout << "user validation failed with: " << ex.what() << "\n";
+		return false;		
 	}
 }

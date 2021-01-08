@@ -30,13 +30,14 @@ public:
 	static bool update_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, const std::string& request_body);
 	static bool new_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, const std::string& request_body);
 	static bool delete_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value);
-	static std::string scan_table_items_dynamo(const Aws::String& table_name);
-	static std::string scan_table_items_filer_dynamo(const Aws::String& table_name, const std::map<std::string, std::string>& conditions_and_values);
-	static std::string query_index(const Aws::String& table_name, const Aws::String& partition_key, const Aws::String& match);
+	static void scan_table_items_dynamo(const Aws::String& table_name, nlohmann::json& result_out);
+	static void scan_table_items_filer_dynamo(const Aws::String& table_name, const std::map<std::string, std::string>& conditions_and_values, nlohmann::json& result_out);
+	static void query_index(const Aws::String& table_name, const Aws::String& partition_key, const Aws::String& match, nlohmann::json& result_out);
 
 private:
 	static void client_config(Aws::Auth::AWSCredentials& aws_credentials, Aws::Client::ClientConfiguration& client_config);
-	static std::string dynamo_result_to_json_string(const Aws::Vector<Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue>>& dynamo_result);
+	static void parse_collection(const Aws::Vector<Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue>>& dynamo_result, nlohmann::json& json_out);
+	static void parse_object(const Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue>& dynamo_result, nlohmann::json& json_out);
 	static nlohmann::json parse_type(Aws::DynamoDB::Model::AttributeValue attr);
 };
 #endif

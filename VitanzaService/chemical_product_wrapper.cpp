@@ -6,9 +6,9 @@
 #include "chemical_product_wrapper.h"
 
 std::string Chemical_Product_Wrapper::get_product(const std::string& id_or_uuid) {
-	//const nlohmann::json j = DynamoDB::get_item_dynamo("ch_products", "ProductId_uuid", id_or_uuid.c_str());
-	//return j.dump();
-	return "";
+	nlohmann::json j;
+	DynamoDB::get_item_dynamo("ch_products", "ProductId_uuid", id_or_uuid.c_str(), j);
+	return j.dump();	
 }
 
 bool Chemical_Product_Wrapper::delete_product(const std::string& id_or_uuid) {
@@ -26,5 +26,7 @@ bool Chemical_Product_Wrapper::update_product(const std::string& id_or_uuid, con
 }
 
 std::string Chemical_Product_Wrapper::get_all_products() {
-	return DynamoDB::scan_table_items_dynamo("ch_products");
+	nlohmann::json j;
+	DynamoDB::scan_table_items_dynamo("ch_products", j);
+	return j.dump();
 }

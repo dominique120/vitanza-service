@@ -6,9 +6,9 @@
 #include "chemical_order_wrapper.h"
 
 std::string Chemical_Order_Wrapper::get_order(const std::string& id_or_uuid) {
-	//const nlohmann::json j = DynamoDB::get_item_dynamo("ch_orders", "OrderId_uuid", id_or_uuid.c_str());
-	//return j.dump();
-	return "";
+	nlohmann::json j;
+	DynamoDB::get_item_dynamo("ch_orders", "OrderId_uuid", id_or_uuid.c_str(), j);
+	return j.dump();
 }
 
 bool Chemical_Order_Wrapper::update_order(const std::string& id_or_uuid, const std::string& request_body) {
@@ -25,7 +25,9 @@ bool Chemical_Order_Wrapper::new_order(const std::string& request_body) {
 }
 
 std::string Chemical_Order_Wrapper::get_all_orders() {
-	return DynamoDB::scan_table_items_dynamo("ch_orders");
+	nlohmann::json j;
+	DynamoDB::scan_table_items_dynamo("ch_orders", j);
+	return j.dump();
 }
 
 std::string Chemical_Order_Wrapper::get_outstanding_orders() {
@@ -35,10 +37,14 @@ std::string Chemical_Order_Wrapper::get_outstanding_orders() {
 	auto paid = std::pair<std::string, std::string>("Paid", "0");
 	conditions.insert(paid);
 
-	return DynamoDB::scan_table_items_filer_dynamo("ch_orders", conditions);
+	nlohmann::json j;
+	DynamoDB::scan_table_items_filer_dynamo("ch_orders", conditions, j);
+	return j.dump();
 }
 
 
 std::string Chemical_Order_Wrapper::get_order_by_client(const std::string& client_uuid) {
-	return DynamoDB::query_index("ch_orders", "ClientId_uuid", client_uuid.c_str());
+	nlohmann::json j;
+	DynamoDB::query_index("ch_orders", "ClientId_uuid", client_uuid.c_str(), j);
+	return j.dump();
 }

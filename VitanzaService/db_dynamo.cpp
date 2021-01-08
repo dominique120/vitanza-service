@@ -21,17 +21,17 @@ nlohmann::json DynamoDB::parse_type(Aws::DynamoDB::Model::AttributeValue attr) {
 		nlohmann::json json;
 		auto type = attr.GetM();
 		for (const auto& element : type) {
-			json[element.first.c_str()] = parse_type(*element.second);			
+			json[element.first.c_str()] = parse_type(*element.second);
 		}
 		return json;
-	}	
+	}
 	else if (attr.GetType() == Aws::DynamoDB::Model::ValueType::ATTRIBUTE_LIST) {
 		nlohmann::json json = nlohmann::json::array();
 		auto type = attr.GetL();
 		for (const auto& element : type) {
 			nlohmann::json obj = parse_type(*element);
 			json.push_back(obj);
-		}		
+		}
 		return json;
 	}
 	else if (attr.GetType() == Aws::DynamoDB::Model::ValueType::NULLVALUE) {
@@ -39,6 +39,23 @@ nlohmann::json DynamoDB::parse_type(Aws::DynamoDB::Model::AttributeValue attr) {
 	}
 	else {
 		return nullptr;
+	}
+}
+
+void DynamoDB::parse_object(const Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue>& dynamo_result, nlohmann::json& json_out) {
+	for (const auto& element : dynamo_result) {
+		json_out[element.first.c_str()] = parse_type(element.second);
+	}
+}
+
+void DynamoDB::parse_collection(const Aws::Vector<Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue>>& dynamo_result, nlohmann::json& json_out) {
+	json_out = nlohmann::json::array();
+	for (const auto& object : dynamo_result) {
+		nlohmann::json obj;
+		for (const auto& element : object) {
+			obj[element.first.c_str()] = parse_type(element.second);
+		}
+		json_out.push_back(obj);
 	}
 }
 
@@ -63,17 +80,7 @@ void DynamoDB::get_item_dynamo(const Aws::String& table_name, const Aws::String&
 	// Retrieve the item's fields and values
 	const Aws::DynamoDB::Model::GetItemOutcome& result = dynamo_client.GetItem(req);
 	if (result.IsSuccess()) {
-		// Reference the retrieved fields/values
-		const Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue>& item = result.GetResult().GetItem();
-		if (!item.empty()) {
-			// Output each retrieved field and its value			
-			for (const auto& i : item) {
-				result_out[i.first.c_str()] = parse_type(i.second);
-			}			
-		}
-		else {
-			std::cout << "No item found with the key " << key_name << std::endl;
-		}
+		parse_object(result.GetResult().GetItem(), result_out);
 	}
 	else {
 		std::cout << "Failed to get item: " << result.GetError().GetMessage() << std::endl;
@@ -225,7 +232,7 @@ bool DynamoDB::delete_item_dynamo(const Aws::String& table_name, const Aws::Stri
 	}
 }
 
-std::string DynamoDB::query_index(const Aws::String& table_name, const Aws::String& partition_key, const Aws::String& match) {
+void DynamoDB::query_index(const Aws::String& table_name, const Aws::String& partition_key, const Aws::String& match, nlohmann::json& result_out) {
 	Aws::Auth::AWSCredentials credentials;
 	Aws::Client::ClientConfiguration client_config;
 
@@ -257,15 +264,12 @@ std::string DynamoDB::query_index(const Aws::String& table_name, const Aws::Stri
 	const Aws::DynamoDB::Model::QueryOutcome& result = dynamo_client.Query(query_request);
 	if (!result.IsSuccess()) {
 		std::cout << result.GetError().GetMessage() << std::endl;
-		return "";
 	}
 
-	const Aws::Vector<Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue>> query_result = result.GetResult().GetItems();
-
-	return DynamoDB::dynamo_result_to_json_string(query_result);
+	DynamoDB::parse_collection(result.GetResult().GetItems(), result_out);
 }
 
-std::string DynamoDB::scan_table_items_dynamo(const Aws::String& table_name) {
+void DynamoDB::scan_table_items_dynamo(const Aws::String& table_name, nlohmann::json& result_out) {
 	Aws::Auth::AWSCredentials credentials;
 	Aws::Client::ClientConfiguration client_config;
 
@@ -283,16 +287,13 @@ std::string DynamoDB::scan_table_items_dynamo(const Aws::String& table_name) {
 	const Aws::DynamoDB::Model::ScanOutcome& result = dynamo_client.Scan(scan_request);
 	if (!result.IsSuccess()) {
 		std::cout << result.GetError().GetMessage() << std::endl;
-		return "";
 	}
 
-	const Aws::Vector<Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue>> query_result = result.GetResult().GetItems();
-
-	return DynamoDB::dynamo_result_to_json_string(query_result);
+	DynamoDB::parse_collection(result.GetResult().GetItems(), result_out);
 }
 
 // Currently only tests for equality
-std::string DynamoDB::scan_table_items_filer_dynamo(const Aws::String& table_name, const std::map<std::string, std::string>& conditions_and_values) {
+void DynamoDB::scan_table_items_filer_dynamo(const Aws::String& table_name, const std::map<std::string, std::string>& conditions_and_values, nlohmann::json& result_out) {
 	Aws::Auth::AWSCredentials credentials;
 	Aws::Client::ClientConfiguration client_config;
 
@@ -339,12 +340,9 @@ std::string DynamoDB::scan_table_items_filer_dynamo(const Aws::String& table_nam
 	const Aws::DynamoDB::Model::ScanOutcome& result = dynamo_client.Scan(scan_request);
 	if (!result.IsSuccess()) {
 		std::cout << result.GetError().GetMessage() << std::endl;
-		return "";
 	}
 
-	const Aws::Vector<Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue>> query_result = result.GetResult().GetItems();
-
-	return DynamoDB::dynamo_result_to_json_string(query_result);
+	DynamoDB::parse_collection(result.GetResult().GetItems(), result_out);
 }
 
 void DynamoDB::client_config(Aws::Auth::AWSCredentials& aws_credentials, Aws::Client::ClientConfiguration& client_config) {
@@ -358,39 +356,3 @@ void DynamoDB::client_config(Aws::Auth::AWSCredentials& aws_credentials, Aws::Cl
 	client_config.region = g_config.AWS_REGION().c_str();
 }
 
-std::string DynamoDB::dynamo_result_to_json_string(const Aws::Vector<Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue>>& dynamo_result) {
-	// convert to json
-	// TODO: I absolutely don't like the way I use an inner counter and an outer counter. I'd like to replace that.
-	// Either way it "seems" to work
-	size_t inner_cntr = 0;
-	size_t outer_cntr = 0;
-	Aws::OStringStream j_ss;
-	dynamo_result.empty() ? j_ss << "" : j_ss << "[";
-	for (size_t i = 0; i < dynamo_result.size(); ++i) {
-		j_ss << "{";
-		for (const auto& j : dynamo_result.at(i)) {
-			j_ss << "\"" << j.first << "\" : \"";
-			// TODO: Could move this to some sort of recursive function to deal with nested objects
-			if (j.second.GetType() == Aws::DynamoDB::Model::ValueType::STRING) {
-				j_ss << j.second.GetS();
-			}
-			else if (j.second.GetType() == Aws::DynamoDB::Model::ValueType::NUMBER) {
-				j_ss << j.second.GetN();
-			}
-			else if (j.second.GetType() == Aws::DynamoDB::Model::ValueType::BOOL) {
-				j_ss << j.second.GetBool();
-			}
-			else if (j.second.GetType() == Aws::DynamoDB::Model::ValueType::NULLVALUE) {
-				j_ss << j.second.GetNull();
-			}
-			++inner_cntr;
-			inner_cntr != dynamo_result.at(i).size() ? j_ss << "\", \n" : j_ss << "\" \n";
-		}
-		inner_cntr = 0;
-		++outer_cntr;
-		outer_cntr != dynamo_result.size() ? j_ss << "}, " : j_ss << "}";
-	}
-	dynamo_result.empty() ? j_ss << "" : j_ss << "]";
-
-	return j_ss.str().c_str();
-}
