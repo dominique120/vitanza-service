@@ -7,6 +7,52 @@
 
 extern ConfigurationManager g_config;
 
+
+void compose_type(Aws::DynamoDB::Model::AttributeValue& attr, const nlohmann::json& json) {
+	for (const auto& item : json.items()) {
+		if (item.value().is_number_integer()) {
+			attr.SetN(std::to_string(item.value().get<long>()).c_str());
+		}
+		else if (item.value().is_number_float()) {
+			attr.SetN(item.value().get<double>());
+		}
+		else if (item.value().is_string()) {
+			attr.SetS(item.value().get<std::string>().c_str());
+		}
+		else if (item.value().is_boolean()) {
+			attr.SetBool(item.value().get<bool>());
+		}
+		else if (item.value().is_array()) {
+			Aws::Vector< std::shared_ptr<Aws::DynamoDB::Model::AttributeValue>> array;
+
+			for (const auto& array_object : item.value().items()) {
+				Aws::DynamoDB::Model::AttributeValue temp_attr;
+				compose_type(temp_attr, array_object.value());
+				array.push_back(Aws::MakeShared<Aws::DynamoDB::Model::AttributeValue>("", temp_attr));
+			}
+			attr.SetL(array);
+		}
+		else if (item.value().is_object()) {
+			Aws::Map<Aws::String, const std::shared_ptr<Aws::DynamoDB::Model::AttributeValue>> object;
+			for (const auto& nested_item : item.value().items()) {
+				std::pair<Aws::String, std::shared_ptr<Aws::DynamoDB::Model::AttributeValue>> pair;
+
+				Aws::DynamoDB::Model::AttributeValue temp_attr;
+
+				pair.first = nested_item.key();
+				compose_type(temp_attr, nested_item.value());
+				pair.second = Aws::MakeShared<Aws::DynamoDB::Model::AttributeValue>("", temp_attr);
+
+				object.insert(pair);
+			}
+			attr.SetM(object);
+		}
+		else if (item.value().is_null()) {
+			attr.SetNull(true);
+		}
+	}
+}
+
 nlohmann::json DynamoDB::parse_type(Aws::DynamoDB::Model::AttributeValue attr) {
 	if (attr.GetType() == Aws::DynamoDB::Model::ValueType::STRING) {
 		return attr.GetS();
@@ -52,25 +98,23 @@ void DynamoDB::parse_collection(const Aws::Vector<Aws::Map<Aws::String, Aws::Dyn
 	json_out = nlohmann::json::array();
 	for (const auto& object : dynamo_result) {
 		nlohmann::json obj;
-		for (const auto& element : object) {
-			obj[element.first.c_str()] = parse_type(element.second);
-		}
+		parse_object(object, obj);
 		json_out.push_back(obj);
 	}
 }
 
 void DynamoDB::get_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, nlohmann::json& result_out) {
+	/* Config */
 	Aws::Auth::AWSCredentials credentials;
 	Aws::Client::ClientConfiguration client_config;
-
 	DynamoDB::client_config(credentials, client_config);
-
 	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
-
 	const Aws::String endpoint(g_config.AWS_DYNAMODB_ENDPOINT().c_str());
 	dynamo_client.OverrideEndpoint(endpoint);
+	/* Config */
 
 	Aws::DynamoDB::Model::GetItemRequest req;
+
 	// Set up the request
 	req.SetTableName(table_name); // table name
 	Aws::DynamoDB::Model::AttributeValue hash_key;

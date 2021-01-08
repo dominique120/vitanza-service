@@ -97,8 +97,6 @@ bool Auth::validate_user(const std::string& usr, const std::string& pwd) {
 	const std::string hashed_pwd = Auth::hash_password(pwd, usr);
 	nlohmann::json j;
 
-	// Move Dynamo implementation to its own file
-
 	DynamoDB::query_index("users", "username", usr.c_str(), j);
 
 	std::map<std::string, std::string> user = j[0];
