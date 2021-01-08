@@ -46,7 +46,8 @@ int main(int argc, char* argv[]) {
 
 
 	std::cout << "Initializing - Setting up AWS SDK." << std::endl;
-	const Aws::SDKOptions options;
+	Aws::SDKOptions options;
+	options.loggingOptions.logLevel = Aws::Utils::Logging::LogLevel::Trace;
 	Aws::InitAPI(options);
 
 

@@ -7,7 +7,42 @@
 
 extern ConfigurationManager g_config;
 
-std::map<std::string, std::string> DynamoDB::get_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value) {
+nlohmann::json DynamoDB::parse_type(Aws::DynamoDB::Model::AttributeValue attr) {
+	if (attr.GetType() == Aws::DynamoDB::Model::ValueType::STRING) {
+		return attr.GetS();
+	}
+	else if (attr.GetType() == Aws::DynamoDB::Model::ValueType::NUMBER) {
+		return attr.GetN();
+	}
+	else if (attr.GetType() == Aws::DynamoDB::Model::ValueType::BOOL) {
+		return attr.GetBool();
+	}
+	else if (attr.GetType() == Aws::DynamoDB::Model::ValueType::ATTRIBUTE_MAP) {
+		nlohmann::json json;
+		auto type = attr.GetM();
+		for (const auto& element : type) {
+			json[element.first.c_str()] = parse_type(*element.second);			
+		}
+		return json;
+	}	
+	else if (attr.GetType() == Aws::DynamoDB::Model::ValueType::ATTRIBUTE_LIST) {
+		nlohmann::json json = nlohmann::json::array();
+		auto type = attr.GetL();
+		for (const auto& element : type) {
+			nlohmann::json obj = parse_type(*element);
+			json.push_back(obj);
+		}		
+		return json;
+	}
+	else if (attr.GetType() == Aws::DynamoDB::Model::ValueType::NULLVALUE) {
+		return nullptr;
+	}
+	else {
+		return nullptr;
+	}
+}
+
+void DynamoDB::get_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, nlohmann::json& result_out) {
 	Aws::Auth::AWSCredentials credentials;
 	Aws::Client::ClientConfiguration client_config;
 
@@ -18,9 +53,7 @@ std::map<std::string, std::string> DynamoDB::get_item_dynamo(const Aws::String& 
 	const Aws::String endpoint(g_config.AWS_DYNAMODB_ENDPOINT().c_str());
 	dynamo_client.OverrideEndpoint(endpoint);
 
-	std::map<std::string, std::string> new_map;
 	Aws::DynamoDB::Model::GetItemRequest req;
-
 	// Set up the request
 	req.SetTableName(table_name); // table name
 	Aws::DynamoDB::Model::AttributeValue hash_key;
@@ -33,22 +66,10 @@ std::map<std::string, std::string> DynamoDB::get_item_dynamo(const Aws::String& 
 		// Reference the retrieved fields/values
 		const Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue>& item = result.GetResult().GetItem();
 		if (!item.empty()) {
-			// Output each retrieved field and its value
+			// Output each retrieved field and its value			
 			for (const auto& i : item) {
-				std::pair<std::string, std::string> p;
-				p.first = i.first.c_str();
-
-				if (i.second.GetType() == Aws::DynamoDB::Model::ValueType::STRING) {
-					p.second = i.second.GetS().c_str();
-				}
-				else if (i.second.GetType() == Aws::DynamoDB::Model::ValueType::NUMBER) {
-					p.second = i.second.GetN().c_str();
-				}
-				else if (i.second.GetType() == Aws::DynamoDB::Model::ValueType::BOOL) {
-					p.second = i.second.GetBool();
-				}
-				new_map.insert(p);
-			}
+				result_out[i.first.c_str()] = parse_type(i.second);
+			}			
 		}
 		else {
 			std::cout << "No item found with the key " << key_name << std::endl;
@@ -57,8 +78,8 @@ std::map<std::string, std::string> DynamoDB::get_item_dynamo(const Aws::String& 
 	else {
 		std::cout << "Failed to get item: " << result.GetError().GetMessage() << std::endl;
 	}
-	return new_map;
 }
+
 
 bool DynamoDB::update_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, const std::string& request_body) {
 	Aws::Auth::AWSCredentials credentials;
@@ -349,16 +370,18 @@ std::string DynamoDB::dynamo_result_to_json_string(const Aws::Vector<Aws::Map<Aw
 		j_ss << "{";
 		for (const auto& j : dynamo_result.at(i)) {
 			j_ss << "\"" << j.first << "\" : \"";
-
 			// TODO: Could move this to some sort of recursive function to deal with nested objects
 			if (j.second.GetType() == Aws::DynamoDB::Model::ValueType::STRING) {
-				j_ss << j.second.GetS().c_str();
+				j_ss << j.second.GetS();
 			}
 			else if (j.second.GetType() == Aws::DynamoDB::Model::ValueType::NUMBER) {
-				j_ss << j.second.GetN().c_str();
+				j_ss << j.second.GetN();
 			}
 			else if (j.second.GetType() == Aws::DynamoDB::Model::ValueType::BOOL) {
 				j_ss << j.second.GetBool();
+			}
+			else if (j.second.GetType() == Aws::DynamoDB::Model::ValueType::NULLVALUE) {
+				j_ss << j.second.GetNull();
 			}
 			++inner_cntr;
 			inner_cntr != dynamo_result.at(i).size() ? j_ss << "\", \n" : j_ss << "\" \n";

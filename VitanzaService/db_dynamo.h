@@ -26,7 +26,7 @@
 
 class DynamoDB {
 public:
-	static std::map<std::string, std::string> get_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value);
+	static void get_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, nlohmann::json& result_out);
 	static bool update_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, const std::string& request_body);
 	static bool new_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, const std::string& request_body);
 	static bool delete_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value);
@@ -37,5 +37,6 @@ public:
 private:
 	static void client_config(Aws::Auth::AWSCredentials& aws_credentials, Aws::Client::ClientConfiguration& client_config);
 	static std::string dynamo_result_to_json_string(const Aws::Vector<Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue>>& dynamo_result);
+	static nlohmann::json parse_type(Aws::DynamoDB::Model::AttributeValue attr);
 };
 #endif

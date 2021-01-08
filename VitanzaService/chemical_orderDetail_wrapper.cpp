@@ -6,8 +6,9 @@
 #include "chemical_orderDetail_wrapper.h"
 
 std::string Chemical_Order_Detail_Wrapper::get_order_detail(const std::string& id_or_uuid) {
-	const nlohmann::json j = DynamoDB::get_item_dynamo("ch_orderdetails", "OrderDetailId_uuid", id_or_uuid.c_str());
-	return j.dump();
+	//const nlohmann::json j = DynamoDB::get_item_dynamo("ch_orderdetails", "OrderDetailId_uuid", id_or_uuid.c_str());
+	//return j.dump();
+	return "";
 }
 
 bool Chemical_Order_Detail_Wrapper::delete_order_detail(const std::string& id_or_uuid) {
