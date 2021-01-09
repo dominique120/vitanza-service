@@ -7,6 +7,8 @@
 
 extern ConfigurationManager g_config;
 
+void compose_object(Aws::DynamoDB::Model::AttributeValue& attr, const nlohmann::json& json);
+void compose_type(Aws::DynamoDB::Model::AttributeValue& attr, const nlohmann::json& json);
 
 void compose_type(Aws::DynamoDB::Model::AttributeValue& attr, const nlohmann::json& json) {
 	for (const auto& item : json.items()) {
@@ -27,7 +29,7 @@ void compose_type(Aws::DynamoDB::Model::AttributeValue& attr, const nlohmann::js
 
 			for (const auto& array_object : item.value().items()) {
 				Aws::DynamoDB::Model::AttributeValue temp_attr;
-				compose_type(temp_attr, array_object.value());
+				compose_object(temp_attr, array_object.value());
 				array.push_back(Aws::MakeShared<Aws::DynamoDB::Model::AttributeValue>("", temp_attr));
 			}
 			attr.SetL(array);
@@ -52,6 +54,23 @@ void compose_type(Aws::DynamoDB::Model::AttributeValue& attr, const nlohmann::js
 		}
 	}
 }
+
+void compose_object(Aws::DynamoDB::Model::AttributeValue& attr, const nlohmann::json& json) {
+	Aws::Map<Aws::String, const std::shared_ptr<Aws::DynamoDB::Model::AttributeValue>> object;
+	for (const auto& item : json.items()) {
+		std::pair<Aws::String, std::shared_ptr<Aws::DynamoDB::Model::AttributeValue>> pair;
+
+		Aws::DynamoDB::Model::AttributeValue temp_attr;
+
+		pair.first = item.key();
+		compose_type(temp_attr, item.value());
+		pair.second = Aws::MakeShared<Aws::DynamoDB::Model::AttributeValue>("", temp_attr);
+
+		object.insert(pair);
+	}
+	attr.SetM(object);
+}
+
 
 nlohmann::json DynamoDB::parse_type(Aws::DynamoDB::Model::AttributeValue attr) {
 	if (attr.GetType() == Aws::DynamoDB::Model::ValueType::STRING) {
@@ -215,24 +234,16 @@ bool DynamoDB::new_item_dynamo(const Aws::String& table_name, const Aws::String&
 	const Aws::String endpoint(g_config.AWS_DYNAMODB_ENDPOINT().c_str());
 	dynamo_client.OverrideEndpoint(endpoint);
 
-	nlohmann::json j = nlohmann::json::parse(request_body);
-
-	std::map<std::string, std::string> items = j;
+	nlohmann::json item = nlohmann::json::parse(request_body);
 
 	Aws::DynamoDB::Model::PutItemRequest pir;
 	pir.SetTableName(table_name);
 
 	// Add body
-	for (const auto& i : items) {
+	for (const auto& element : item.items()) {
 		Aws::DynamoDB::Model::AttributeValue attribute_value;
-		// TODO: change this to get they type of the item instead of manually filtering keys
-		if (i.first == "Paid" || i.first == "Delivered" || i.first == "Stock" || i.first == "Price") {
-			attribute_value.SetN(i.second.c_str());
-		}
-		else {
-			attribute_value.SetS(i.second.c_str());
-		}
-		pir.AddItem(i.first.c_str(), attribute_value);
+		compose_type(attribute_value, element);
+		pir.AddItem(element.key().c_str(), attribute_value);
 	}
 
 	// Add key
