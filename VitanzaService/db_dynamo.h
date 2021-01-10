@@ -39,5 +39,10 @@ private:
 	static void parse_collection(const Aws::Vector<Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue>>& dynamo_result, nlohmann::json& json_out);
 	static void parse_object(const Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue>& dynamo_result, nlohmann::json& json_out);
 	static nlohmann::json parse_type(Aws::DynamoDB::Model::AttributeValue attr);
+	static void compose_type(Aws::DynamoDB::Model::AttributeValue& attr, const nlohmann::json& json);
+	static Aws::String build_set_expression(const nlohmann::json& json);
+	static void compose_object(Aws::DynamoDB::Model::AttributeValue& attr, const nlohmann::json& json);
+	static Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue> build_set_values(const nlohmann::json& json);
+	
 };
 #endif

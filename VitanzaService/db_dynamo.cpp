@@ -7,10 +7,7 @@
 
 extern ConfigurationManager g_config;
 
-void compose_object(Aws::DynamoDB::Model::AttributeValue& attr, const nlohmann::json& json);
-void compose_type(Aws::DynamoDB::Model::AttributeValue& attr, const nlohmann::json& json);
-
-void compose_type(Aws::DynamoDB::Model::AttributeValue& attr, const nlohmann::json& json) {
+void DynamoDB::compose_type(Aws::DynamoDB::Model::AttributeValue& attr, const nlohmann::json& json) {
 	for (const auto& item : json.items()) {
 		if (item.value().is_number_integer()) {
 			attr.SetN(std::to_string(item.value().get<long>()).c_str());
@@ -55,7 +52,35 @@ void compose_type(Aws::DynamoDB::Model::AttributeValue& attr, const nlohmann::js
 	}
 }
 
-void compose_object(Aws::DynamoDB::Model::AttributeValue& attr, const nlohmann::json& json) {
+Aws::String DynamoDB::build_set_expression(const nlohmann::json& json) {
+	std::stringstream ss;
+	ss << "SET ";
+	for (const auto& item : json.items()) {
+		ss << item.key() << " = :" << item.key() << ", ";		
+	}
+	Aws::String expr = ss.str().c_str();
+	expr.pop_back();
+	expr.pop_back();
+	return expr;
+}
+
+Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue> DynamoDB::build_set_values(const nlohmann::json& json) {
+	Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue> object;
+	for (const auto& item : json.items()) {
+		std::pair<Aws::String, Aws::DynamoDB::Model::AttributeValue> pair;
+
+		Aws::DynamoDB::Model::AttributeValue temp_attr;
+
+		pair.first = ":" + item.key();
+		compose_type(temp_attr, item.value());
+		pair.second = temp_attr;
+
+		object.insert(pair);
+	}
+	return object;
+}
+
+void DynamoDB::compose_object(Aws::DynamoDB::Model::AttributeValue& attr, const nlohmann::json& json) {
 	Aws::Map<Aws::String, const std::shared_ptr<Aws::DynamoDB::Model::AttributeValue>> object;
 	for (const auto& item : json.items()) {
 		std::pair<Aws::String, std::shared_ptr<Aws::DynamoDB::Model::AttributeValue>> pair;
@@ -70,7 +95,6 @@ void compose_object(Aws::DynamoDB::Model::AttributeValue& attr, const nlohmann::
 	}
 	attr.SetM(object);
 }
-
 
 nlohmann::json DynamoDB::parse_type(Aws::DynamoDB::Model::AttributeValue attr) {
 	if (attr.GetType() == Aws::DynamoDB::Model::ValueType::STRING) {
@@ -162,7 +186,6 @@ bool DynamoDB::update_item_dynamo(const Aws::String& table_name, const Aws::Stri
 	const Aws::String endpoint(g_config.AWS_DYNAMODB_ENDPOINT().c_str());
 	dynamo_client.OverrideEndpoint(endpoint);
 
-	// *** Define UpdateItem request arguments
 	// Define TableName argument
 	Aws::DynamoDB::Model::UpdateItemRequest request;
 	request.SetTableName(table_name);
@@ -171,47 +194,20 @@ bool DynamoDB::update_item_dynamo(const Aws::String& table_name, const Aws::Stri
 	Aws::DynamoDB::Model::AttributeValue attrib_value;
 	attrib_value.SetS(key_value);
 	request.AddKey(key_name, attrib_value);
-
-	nlohmann::json j = nlohmann::json::parse(request_body);
-
-	// map json request to an std::map
-	std::map<std::string, std::string> json_map = j;
-
-	json_map.erase(key_name.c_str());
-
-	// build SET expression
-	Aws::OStringStream ss;
-	ss << "SET ";
-	size_t counter = 0;
-	for (const auto& i : json_map) {
-		ss << i.first << " = :" << i.first;
-		++counter;
-		if (counter != json_map.size()) {
-			ss << ", ";
-		}
+	nlohmann::json j;
+	try {
+		j = nlohmann::json::parse(request_body);
+		j.erase(key_name.c_str());
+	}
+	catch (nlohmann::json::exception) {
+		return false;
 	}
 
-	// Construct the SET update expression argument
-	Aws::String update_expression(ss.str());
-	request.SetUpdateExpression(update_expression);
+	// set expression for SET
+	request.SetUpdateExpression(build_set_expression(j));
 
 	// Construct attribute value argument
-	Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue> expression_attribute_values;
-
-	for (const auto& i : json_map) {
-		Aws::DynamoDB::Model::AttributeValue attribute_updated_value;
-		// TODO: change this to get they type of the item instead of manually filtering keys
-		if (i.first == "Paid" || i.first == "Delivered" || i.first == "Stock" || i.first == "Price") {
-			attribute_updated_value.SetN(i.second.c_str());//need to pass here the value to be updated
-		}
-		else {
-			attribute_updated_value.SetS(i.second.c_str());//need to pass here the value to be updated
-		}
-		Aws::OStringStream ostr;
-		ostr << ":" << i.first.c_str();
-		expression_attribute_values[ostr.str()] = attribute_updated_value;
-	}
-	request.SetExpressionAttributeValues(expression_attribute_values);
+	request.SetExpressionAttributeValues(build_set_values(j));
 
 	// Update the item
 	const Aws::DynamoDB::Model::UpdateItemOutcome& result = dynamo_client.UpdateItem(request);
