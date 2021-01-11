@@ -52,9 +52,9 @@ void DynamoDB::compose_type(Aws::DynamoDB::Model::AttributeValue& attr, const nl
 	}
 }
 
-Aws::String DynamoDB::build_set_expression(const nlohmann::json& json) {
+Aws::String DynamoDB::build_operation_expression(const nlohmann::json& json, const std::string& operation) {
 	std::stringstream ss;
-	ss << "SET ";
+	ss << operation << " ";
 	for (const auto& item : json.items()) {
 		ss << item.key() << " = :" << item.key() << ", ";		
 	}
@@ -64,7 +64,7 @@ Aws::String DynamoDB::build_set_expression(const nlohmann::json& json) {
 	return expr;
 }
 
-Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue> DynamoDB::build_set_values(const nlohmann::json& json) {
+Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue> DynamoDB::build_operation_values(const nlohmann::json& json) {
 	Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue> object;
 	for (const auto& item : json.items()) {
 		std::pair<Aws::String, Aws::DynamoDB::Model::AttributeValue> pair;
@@ -174,7 +174,6 @@ void DynamoDB::get_item_dynamo(const Aws::String& table_name, const Aws::String&
 	}
 }
 
-
 bool DynamoDB::update_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, const std::string& request_body) {
 	Aws::Auth::AWSCredentials credentials;
 	Aws::Client::ClientConfiguration client_config;
@@ -204,10 +203,10 @@ bool DynamoDB::update_item_dynamo(const Aws::String& table_name, const Aws::Stri
 	}
 
 	// set expression for SET
-	request.SetUpdateExpression(build_set_expression(j));
+	request.SetUpdateExpression(build_operation_expression(j, "SET"));
 
 	// Construct attribute value argument
-	request.SetExpressionAttributeValues(build_set_values(j));
+	request.SetExpressionAttributeValues(build_operation_values(j));
 
 	// Update the item
 	const Aws::DynamoDB::Model::UpdateItemOutcome& result = dynamo_client.UpdateItem(request);
@@ -283,6 +282,33 @@ bool DynamoDB::delete_item_dynamo(const Aws::String& table_name, const Aws::Stri
 	}
 }
 
+void DynamoDB::query_with_expression(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& expression, const nlohmann::json& expression_values, nlohmann::json& result_out) {
+	Aws::Auth::AWSCredentials credentials;
+	Aws::Client::ClientConfiguration client_config;
+
+	DynamoDB::client_config(credentials, client_config);
+
+	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
+
+	const Aws::String endpoint(g_config.AWS_DYNAMODB_ENDPOINT().c_str());
+	dynamo_client.OverrideEndpoint(endpoint);
+		
+	Aws::DynamoDB::Model::QueryRequest query_request;
+	query_request.SetTableName(table_name);
+	query_request.SetIndexName(key_name);
+
+	query_request.SetKeyConditionExpression(expression);
+	query_request.SetExpressionAttributeValues(build_operation_values(expression_values));
+
+	// run the query
+	const Aws::DynamoDB::Model::QueryOutcome& result = dynamo_client.Query(query_request);
+	if (!result.IsSuccess()) {
+		std::cout << result.GetError().GetMessage() << std::endl;
+	}
+
+	DynamoDB::parse_collection(result.GetResult().GetItems(), result_out);
+}
+
 void DynamoDB::query_index(const Aws::String& table_name, const Aws::String& partition_key, const Aws::String& match, nlohmann::json& result_out) {
 	Aws::Auth::AWSCredentials credentials;
 	Aws::Client::ClientConfiguration client_config;
@@ -295,7 +321,6 @@ void DynamoDB::query_index(const Aws::String& table_name, const Aws::String& par
 	dynamo_client.OverrideEndpoint(endpoint);
 
 	const Aws::String query_expression(partition_key + " = :" + partition_key);
-	//std::cout << query_expression.c_str() << std::endl;
 
 	// Construct attribute value argument
 	Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue> expression_attribute_values;
@@ -309,7 +334,6 @@ void DynamoDB::query_index(const Aws::String& table_name, const Aws::String& par
 
 	query_request.SetKeyConditionExpression(query_expression);
 	query_request.SetExpressionAttributeValues(expression_attribute_values);
-
 
 	// run the query
 	const Aws::DynamoDB::Model::QueryOutcome& result = dynamo_client.Query(query_request);
