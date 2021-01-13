@@ -47,9 +47,7 @@ int main(int argc, char* argv[]) {
 
 	std::cout << "Initializing - Setting up AWS SDK." << std::endl;
 	Aws::SDKOptions options;
-	options.loggingOptions.logLevel = Aws::Utils::Logging::LogLevel::Trace;
 	Aws::InitAPI(options);
-
 
 	std::cout << "Initializing - Registering handlers." << std::endl;
 	httplib::Server server;
@@ -512,6 +510,54 @@ void register_handlers(httplib::Server& svr) {
 
 		if (Chemical_Order_Detail_Wrapper::new_order_detail(req.body)) {
 			res.status = 201;
+		}
+		else {
+			res.status = 400;
+		}
+		});
+
+
+
+
+	/*
+	
+	Test Section
+
+	*/
+
+	svr.Get("/test/client", [](const httplib::Request& req, httplib::Response& res) {
+		set_response_headers(res);
+
+		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+			res.status = 403;
+			return;
+		}
+
+		// AP 1
+		if (req.has_param("status")) {
+			nlohmann::json result;
+			Client::query_clients_by_status(req.get_param_value("status"), result);
+
+			if (result.empty()) {
+				res.status = 204;
+			}
+			else {
+				res.status = 200;
+				res.body = result.dump();
+			}
+
+		// AP 2
+		} else 	if (req.has_param("id")) {
+			nlohmann::json result;
+			Client::get_client(req.get_param_value("id"), result);
+
+			if (result.empty()) {
+				res.status = 204;
+			}
+			else {
+				res.status = 200;
+				res.body = result.dump();
+			}
 		}
 		else {
 			res.status = 400;

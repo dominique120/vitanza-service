@@ -33,6 +33,7 @@ public:
 	static void scan_table_items_dynamo(const Aws::String& table_name, nlohmann::json& result_out);
 	static void scan_table_items_filer_dynamo(const Aws::String& table_name, const std::map<std::string, std::string>& conditions_and_values, nlohmann::json& result_out);
 	static void query_index(const Aws::String& table_name, const Aws::String& partition_key, const Aws::String& match, nlohmann::json& result_out);
+	static void query_with_expression(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& expression, const nlohmann::json& expression_values, nlohmann::json& result_out);
 
 private:
 	static void client_config(Aws::Auth::AWSCredentials& aws_credentials, Aws::Client::ClientConfiguration& client_config);
@@ -43,7 +44,6 @@ private:
 	static void compose_object(Aws::DynamoDB::Model::AttributeValue& attr, const nlohmann::json& json);
 	static Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue> build_operation_values(const nlohmann::json& json);
 	static Aws::String build_operation_expression(const nlohmann::json& json, const std::string& operation);
-	static void query_with_expression(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& expression, const nlohmann::json& expression_values, nlohmann::json& result_out);
 
 };
 #endif

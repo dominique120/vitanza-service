@@ -3,8 +3,10 @@
 
 void Client::query_clients_by_status(const std::string& status, nlohmann::json& result_out)
 {
-	// GSI-2PK = ACTIVE
-
+	// GSI2PK = ACTIVE
+	nlohmann::json j;
+	j["status"] = status;
+	DynamoDB::query_with_expression("Vitanza", "GSI2PK", "GSI2PK = :status", j, result_out);
 }
 
 void Client::get_client(const std::string& client_id, nlohmann::json& result_out)
@@ -21,13 +23,13 @@ void Order::query_orders_by_client(const std::string& client_id, nlohmann::json&
 
 void Order::query_orders_by_status(const std::string& status, nlohmann::json& result_out)
 {
-	// GSI - 2 = P_PAY
+	// GSI2PK = P_PAY
 
 }
 
 void Order::get_order(const std::string& order_id, nlohmann::json& result_out)
 {
-	// GSI1-PK is ORD|uuid
+	// GSI1PK is ORD|uuid
 
 }
 
@@ -39,7 +41,7 @@ void FilterInstallation::query_filter_installations_by_client(const std::string&
 
 void FilterInstallation::get_filter_installation(const std::string& filter_install_id, nlohmann::json& result_out)
 {
-	// GSI1-PK is FLI|uui
+	// GSI1PK is FLI|uui
 
 }
 
@@ -57,13 +59,13 @@ void Product::get_product(const std::string& product_id, nlohmann::json& result_
 
 void Product::get_current_stock(const std::string& category, nlohmann::json& result_out)
 {
-	// GSI-1 PK is filters/chem, SK stats with PRO
+	// GSI1 PK is filters/chem, SK stats with PRO
 
 }
 
 void Note::get_notes_by_status(const std::string& status, nlohmann::json& result_out)
 {
-	// GSI-1 PK = OPEN
+	// GSI1 PK = OPEN
 
 }
 
@@ -75,6 +77,6 @@ void FilterChange::get_changes_by_installation(const std::string& filter_install
 
 void FilterChange::get_changes_by_status_dates(const std::string& status, const std::string& date_start, const std::string& date_finish, nlohmann::json& result_out)
 {
-	// GSI-1 PK = STATUS, GSI-1 SK in range
+	// GSI1 PK = STATUS, GSI1 SK in range
 
 }

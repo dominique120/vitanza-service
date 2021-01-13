@@ -27,6 +27,8 @@
 #include "chemical_product_wrapper.h"
 #include "file_wrapper.h"
 
+#include "Entities.h"
+
 #include <aws/core/Aws.h>
 #include <aws/core/VersionConfig.h>
 
