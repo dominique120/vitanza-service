@@ -1,0 +1,306 @@
+{
+  "ModelName": "_new Vitanza Service Model",
+  "ModelMetadata": {
+    "Author": "Dominique Verellen",
+    "DateCreated": "Jan 12, 2021, 08:52 PM",
+    "DateLastModified": "Jan 12, 2021, 09:19 PM",
+    "Description": "Single table schema for Vitanza Service",
+    "AWSService": "Amazon DynamoDB",
+    "Version": "2.0"
+  },
+  "DataModel": [
+    {
+      "TableName": "Vitanza",
+      "KeyAttributes": {
+        "PartitionKey": {
+          "AttributeName": "PK",
+          "AttributeType": "S"
+        },
+        "SortKey": {
+          "AttributeName": "SK",
+          "AttributeType": "S"
+        }
+      },
+      "NonKeyAttributes": [
+        {
+          "AttributeName": "GSI-1PK",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "GSI-1SK",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "GSI-2PK",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "GSI-2SK",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "Address 1",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "Address 2",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "Phone 1",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "Phone 2",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "Emaiil",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "InCharge",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "Total",
+          "AttributeType": "N"
+        },
+        {
+          "AttributeName": "PayInfo",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "PayDoc",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "Qty",
+          "AttributeType": "N"
+        },
+        {
+          "AttributeName": "OrvPrice",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "Notes",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "Address",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "Type",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "WhoInstalled",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "BasePrice",
+          "AttributeType": "N"
+        },
+        {
+          "AttributeName": "Description",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "Stock",
+          "AttributeType": "N"
+        },
+        {
+          "AttributeName": "Name",
+          "AttributeType": "S"
+        }
+      ],
+      "GlobalSecondaryIndexes": [
+        {
+          "IndexName": "GSI-1PK",
+          "KeyAttributes": {
+            "PartitionKey": {
+              "AttributeName": "GSI-1PK",
+              "AttributeType": "S"
+            },
+            "SortKey": {
+              "AttributeName": "GSI-1SK",
+              "AttributeType": "S"
+            }
+          },
+          "Projection": {
+            "ProjectionType": "ALL"
+          }
+        },
+        {
+          "IndexName": "GSI-2PK",
+          "KeyAttributes": {
+            "PartitionKey": {
+              "AttributeName": "GSI-2PK",
+              "AttributeType": "S"
+            },
+            "SortKey": {
+              "AttributeName": "GSI-2SK",
+              "AttributeType": "S"
+            }
+          },
+          "Projection": {
+            "ProjectionType": "ALL"
+          }
+        }
+      ],
+      "TableData": [
+        {
+          "PK": {
+            "S": "CLI|a7vxc"
+          },
+          "SK": {
+            "S": "CLI|a7vxc"
+          },
+          "GSI-1PK": {
+            "S": "Juan Perez"
+          },
+          "GSI-1SK": {
+            "S": "La Molina"
+          },
+          "GSI-2PK": {
+            "S": "ACTIVE"
+          },
+          "GSI-2SK": {
+            "S": "FILTER"
+          },
+          "Address 1": {
+            "S": "Calle 5 # 109 "
+          },
+          "Phone 1": {
+            "S": "951875215"
+          },
+          "Phone 2": {
+            "S": "4156251"
+          },
+          "Emaiil": {
+            "S": "email@gmail.com"
+          }
+        },
+        {
+          "PK": {
+            "S": "CLI|a7vxc"
+          },
+          "SK": {
+            "S": "ORD|d51a9"
+          },
+          "GSI-1PK": {
+            "S": "ORD|d51a9"
+          },
+          "GSI-1SK": {
+            "S": "12/12/2020"
+          },
+          "GSI-2PK": {
+            "S": "CLOSED"
+          },
+          "Total": {
+            "N": "225.22"
+          },
+          "PayInfo": {
+            "S": "BBVA"
+          }
+        },
+        {
+          "PK": {
+            "S": "ORD|d51a9"
+          },
+          "SK": {
+            "S": "ODD|6sd2f"
+          },
+          "GSI-1PK": {
+            "S": "PRO|9dsf1"
+          },
+          "Qty": {
+            "N": "2"
+          },
+          "OrvPrice": {
+            "S": "22.5"
+          }
+        },
+        {
+          "PK": {
+            "S": "CLI|a7vxc"
+          },
+          "SK": {
+            "S": "FLI|sd654f"
+          },
+          "GSI-1PK": {
+            "S": "FLI|sd654f"
+          },
+          "GSI-1SK": {
+            "S": "12/12/2020"
+          },
+          "Total": {
+            "N": "1240.22"
+          },
+          "Notes": {
+            "S": "this is a note"
+          },
+          "Address": {
+            "S": "Calle 5 # 109 "
+          },
+          "Type": {
+            "S": "OT32"
+          },
+          "WhoInstalled": {
+            "S": "DV"
+          }
+        },
+        {
+          "PK": {
+            "S": "FLI|sd654f"
+          },
+          "SK": {
+            "S": "FLC|6d4s89"
+          },
+          "GSI-1PK": {
+            "S": "UPCOMING"
+          },
+          "GSI-1SK": {
+            "S": "12/12/2020"
+          },
+          "Total": {
+            "N": "150.1"
+          },
+          "WhoInstalled": {
+            "S": "DV"
+          }
+        },
+        {
+          "PK": {
+            "S": "PRO|9dsf1"
+          },
+          "SK": {
+            "S": "Filter"
+          },
+          "GSI-1PK": {
+            "S": "PRO|9dsf1"
+          },
+          "Notes": {
+            "S": "wrench 58"
+          },
+          "BasePrice": {
+            "N": "1251.2"
+          },
+          "Description": {
+            "S": "filter filter etc"
+          },
+          "Stock": {
+            "N": "4"
+          },
+          "Name": {
+            "S": "OT32"
+          }
+        }
+      ],
+      "DataAccess": {
+        "MySql": {}
+      }
+    }
+  ]
+}

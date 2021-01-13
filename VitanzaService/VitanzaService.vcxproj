@@ -117,6 +117,7 @@
     <ClInclude Include="client_wrapper.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="db_dynamo.h" />
+    <ClInclude Include="Entities.h" />
     <ClInclude Include="file_wrapper.h" />
     <ClInclude Include="local_file_handler.h" />
     <ClInclude Include="logger.h" />
