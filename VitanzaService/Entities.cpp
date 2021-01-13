@@ -12,13 +12,18 @@ void Client::query_clients_by_status(const std::string& status, nlohmann::json& 
 void Client::get_client(const std::string& client_id, nlohmann::json& result_out)
 {
 	// PK is CLI|uuid
-
+	const Aws::String PK = client_id.c_str();
+	DynamoDB::get_item_composite("Vitanza", "PK", PK, "SK", PK, result_out);
 }
 
 void Order::query_orders_by_client(const std::string& client_id, nlohmann::json& result_out)
 {
 	// PK is CLI|uuid, SK starts with ORD
-
+	// Error: The table does not have the specified index: PK
+	nlohmann::json j;
+	j["PK"] = client_id;
+	j["order"] = "ORD";
+	DynamoDB::query_with_expression("Vitanza", "PK", "PK = :PK and begins_with(SK, :order)", j, result_out);
 }
 
 void Order::query_orders_by_status(const std::string& status, nlohmann::json& result_out)

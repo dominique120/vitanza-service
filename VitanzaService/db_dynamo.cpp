@@ -174,6 +174,42 @@ void DynamoDB::get_item_dynamo(const Aws::String& table_name, const Aws::String&
 	}
 }
 
+void DynamoDB::get_item_composite(const Aws::String& table_name, const Aws::String& pk, const Aws::String& pk_value, const Aws::String& sk, const Aws::String& sk_value, nlohmann::json& result_out) {
+	/* Config */
+	Aws::Auth::AWSCredentials credentials;
+	Aws::Client::ClientConfiguration client_config;
+	DynamoDB::client_config(credentials, client_config);
+	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
+	const Aws::String endpoint(g_config.AWS_DYNAMODB_ENDPOINT().c_str());
+	dynamo_client.OverrideEndpoint(endpoint);
+	/* Config */
+
+	Aws::DynamoDB::Model::GetItemRequest req;
+
+	// Set up the request
+	req.SetTableName(table_name); // table name
+
+
+	// Setup the composite key for the GetItemRequest
+	Aws::DynamoDB::Model::AttributeValue primary_key;
+	primary_key.SetS(pk_value);
+	req.AddKey(pk, primary_key); 
+
+	Aws::DynamoDB::Model::AttributeValue sort_key;
+	sort_key.SetS(sk_value);
+	req.AddKey(sk, sort_key);
+
+
+	// Retrieve the item's fields and values
+	const Aws::DynamoDB::Model::GetItemOutcome& result = dynamo_client.GetItem(req);
+	if (result.IsSuccess()) {
+		parse_object(result.GetResult().GetItem(), result_out);
+	}
+	else {
+		std::cout << "Failed to get item: " << result.GetError().GetMessage() << std::endl;
+	}
+}
+
 bool DynamoDB::update_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, const std::string& request_body) {
 	Aws::Auth::AWSCredentials credentials;
 	Aws::Client::ClientConfiguration client_config;

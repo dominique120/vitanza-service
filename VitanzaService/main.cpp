@@ -564,6 +564,34 @@ void register_handlers(httplib::Server& svr) {
 		}
 		});
 
+
+	svr.Get("/test/order", [](const httplib::Request& req, httplib::Response& res) {
+		set_response_headers(res);
+
+		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+			res.status = 403;
+			return;
+		}
+
+		// AP 3
+		if (req.has_param("clientid")) {
+			nlohmann::json result;
+			Order::query_orders_by_client(req.get_param_value("clientid"), result);
+
+			if (result.empty()) {
+				res.status = 204;
+			}
+			else {
+				res.status = 200;
+				res.body = result.dump();
+			}
+
+		}
+		else {
+			res.status = 400;
+		}
+		});
+
 }
 
 
