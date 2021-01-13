@@ -331,7 +331,9 @@ void DynamoDB::query_with_expression(const Aws::String& table_name, const Aws::S
 		
 	Aws::DynamoDB::Model::QueryRequest query_request;
 	query_request.SetTableName(table_name);
-	query_request.SetIndexName(key_name);
+	if (!key_name.empty()) {
+		query_request.SetIndexName(key_name);
+	}
 
 	query_request.SetKeyConditionExpression(expression);
 	query_request.SetExpressionAttributeValues(build_operation_values(expression_values));

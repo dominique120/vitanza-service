@@ -585,6 +585,212 @@ void register_handlers(httplib::Server& svr) {
 				res.status = 200;
 				res.body = result.dump();
 			}
+		}
+		// AP 5
+		else if (req.has_param("status")) {
+			nlohmann::json result;
+			Order::query_orders_by_status(req.get_param_value("status"), result);
+
+			if (result.empty()) {
+				res.status = 204;
+			}
+			else {
+				res.status = 200;
+				res.body = result.dump();
+			}
+		}
+		// AP 7
+		else if (req.has_param("orderid") && req.has_param("clientid")) {
+			nlohmann::json result;
+			Order::get_order(req.get_param_value("clientid"), req.get_param_value("orderid"), result);
+
+			if (result.empty()) {
+				res.status = 204;
+			}
+			else {
+				res.status = 200;
+				res.body = result.dump();
+			}
+		}
+		else {
+			res.status = 400;
+		}
+		});
+
+	svr.Get("/test/filter", [](const httplib::Request& req, httplib::Response& res) {
+		set_response_headers(res);
+
+		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+			res.status = 403;
+			return;
+		}
+
+		// AP 4
+		if (req.has_param("clientid")) {
+			nlohmann::json result;
+			FilterInstallation::query_filter_installations_by_client(req.get_param_value("clientid"), result);
+
+			if (result.empty()) {
+				res.status = 204;
+			}
+			else {
+				res.status = 200;
+				res.body = result.dump();
+			}
+		}
+
+		// AP 6
+		else if(req.has_param("filterid") && req.has_param("clientid")) {
+			nlohmann::json result;
+			FilterInstallation::get_filter_installation(req.get_param_value("clientid"), req.get_param_value("filterid"), result);
+
+			if (result.empty()) {
+				res.status = 204;
+			}
+			else {
+				res.status = 200;
+				res.body = result.dump();
+			}
+		}
+		else {
+			res.status = 400;
+		}
+		});
+
+
+	svr.Get("/test/orderdetails", [](const httplib::Request& req, httplib::Response& res) {
+		set_response_headers(res);
+
+		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+			res.status = 403;
+			return;
+		}
+
+		// AP 8
+		if (req.has_param("orderid")) {
+			nlohmann::json result;
+			OrderDetail::get_order_details_by_order(req.get_param_value("orderid"), result);
+
+			if (result.empty()) {
+				res.status = 204;
+			}
+			else {
+				res.status = 200;
+				res.body = result.dump();
+			}
+
+		}
+		else {
+			res.status = 400;
+		}
+		});
+
+	svr.Get("/test/product", [](const httplib::Request& req, httplib::Response& res) {
+		set_response_headers(res);
+
+		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+			res.status = 403;
+			return;
+		}
+
+		// AP 9
+		if (req.has_param("productid") && req.has_param("category")) {
+			nlohmann::json result;
+			Product::get_product(req.get_param_value("category"), req.get_param_value("productid"), result);
+
+			if (result.empty()) {
+				res.status = 204;
+			}
+			else {
+				res.status = 200;
+				res.body = result.dump();
+			}
+
+		} 
+		// AP 10
+		else if (req.has_param("category")) {
+			nlohmann::json result;
+			Product::get_current_stock(req.get_param_value("category"), result);
+
+			if (result.empty()) {
+				res.status = 204;
+			}
+			else {
+				res.status = 200;
+				res.body = result.dump();
+			}
+
+		}
+		else {
+			res.status = 400;
+		}
+		});
+
+
+
+
+	svr.Get("/test/note", [](const httplib::Request& req, httplib::Response& res) {
+		set_response_headers(res);
+
+		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+			res.status = 403;
+			return;
+		}
+
+		// AP 11
+		if (req.has_param("status")) {
+			nlohmann::json result;
+			Note::get_notes_by_status(req.get_param_value("status"), result);
+
+			if (result.empty()) {
+				res.status = 204;
+			}
+			else {
+				res.status = 200;
+				res.body = result.dump();
+			}
+
+		}
+		else {
+			res.status = 400;
+		}
+		});
+
+
+	svr.Get("/test/filterchange", [](const httplib::Request& req, httplib::Response& res) {
+		set_response_headers(res);
+
+		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+			res.status = 403;
+			return;
+		}
+
+		// AP 11
+		if (req.has_param("filterid")) {
+			nlohmann::json result;
+			FilterChange::get_changes_by_installation(req.get_param_value("filterid"), result);
+
+			if (result.empty()) {
+				res.status = 204;
+			}
+			else {
+				res.status = 200;
+				res.body = result.dump();
+			}
+
+		}
+		// AP 13
+		else if (req.has_param("status") && req.has_param("start") && req.has_param("end")) {
+			nlohmann::json result;
+			FilterChange::get_changes_by_status_dates(req.get_param_value("status"), req.get_param_value("start"), req.get_param_value("end"), result);
+
+			if (result.empty()) {
+				res.status = 204;
+			}
+			else {
+				res.status = 200;
+				res.body = result.dump();
+			}
 
 		}
 		else {

@@ -27,7 +27,7 @@ public:
 	static void query_orders_by_status(const std::string& status, nlohmann::json& result_out);
 
 	// AP 7
-	static void get_order(const std::string& order_id, nlohmann::json& result_out);
+	static void get_order(const std::string& client_id, const std::string& order_id, nlohmann::json& result_out);
 };
 
 class OrderDetail {
@@ -39,10 +39,10 @@ public:
 class FilterInstallation {
 public:
 	// AP 4
-	static void query_filter_installations_by_client(const std::string& filter_install_id, nlohmann::json& result_out);
+	static void query_filter_installations_by_client(const std::string& client_id, nlohmann::json& result_out);
 	
 	// AP 6
-	static void get_filter_installation(const std::string& filter_install_id, nlohmann::json& result_out);
+	static void get_filter_installation(const std::string& client_id, const std::string& filter_install_id, nlohmann::json& result_out);
 };
 
 class FilterChange {
@@ -55,9 +55,9 @@ public:
 };
 
 class Product {
-public:
+public:	
 	// AP 9
-	static void get_product(const std::string& product_id, nlohmann::json& result_out);
+	static void get_product(const std::string& category, const std::string& product_id, nlohmann::json& result_out);
 
 	// AP 10
 	static void get_current_stock(const std::string& category, nlohmann::json& result_out);
