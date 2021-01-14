@@ -38,7 +38,7 @@ void Order::get_order(const std::string& client_id, const std::string& order_id,
 	// GSI1PK is ORD|uuid
 	const Aws::String PK = client_id.c_str();
 	const Aws::String SK = order_id.c_str();
-	DynamoDB::get_item_composite("Vitanza", "GSI1PK", PK, "GSI1SK", SK, result_out);
+	DynamoDB::get_item_composite("Vitanza", "PK", PK, "SK", SK, result_out);
 }
 
 void FilterInstallation::query_filter_installations_by_client(const std::string& client_id, nlohmann::json& result_out)
@@ -52,10 +52,11 @@ void FilterInstallation::query_filter_installations_by_client(const std::string&
 
 void FilterInstallation::get_filter_installation(const std::string& client_id, const std::string& filter_install_id, nlohmann::json& result_out)
 {
-	// GSI1PK is FLI|uuid
+	// PK is CLI|uuid, SK is FLI|uuid
 	const Aws::String PK = client_id.c_str();
 	const Aws::String SK = filter_install_id.c_str();
-	DynamoDB::get_item_composite("Vitanza", "GSI1PK", PK, "GSI1SK", SK, result_out);
+	std::cout << "PK = " << PK << " SK = " << SK << "\n";
+	DynamoDB::get_item_composite("Vitanza", "PK", PK, "SK", SK, result_out);
 }
 
 void OrderDetail::get_order_details_by_order(const std::string& order_id, nlohmann::json& result_out)
@@ -81,7 +82,7 @@ void Product::get_current_stock(const std::string& category, nlohmann::json& res
 	nlohmann::json j;
 	j["gsi"] = category;
 	j["pro"] = "PRO";
-	DynamoDB::query_with_expression("Vitanza", "GSI1PK", "GSI1PK = :gsi and begins_with(SK, :pro)", j, result_out);
+	DynamoDB::query_with_expression("Vitanza", "GSI1PK", "GSI1PK = :gsi and begins_with(GSI1SK, :pro)", j, result_out);
 }
 
 void Note::get_notes_by_status(const std::string& status, nlohmann::json& result_out)

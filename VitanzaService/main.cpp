@@ -520,7 +520,7 @@ void register_handlers(httplib::Server& svr) {
 
 
 	/*
-	
+
 	Test Section
 
 	*/
@@ -546,8 +546,9 @@ void register_handlers(httplib::Server& svr) {
 				res.body = result.dump();
 			}
 
-		// AP 2
-		} else 	if (req.has_param("id")) {
+			// AP 2
+		}
+		else 	if (req.has_param("id")) {
 			nlohmann::json result;
 			Client::get_client(req.get_param_value("id"), result);
 
@@ -573,8 +574,22 @@ void register_handlers(httplib::Server& svr) {
 			return;
 		}
 
+		// AP 7
+		if (req.has_param("orderid") && req.has_param("clientid")) {
+			nlohmann::json result;
+			Order::get_order(req.get_param_value("clientid"), req.get_param_value("orderid"), result);
+
+			if (result.empty()) {
+				res.status = 204;
+			}
+			else {
+				res.status = 200;
+				res.body = result.dump();
+			}
+		}
+
 		// AP 3
-		if (req.has_param("clientid")) {
+		else if (req.has_param("clientid")) {
 			nlohmann::json result;
 			Order::query_orders_by_client(req.get_param_value("clientid"), result);
 
@@ -586,23 +601,11 @@ void register_handlers(httplib::Server& svr) {
 				res.body = result.dump();
 			}
 		}
+
 		// AP 5
 		else if (req.has_param("status")) {
 			nlohmann::json result;
 			Order::query_orders_by_status(req.get_param_value("status"), result);
-
-			if (result.empty()) {
-				res.status = 204;
-			}
-			else {
-				res.status = 200;
-				res.body = result.dump();
-			}
-		}
-		// AP 7
-		else if (req.has_param("orderid") && req.has_param("clientid")) {
-			nlohmann::json result;
-			Order::get_order(req.get_param_value("clientid"), req.get_param_value("orderid"), result);
 
 			if (result.empty()) {
 				res.status = 204;
@@ -625,8 +628,22 @@ void register_handlers(httplib::Server& svr) {
 			return;
 		}
 
+		// AP 6
+		if (req.has_param("filterid") && req.has_param("clientid")) {
+			nlohmann::json result;
+			FilterInstallation::get_filter_installation(req.get_param_value("clientid"), req.get_param_value("filterid"), result);
+
+			if (result.empty()) {
+				res.status = 204;
+			}
+			else {
+				res.status = 200;
+				res.body = result.dump();
+			}
+		}
+
 		// AP 4
-		if (req.has_param("clientid")) {
+		else if (req.has_param("clientid")) {
 			nlohmann::json result;
 			FilterInstallation::query_filter_installations_by_client(req.get_param_value("clientid"), result);
 
@@ -639,19 +656,7 @@ void register_handlers(httplib::Server& svr) {
 			}
 		}
 
-		// AP 6
-		else if(req.has_param("filterid") && req.has_param("clientid")) {
-			nlohmann::json result;
-			FilterInstallation::get_filter_installation(req.get_param_value("clientid"), req.get_param_value("filterid"), result);
 
-			if (result.empty()) {
-				res.status = 204;
-			}
-			else {
-				res.status = 200;
-				res.body = result.dump();
-			}
-		}
 		else {
 			res.status = 400;
 		}
@@ -706,7 +711,8 @@ void register_handlers(httplib::Server& svr) {
 				res.body = result.dump();
 			}
 
-		} 
+		}
+
 		// AP 10
 		else if (req.has_param("category")) {
 			nlohmann::json result;
@@ -765,10 +771,10 @@ void register_handlers(httplib::Server& svr) {
 			return;
 		}
 
-		// AP 11
-		if (req.has_param("filterid")) {
+		// AP 13
+		if (req.has_param("status") && req.has_param("start") && req.has_param("end")) {
 			nlohmann::json result;
-			FilterChange::get_changes_by_installation(req.get_param_value("filterid"), result);
+			FilterChange::get_changes_by_status_dates(req.get_param_value("status"), req.get_param_value("start"), req.get_param_value("end"), result);
 
 			if (result.empty()) {
 				res.status = 204;
@@ -776,13 +782,13 @@ void register_handlers(httplib::Server& svr) {
 			else {
 				res.status = 200;
 				res.body = result.dump();
-			}
-
+			}			
 		}
-		// AP 13
-		else if (req.has_param("status") && req.has_param("start") && req.has_param("end")) {
+
+		// AP 12
+		else if (req.has_param("filterid")) {
 			nlohmann::json result;
-			FilterChange::get_changes_by_status_dates(req.get_param_value("status"), req.get_param_value("start"), req.get_param_value("end"), result);
+			FilterChange::get_changes_by_installation(req.get_param_value("filterid"), result);
 
 			if (result.empty()) {
 				res.status = 204;
@@ -806,6 +812,6 @@ void register_handlers(httplib::Server& svr) {
 * - Add functionality to "create order" to subtract from stock
 * - Add functionality to manage inventory(stock)
 * - Add to database order table infor for ammount of items, total price and maybe extras
-* - Add "archived" field to orders table in database 
+* - Add "archived" field to orders table in database
 */
 
