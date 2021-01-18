@@ -90,6 +90,33 @@ void DynamoDB::compose_object(Aws::DynamoDB::Model::AttributeValue& attr, const 
 	attr.SetM(object);
 }
 
+bool DynamoDB::put_item(const nlohmann::json& request, const std::string& table) {
+	Aws::Auth::AWSCredentials credentials;
+	Aws::Client::ClientConfiguration client_config;
+	DynamoDB::client_config(credentials, client_config);
+	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
+	const Aws::String endpoint(g_config.AWS_DYNAMODB_ENDPOINT().c_str());
+	dynamo_client.OverrideEndpoint(endpoint);
+
+
+	Aws::DynamoDB::Model::PutItemRequest pir;
+	pir.SetTableName(table.c_str());
+
+	// Add body
+	for (const auto& element : request.items()) {
+		Aws::DynamoDB::Model::AttributeValue attribute_value;
+		compose_type(attribute_value, element.value());
+		pir.AddItem(element.key().c_str(), attribute_value);
+	}
+
+	const Aws::DynamoDB::Model::PutItemOutcome outcome = dynamo_client.PutItem(pir);
+	if (!outcome.IsSuccess()) {
+		std::cout << outcome.GetError().GetMessage() << std::endl;
+		return false;
+	}
+	return true;
+}
+
 nlohmann::json DynamoDB::parse_type(Aws::DynamoDB::Model::AttributeValue attr) {
 	if (attr.GetType() == Aws::DynamoDB::Model::ValueType::STRING) {
 		return attr.GetS();

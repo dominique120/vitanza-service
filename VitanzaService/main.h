@@ -31,9 +31,10 @@
 #include "s3_file_handler.h"
 #include "db_dynamo.h"
 
+#include "request_handlers.h"
+
 int main(int argc, char* argv[]);
 void register_handlers(httplib::Server& svr);
 void register_handlers_v2(httplib::Server& svr);
-void set_response_headers(httplib::Response& res);
 
 #endif

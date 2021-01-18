@@ -3,7 +3,7 @@
   "ModelMetadata": {
     "Author": "Dominique Verellen",
     "DateCreated": "Jan 12, 2021, 08:52 PM",
-    "DateLastModified": "Jan 17, 2021, 07:28 PM",
+    "DateLastModified": "Jan 17, 2021, 07:35 PM",
     "Description": "Single table schema for Vitanza Service",
     "AWSService": "Amazon DynamoDB",
     "Version": "2.0"
@@ -109,6 +109,10 @@
         {
           "AttributeName": "Name",
           "AttributeType": "S"
+        },
+        {
+          "AttributeName": "DateDelivered",
+          "AttributeType": "S"
         }
       ],
       "GlobalSecondaryIndexes": [
@@ -201,7 +205,7 @@
           "SK": {
             "S": "ODD|6sd2f"
           },
-          "GSI1PK": {
+          "GSI2PK": {
             "S": "PRO|9dsf1"
           },
           "Qty": {

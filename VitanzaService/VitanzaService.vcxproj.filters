@@ -63,6 +63,9 @@
     <ClCompile Include="Entities.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="request_handlers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -111,6 +114,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Entities.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="request_handlers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

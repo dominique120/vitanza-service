@@ -14,5 +14,6 @@ set(vts_SRC
 	${CMAKE_CURRENT_LIST_DIR}/file_wrapper.cpp
 	${CMAKE_CURRENT_LIST_DIR}/logger.cpp
 	${CMAKE_CURRENT_LIST_DIR}/Entities.cpp
+	${CMAKE_CURRENT_LIST_DIR}/request_handlers.cpp
 	PARENT_SCOPE)
 

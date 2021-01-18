@@ -36,6 +36,8 @@ public:
 	static void query_with_expression(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& expression, const nlohmann::json& expression_values, nlohmann::json& result_out);
 	static void get_item_composite(const Aws::String& table_name, const Aws::String& pk, const Aws::String& pk_value, const Aws::String& sk, const Aws::String& sk_value, nlohmann::json& result_out);
 
+	static bool put_item(const nlohmann::json& request, const std::string& table);
+
 private:
 	static void client_config(Aws::Auth::AWSCredentials& aws_credentials, Aws::Client::ClientConfiguration& client_config);
 	static void parse_collection(const Aws::Vector<Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue>>& dynamo_result, nlohmann::json& json_out);
