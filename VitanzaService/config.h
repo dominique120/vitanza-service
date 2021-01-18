@@ -17,6 +17,7 @@ public:
 	int SERVER_PORT();
 	std::string SERVER_IP();
 	std::string API_BASE_URL();
+	std::string API_BASE_URL_V2();
 	std::string SHA512_SECRET();
 	std::string JWT_ISSUER();
 	std::string FS_LOCAL_DIR();

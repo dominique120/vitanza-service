@@ -3,7 +3,7 @@
   "ModelMetadata": {
     "Author": "Dominique Verellen",
     "DateCreated": "Jan 12, 2021, 08:52 PM",
-    "DateLastModified": "Jan 12, 2021, 09:19 PM",
+    "DateLastModified": "Jan 17, 2021, 07:28 PM",
     "Description": "Single table schema for Vitanza Service",
     "AWSService": "Amazon DynamoDB",
     "Version": "2.0"
@@ -23,39 +23,35 @@
       },
       "NonKeyAttributes": [
         {
-          "AttributeName": "GSI-1PK",
+          "AttributeName": "GSI1PK",
           "AttributeType": "S"
         },
         {
-          "AttributeName": "GSI-1SK",
+          "AttributeName": "GSI1SK",
           "AttributeType": "S"
         },
         {
-          "AttributeName": "GSI-2PK",
+          "AttributeName": "GSI2PK",
           "AttributeType": "S"
         },
         {
-          "AttributeName": "GSI-2SK",
+          "AttributeName": "Address1",
           "AttributeType": "S"
         },
         {
-          "AttributeName": "Address 1",
+          "AttributeName": "Address2",
           "AttributeType": "S"
         },
         {
-          "AttributeName": "Address 2",
+          "AttributeName": "Phone1",
           "AttributeType": "S"
         },
         {
-          "AttributeName": "Phone 1",
+          "AttributeName": "Phone2",
           "AttributeType": "S"
         },
         {
-          "AttributeName": "Phone 2",
-          "AttributeType": "S"
-        },
-        {
-          "AttributeName": "Emaiil",
+          "AttributeName": "Email",
           "AttributeType": "S"
         },
         {
@@ -117,14 +113,14 @@
       ],
       "GlobalSecondaryIndexes": [
         {
-          "IndexName": "GSI-1PK",
+          "IndexName": "GSI1PK",
           "KeyAttributes": {
             "PartitionKey": {
-              "AttributeName": "GSI-1PK",
+              "AttributeName": "GSI1PK",
               "AttributeType": "S"
             },
             "SortKey": {
-              "AttributeName": "GSI-1SK",
+              "AttributeName": "GSI1SK",
               "AttributeType": "S"
             }
           },
@@ -133,14 +129,10 @@
           }
         },
         {
-          "IndexName": "GSI-2PK",
+          "IndexName": "GSI2PK",
           "KeyAttributes": {
             "PartitionKey": {
-              "AttributeName": "GSI-2PK",
-              "AttributeType": "S"
-            },
-            "SortKey": {
-              "AttributeName": "GSI-2SK",
+              "AttributeName": "GSI2PK",
               "AttributeType": "S"
             }
           },
@@ -157,28 +149,25 @@
           "SK": {
             "S": "CLI|a7vxc"
           },
-          "GSI-1PK": {
+          "GSI1PK": {
             "S": "Juan Perez"
           },
-          "GSI-1SK": {
+          "GSI1SK": {
             "S": "La Molina"
           },
-          "GSI-2PK": {
+          "GSI2PK": {
             "S": "ACTIVE"
           },
-          "GSI-2SK": {
-            "S": "FILTER"
-          },
-          "Address 1": {
+          "Address1": {
             "S": "Calle 5 # 109 "
           },
-          "Phone 1": {
+          "Phone1": {
             "S": "951875215"
           },
-          "Phone 2": {
+          "Phone2": {
             "S": "4156251"
           },
-          "Emaiil": {
+          "Email": {
             "S": "email@gmail.com"
           }
         },
@@ -189,14 +178,14 @@
           "SK": {
             "S": "ORD|d51a9"
           },
-          "GSI-1PK": {
+          "GSI1PK": {
             "S": "ORD|d51a9"
           },
-          "GSI-1SK": {
+          "GSI1SK": {
             "S": "12/12/2020"
           },
-          "GSI-2PK": {
-            "S": "CLOSED"
+          "GSI2PK": {
+            "S": "P_PAY"
           },
           "Total": {
             "N": "225.22"
@@ -212,7 +201,7 @@
           "SK": {
             "S": "ODD|6sd2f"
           },
-          "GSI-1PK": {
+          "GSI1PK": {
             "S": "PRO|9dsf1"
           },
           "Qty": {
@@ -229,10 +218,10 @@
           "SK": {
             "S": "FLI|sd654f"
           },
-          "GSI-1PK": {
+          "GSI1PK": {
             "S": "FLI|sd654f"
           },
-          "GSI-1SK": {
+          "GSI1SK": {
             "S": "12/12/2020"
           },
           "Total": {
@@ -258,10 +247,10 @@
           "SK": {
             "S": "FLC|6d4s89"
           },
-          "GSI-1PK": {
+          "GSI1PK": {
             "S": "UPCOMING"
           },
-          "GSI-1SK": {
+          "GSI1SK": {
             "S": "12/12/2020"
           },
           "Total": {
@@ -278,7 +267,7 @@
           "SK": {
             "S": "Filter"
           },
-          "GSI-1PK": {
+          "GSI1PK": {
             "S": "PRO|9dsf1"
           },
           "Notes": {

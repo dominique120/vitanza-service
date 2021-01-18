@@ -30,12 +30,10 @@ int main(int argc, char* argv[]) {
 #elif defined(FS_LOCAL)
 	if (std::filesystem::exists(g_config.FS_LOCAL_DIR())) {
 		std::cout << "Using " << "directory \"" << g_config.FS_LOCAL_DIR() + "\" to store files locally." << std::endl;
-	}
-	else {
+	} else {
 		if (std::filesystem::create_directory(g_config.FS_LOCAL_DIR())) {
 			std::cout << "Created directory \"" << g_config.FS_LOCAL_DIR() + "\" to store files locally." << std::endl;
-		}
-		else {
+		} else {
 			std::cout << "Could not create directory." << std::endl;
 			return EXIT_FAILURE;
 		}
@@ -52,6 +50,7 @@ int main(int argc, char* argv[]) {
 	std::cout << "Initializing - Registering handlers." << std::endl;
 	httplib::Server server;
 	register_handlers(server);
+	register_handlers_v2(server);
 
 	server.set_logger([](const auto& req, const auto& res) {
 		Logger::log_event(req, res);
@@ -88,8 +87,7 @@ void register_handlers(httplib::Server& svr) {
 
 		if (g_config.reload(req.body)) {
 			res.status = 201;
-		}
-		else {
+		} else {
 			res.status = 400;
 		}
 		});
@@ -109,8 +107,7 @@ void register_handlers(httplib::Server& svr) {
 
 		if (auth_wrapper::save_new_user(user.at("username"), user.at("password"))) {
 			res.status = 201;
-		}
-		else {
+		} else {
 			res.status = 400;
 		}
 		});
@@ -120,8 +117,7 @@ void register_handlers(httplib::Server& svr) {
 
 		if (auth_wrapper::authenticate(user.at("username"), user.at("password"))) {
 			res.status = 200;
-		}
-		else {
+		} else {
 			res.status = 403;
 		}
 		});
@@ -135,8 +131,7 @@ void register_handlers(httplib::Server& svr) {
 			j["jwt"] = Auth::generate_token(user.at("username"), user.at("password"));
 			res.body = j.dump();
 			res.status = 200;
-		}
-		else {
+		} else {
 			res.status = 403;
 		}
 		});
@@ -147,8 +142,7 @@ void register_handlers(httplib::Server& svr) {
 
 		if (Auth::validate_token(req.get_header_value("Authorization"))) {
 			res.status = 200;
-		}
-		else {
+		} else {
 			res.status = 403;
 		}
 
@@ -167,18 +161,15 @@ void register_handlers(httplib::Server& svr) {
 			const std::string response = Client_wrapper::get_client(req.get_param_value("id"));
 			if (response.empty()) {
 				res.status = 204;
-			}
-			else {
+			} else {
 				res.status = 200;
 				res.body = response;
 			}
-		}
-		else {
+		} else {
 			const std::string response = Client_wrapper::get_all_clients();
 			if (response.empty()) {
 				res.status = 204;
-			}
-			else {
+			} else {
 				res.status = 200;
 				res.body = response;
 			}
@@ -194,12 +185,10 @@ void register_handlers(httplib::Server& svr) {
 		if (req.has_param("id")) {
 			if (Client_wrapper::update_client(req.get_param_value("id"), req.body)) {
 				res.status = 204;
-			}
-			else {
+			} else {
 				res.status = 400;
 			}
-		}
-		else {
+		} else {
 			res.status = 400;
 		}
 		});
@@ -212,12 +201,10 @@ void register_handlers(httplib::Server& svr) {
 		if (req.has_param("id")) {
 			if (Client_wrapper::delete_client(req.get_param_value("id"))) {
 				res.status = 200;
-			}
-			else {
+			} else {
 				res.status = 400;
 			}
-		}
-		else {
+		} else {
 			res.status = 400;
 		}
 		});
@@ -230,8 +217,7 @@ void register_handlers(httplib::Server& svr) {
 
 		if (Client_wrapper::new_client(req.body)) {
 			res.status = 201;
-		}
-		else {
+		} else {
 			res.status = 400;
 		}
 		});
@@ -249,18 +235,15 @@ void register_handlers(httplib::Server& svr) {
 			const std::string response = Chemical_Product_Wrapper::get_product(req.get_param_value("id"));
 			if (response.empty()) {
 				res.status = 204;
-			}
-			else {
+			} else {
 				res.status = 200;
 				res.body = response;
 			}
-		}
-		else {
+		} else {
 			const std::string response = Chemical_Product_Wrapper::get_all_products();
 			if (response.empty()) {
 				res.status = 204;
-			}
-			else {
+			} else {
 				res.status = 200;
 				res.body = response;
 			}
@@ -275,8 +258,7 @@ void register_handlers(httplib::Server& svr) {
 
 		if (Chemical_Product_Wrapper::update_product(req.get_param_value("id"), req.body)) {
 			res.status = 200;
-		}
-		else {
+		} else {
 			res.status = 400;
 		}
 		});
@@ -289,8 +271,7 @@ void register_handlers(httplib::Server& svr) {
 
 		if (Chemical_Product_Wrapper::delete_product(req.get_param_value("id"))) {
 			res.status = 200;
-		}
-		else {
+		} else {
 			res.status = 400;
 		}
 		});
@@ -303,8 +284,7 @@ void register_handlers(httplib::Server& svr) {
 
 		if (Chemical_Product_Wrapper::new_product(req.body)) {
 			res.status = 201;
-		}
-		else {
+		} else {
 			res.status = 400;
 		}
 		});
@@ -322,13 +302,11 @@ void register_handlers(httplib::Server& svr) {
 			const std::string response = Chemical_Order_Wrapper::get_order_by_client(req.get_param_value("id"));
 			if (response.empty()) {
 				res.status = 204;
-			}
-			else {
+			} else {
 				res.status = 200;
 				res.body = response;
 			}
-		}
-		else {
+		} else {
 			res.status = 400;
 		}
 		});
@@ -344,8 +322,7 @@ void register_handlers(httplib::Server& svr) {
 		const std::string response = Chemical_Order_Wrapper::get_outstanding_orders();
 		if (response.empty()) {
 			res.status = 204;
-		}
-		else {
+		} else {
 			res.status = 200;
 			res.body = response;
 		}
@@ -363,18 +340,15 @@ void register_handlers(httplib::Server& svr) {
 			const std::string response = Chemical_Order_Wrapper::get_order(req.get_param_value("id"));
 			if (response.empty()) {
 				res.status = 204;
-			}
-			else {
+			} else {
 				res.status = 200;
 				res.body = response;
 			}
-		}
-		else {
+		} else {
 			const std::string response = Chemical_Order_Wrapper::get_all_orders();
 			if (response.empty()) {
 				res.status = 204;
-			}
-			else {
+			} else {
 				res.status = 200;
 				res.body = response;
 			}
@@ -389,8 +363,7 @@ void register_handlers(httplib::Server& svr) {
 
 		if (Chemical_Order_Wrapper::update_order(req.get_param_value("id"), req.body)) {
 			res.status = 200;
-		}
-		else {
+		} else {
 			res.status = 400;
 		}
 		});
@@ -403,8 +376,7 @@ void register_handlers(httplib::Server& svr) {
 
 		if (Chemical_Order_Wrapper::delete_order(req.get_param_value("id"))) {
 			res.status = 200;
-		}
-		else {
+		} else {
 			res.status = 400;
 		}
 		});
@@ -417,8 +389,7 @@ void register_handlers(httplib::Server& svr) {
 
 		if (Chemical_Order_Wrapper::new_order(req.body)) {
 			res.status = 201;
-		}
-		else {
+		} else {
 			res.status = 400;
 		}
 		});
@@ -436,13 +407,11 @@ void register_handlers(httplib::Server& svr) {
 			const std::string response = Chemical_Order_Detail_Wrapper::get_orderdetails_by_order(req.get_param_value("id"));
 			if (response.empty()) {
 				res.status = 204;
-			}
-			else {
+			} else {
 				res.status = 200;
 				res.body = response;
 			}
-		}
-		else {
+		} else {
 			res.status = 400;
 		}
 		});
@@ -459,13 +428,11 @@ void register_handlers(httplib::Server& svr) {
 			const std::string response = Chemical_Order_Detail_Wrapper::get_order_detail(req.get_param_value("id"));
 			if (response.empty()) {
 				res.status = 204;
-			}
-			else {
+			} else {
 				res.status = 200;
 				res.body = response;
 			}
-		}
-		else {
+		} else {
 			res.status = 400;
 		}
 		});
@@ -478,12 +445,10 @@ void register_handlers(httplib::Server& svr) {
 		if (req.has_param("id")) {
 			if (Chemical_Order_Detail_Wrapper::update_order_detail(req.get_param_value("id"), req.body)) {
 				res.status = 200;
-			}
-			else {
+			} else {
 				res.status = 400;
 			}
-		}
-		else {
+		} else {
 			res.status = 400;
 		}
 		});
@@ -496,8 +461,7 @@ void register_handlers(httplib::Server& svr) {
 
 		if (Chemical_Order_Detail_Wrapper::delete_order_detail(req.get_param_value("id"))) {
 			res.status = 200;
-		}
-		else {
+		} else {
 			res.status = 400;
 		}
 		});
@@ -510,22 +474,22 @@ void register_handlers(httplib::Server& svr) {
 
 		if (Chemical_Order_Detail_Wrapper::new_order_detail(req.body)) {
 			res.status = 201;
-		}
-		else {
+		} else {
 			res.status = 400;
 		}
 		});
+}
 
-
+void register_handlers_v2(httplib::Server& svr) {
 
 
 	/*
 
-	Test Section
+	New Database Design
 
 	*/
 
-	svr.Get("/test/client", [](const httplib::Request& req, httplib::Response& res) {
+	svr.Get((g_config.API_BASE_URL_V2() + "/client").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		set_response_headers(res);
 
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
@@ -540,33 +504,29 @@ void register_handlers(httplib::Server& svr) {
 
 			if (result.empty()) {
 				res.status = 204;
-			}
-			else {
+			} else {
 				res.status = 200;
 				res.body = result.dump();
 			}
 
 			// AP 2
-		}
-		else 	if (req.has_param("id")) {
+		} else 	if (req.has_param("id")) {
 			nlohmann::json result;
 			Client::get_client(req.get_param_value("id"), result);
 
 			if (result.empty()) {
 				res.status = 204;
-			}
-			else {
+			} else {
 				res.status = 200;
 				res.body = result.dump();
 			}
-		}
-		else {
+		} else {
 			res.status = 400;
 		}
 		});
 
 
-	svr.Get("/test/order", [](const httplib::Request& req, httplib::Response& res) {
+	svr.Get((g_config.API_BASE_URL_V2() + "/order").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		set_response_headers(res);
 
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
@@ -581,8 +541,7 @@ void register_handlers(httplib::Server& svr) {
 
 			if (result.empty()) {
 				res.status = 204;
-			}
-			else {
+			} else {
 				res.status = 200;
 				res.body = result.dump();
 			}
@@ -595,8 +554,7 @@ void register_handlers(httplib::Server& svr) {
 
 			if (result.empty()) {
 				res.status = 204;
-			}
-			else {
+			} else {
 				res.status = 200;
 				res.body = result.dump();
 			}
@@ -609,18 +567,16 @@ void register_handlers(httplib::Server& svr) {
 
 			if (result.empty()) {
 				res.status = 204;
-			}
-			else {
+			} else {
 				res.status = 200;
 				res.body = result.dump();
 			}
-		}
-		else {
+		} else {
 			res.status = 400;
 		}
 		});
 
-	svr.Get("/test/filter", [](const httplib::Request& req, httplib::Response& res) {
+	svr.Get((g_config.API_BASE_URL_V2() + "/filter").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		set_response_headers(res);
 
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
@@ -635,8 +591,7 @@ void register_handlers(httplib::Server& svr) {
 
 			if (result.empty()) {
 				res.status = 204;
-			}
-			else {
+			} else {
 				res.status = 200;
 				res.body = result.dump();
 			}
@@ -649,21 +604,17 @@ void register_handlers(httplib::Server& svr) {
 
 			if (result.empty()) {
 				res.status = 204;
-			}
-			else {
+			} else {
 				res.status = 200;
 				res.body = result.dump();
 			}
-		}
-
-
-		else {
+		} else {
 			res.status = 400;
 		}
 		});
 
 
-	svr.Get("/test/orderdetails", [](const httplib::Request& req, httplib::Response& res) {
+	svr.Get((g_config.API_BASE_URL_V2() + "/orderdetail").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		set_response_headers(res);
 
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
@@ -678,19 +629,16 @@ void register_handlers(httplib::Server& svr) {
 
 			if (result.empty()) {
 				res.status = 204;
-			}
-			else {
+			} else {
 				res.status = 200;
 				res.body = result.dump();
 			}
-
-		}
-		else {
+		} else {
 			res.status = 400;
 		}
 		});
 
-	svr.Get("/test/product", [](const httplib::Request& req, httplib::Response& res) {
+	svr.Get((g_config.API_BASE_URL_V2() + "/product").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		set_response_headers(res);
 
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
@@ -705,12 +653,10 @@ void register_handlers(httplib::Server& svr) {
 
 			if (result.empty()) {
 				res.status = 204;
-			}
-			else {
+			} else {
 				res.status = 200;
 				res.body = result.dump();
 			}
-
 		}
 
 		// AP 10
@@ -720,14 +666,11 @@ void register_handlers(httplib::Server& svr) {
 
 			if (result.empty()) {
 				res.status = 204;
-			}
-			else {
+			} else {
 				res.status = 200;
 				res.body = result.dump();
 			}
-
-		}
-		else {
+		} else {
 			res.status = 400;
 		}
 		});
@@ -735,7 +678,7 @@ void register_handlers(httplib::Server& svr) {
 
 
 
-	svr.Get("/test/note", [](const httplib::Request& req, httplib::Response& res) {
+	svr.Get((g_config.API_BASE_URL_V2() + "/note").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		set_response_headers(res);
 
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
@@ -750,20 +693,18 @@ void register_handlers(httplib::Server& svr) {
 
 			if (result.empty()) {
 				res.status = 204;
-			}
-			else {
+			} else {
 				res.status = 200;
 				res.body = result.dump();
 			}
 
-		}
-		else {
+		} else {
 			res.status = 400;
 		}
 		});
 
 
-	svr.Get("/test/filterchange", [](const httplib::Request& req, httplib::Response& res) {
+	svr.Get((g_config.API_BASE_URL_V2() + "/filterchange").c_str(), [](const httplib::Request& req, httplib::Response& res) {
 		set_response_headers(res);
 
 		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
@@ -778,11 +719,10 @@ void register_handlers(httplib::Server& svr) {
 
 			if (result.empty()) {
 				res.status = 204;
-			}
-			else {
+			} else {
 				res.status = 200;
 				res.body = result.dump();
-			}			
+			}
 		}
 
 		// AP 12
@@ -792,20 +732,16 @@ void register_handlers(httplib::Server& svr) {
 
 			if (result.empty()) {
 				res.status = 204;
-			}
-			else {
+			} else {
 				res.status = 200;
 				res.body = result.dump();
 			}
 
-		}
-		else {
+		} else {
 			res.status = 400;
 		}
 		});
-
 }
-
 
 /* TODO:
 * - Add method for de activating a customer -> /customers/deactivate?id={id}

@@ -40,7 +40,7 @@ class FilterInstallation {
 public:
 	// AP 4
 	static void query_filter_installations_by_client(const std::string& client_id, nlohmann::json& result_out);
-	
+
 	// AP 6
 	static void get_filter_installation(const std::string& client_id, const std::string& filter_install_id, nlohmann::json& result_out);
 };
@@ -55,7 +55,7 @@ public:
 };
 
 class Product {
-public:	
+public:
 	// AP 9
 	static void get_product(const std::string& category, const std::string& product_id, nlohmann::json& result_out);
 

@@ -9,10 +9,6 @@
 #define _WIN32_WINNT 0x0a00
 #endif
 
-#ifdef _MSC_VER
-#pragma warning(disable:4267) // 'var' : conversion from 'size_t' to 'type', possible loss of data
-#endif
-
 #include <httplib.h>
 
 #include "config.h"
@@ -37,6 +33,7 @@
 
 int main(int argc, char* argv[]);
 void register_handlers(httplib::Server& svr);
+void register_handlers_v2(httplib::Server& svr);
 void set_response_headers(httplib::Response& res);
 
 #endif

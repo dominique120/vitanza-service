@@ -11,7 +11,7 @@ bool File_wrapper::write_fs(const std::string& filename, std::stringstream& imag
 		return false;
 	}
 #elif defined(FS_LOCAL)
-	if(Local_file::save_file(filename, image_data)) {
+	if (Local_file::save_file(filename, image_data)) {
 		return true;
 	} else {
 		return false;

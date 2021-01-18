@@ -8,7 +8,7 @@
 std::string Chemical_Product_Wrapper::get_product(const std::string& id_or_uuid) {
 	nlohmann::json j;
 	DynamoDB::get_item_dynamo("ch_products", "ProductId_uuid", id_or_uuid.c_str(), j);
-	return j.dump();	
+	return j.dump();
 }
 
 bool Chemical_Product_Wrapper::delete_product(const std::string& id_or_uuid) {

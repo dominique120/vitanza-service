@@ -11,17 +11,13 @@ void DynamoDB::compose_type(Aws::DynamoDB::Model::AttributeValue& attr, const nl
 	for (const auto& item : json.items()) {
 		if (item.value().is_number_integer()) {
 			attr.SetN(std::to_string(item.value().get<long>()).c_str());
-		}
-		else if (item.value().is_number_float()) {
+		} else if (item.value().is_number_float()) {
 			attr.SetN(item.value().get<double>());
-		}
-		else if (item.value().is_string()) {
+		} else if (item.value().is_string()) {
 			attr.SetS(item.value().get<std::string>().c_str());
-		}
-		else if (item.value().is_boolean()) {
+		} else if (item.value().is_boolean()) {
 			attr.SetBool(item.value().get<bool>());
-		}
-		else if (item.value().is_array()) {
+		} else if (item.value().is_array()) {
 			Aws::Vector< std::shared_ptr<Aws::DynamoDB::Model::AttributeValue>> array;
 
 			for (const auto& array_object : item.value().items()) {
@@ -30,8 +26,7 @@ void DynamoDB::compose_type(Aws::DynamoDB::Model::AttributeValue& attr, const nl
 				array.push_back(Aws::MakeShared<Aws::DynamoDB::Model::AttributeValue>("", temp_attr));
 			}
 			attr.SetL(array);
-		}
-		else if (item.value().is_object()) {
+		} else if (item.value().is_object()) {
 			Aws::Map<Aws::String, const std::shared_ptr<Aws::DynamoDB::Model::AttributeValue>> object;
 			for (const auto& nested_item : item.value().items()) {
 				std::pair<Aws::String, std::shared_ptr<Aws::DynamoDB::Model::AttributeValue>> pair;
@@ -45,8 +40,7 @@ void DynamoDB::compose_type(Aws::DynamoDB::Model::AttributeValue& attr, const nl
 				object.insert(pair);
 			}
 			attr.SetM(object);
-		}
-		else if (item.value().is_null()) {
+		} else if (item.value().is_null()) {
 			attr.SetNull(true);
 		}
 	}
@@ -56,7 +50,7 @@ Aws::String DynamoDB::build_operation_expression(const nlohmann::json& json, con
 	std::stringstream ss;
 	ss << operation << " ";
 	for (const auto& item : json.items()) {
-		ss << item.key() << " = :" << item.key() << ", ";		
+		ss << item.key() << " = :" << item.key() << ", ";
 	}
 	Aws::String expr = ss.str().c_str();
 	expr.pop_back();
@@ -99,22 +93,18 @@ void DynamoDB::compose_object(Aws::DynamoDB::Model::AttributeValue& attr, const 
 nlohmann::json DynamoDB::parse_type(Aws::DynamoDB::Model::AttributeValue attr) {
 	if (attr.GetType() == Aws::DynamoDB::Model::ValueType::STRING) {
 		return attr.GetS();
-	}
-	else if (attr.GetType() == Aws::DynamoDB::Model::ValueType::NUMBER) {
+	} else if (attr.GetType() == Aws::DynamoDB::Model::ValueType::NUMBER) {
 		return attr.GetN();
-	}
-	else if (attr.GetType() == Aws::DynamoDB::Model::ValueType::BOOL) {
+	} else if (attr.GetType() == Aws::DynamoDB::Model::ValueType::BOOL) {
 		return attr.GetBool();
-	}
-	else if (attr.GetType() == Aws::DynamoDB::Model::ValueType::ATTRIBUTE_MAP) {
+	} else if (attr.GetType() == Aws::DynamoDB::Model::ValueType::ATTRIBUTE_MAP) {
 		nlohmann::json json;
 		auto type = attr.GetM();
 		for (const auto& element : type) {
 			json[element.first.c_str()] = parse_type(*element.second);
 		}
 		return json;
-	}
-	else if (attr.GetType() == Aws::DynamoDB::Model::ValueType::ATTRIBUTE_LIST) {
+	} else if (attr.GetType() == Aws::DynamoDB::Model::ValueType::ATTRIBUTE_LIST) {
 		nlohmann::json json = nlohmann::json::array();
 		auto type = attr.GetL();
 		for (const auto& element : type) {
@@ -122,11 +112,9 @@ nlohmann::json DynamoDB::parse_type(Aws::DynamoDB::Model::AttributeValue attr) {
 			json.push_back(obj);
 		}
 		return json;
-	}
-	else if (attr.GetType() == Aws::DynamoDB::Model::ValueType::NULLVALUE) {
+	} else if (attr.GetType() == Aws::DynamoDB::Model::ValueType::NULLVALUE) {
 		return nullptr;
-	}
-	else {
+	} else {
 		return nullptr;
 	}
 }
@@ -168,8 +156,7 @@ void DynamoDB::get_item_dynamo(const Aws::String& table_name, const Aws::String&
 	const Aws::DynamoDB::Model::GetItemOutcome& result = dynamo_client.GetItem(req);
 	if (result.IsSuccess()) {
 		parse_object(result.GetResult().GetItem(), result_out);
-	}
-	else {
+	} else {
 		std::cout << "Failed to get item: " << result.GetError().GetMessage() << std::endl;
 	}
 }
@@ -193,7 +180,7 @@ void DynamoDB::get_item_composite(const Aws::String& table_name, const Aws::Stri
 	// Setup the composite key for the GetItemRequest
 	Aws::DynamoDB::Model::AttributeValue primary_key;
 	primary_key.SetS(pk_value);
-	req.AddKey(pk, primary_key); 
+	req.AddKey(pk, primary_key);
 
 	Aws::DynamoDB::Model::AttributeValue sort_key;
 	sort_key.SetS(sk_value);
@@ -204,8 +191,7 @@ void DynamoDB::get_item_composite(const Aws::String& table_name, const Aws::Stri
 	const Aws::DynamoDB::Model::GetItemOutcome& result = dynamo_client.GetItem(req);
 	if (result.IsSuccess()) {
 		parse_object(result.GetResult().GetItem(), result_out);
-	}
-	else {
+	} else {
 		std::cout << "Failed to get item: " << result.GetError().GetMessage() << std::endl;
 	}
 }
@@ -233,8 +219,7 @@ bool DynamoDB::update_item_dynamo(const Aws::String& table_name, const Aws::Stri
 	try {
 		j = nlohmann::json::parse(request_body);
 		j.erase(key_name.c_str());
-	}
-	catch (nlohmann::json::exception) {
+	} catch (nlohmann::json::exception) {
 		return false;
 	}
 
@@ -311,8 +296,7 @@ bool DynamoDB::delete_item_dynamo(const Aws::String& table_name, const Aws::Stri
 	const Aws::DynamoDB::Model::DeleteItemOutcome& result = dynamo_client.DeleteItem(req);
 	if (result.IsSuccess()) {
 		return true;
-	}
-	else {
+	} else {
 		std::cout << "Failed to delete item: " << result.GetError().GetMessage();
 		return false;
 	}
@@ -328,7 +312,7 @@ void DynamoDB::query_with_expression(const Aws::String& table_name, const Aws::S
 
 	const Aws::String endpoint(g_config.AWS_DYNAMODB_ENDPOINT().c_str());
 	dynamo_client.OverrideEndpoint(endpoint);
-		
+
 	Aws::DynamoDB::Model::QueryRequest query_request;
 	query_request.SetTableName(table_name);
 	if (!key_name.empty()) {

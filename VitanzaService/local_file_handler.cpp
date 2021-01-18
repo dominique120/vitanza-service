@@ -10,8 +10,7 @@ bool Local_file::save_file(const std::string& filename, std::stringstream& image
 		myfile << image_data.rdbuf();
 		myfile.close();
 		return true;
-	}
-	else {
+	} else {
 		std::cout << "Unable to open file:" + filename;
 		return false;
 	}
@@ -23,8 +22,7 @@ bool Local_file::get_file(const std::string& filename, std::stringstream& stream
 		stream << myfile.rdbuf();
 		myfile.close();
 		return true;
-	}
-	else {
+	} else {
 		std::cout << "Unable to open file:" + filename;
 		return false;
 	}
@@ -33,8 +31,7 @@ bool Local_file::get_file(const std::string& filename, std::stringstream& stream
 bool Local_file::delete_file(const std::string& filename) {
 	if (std::filesystem::remove(g_config.FS_LOCAL_DIR() + "/" + filename)) {
 		return true;
-	}
-	else {
+	} else {
 		return false;
 	}
 }

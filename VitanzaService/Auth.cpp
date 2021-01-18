@@ -60,17 +60,13 @@ bool Auth::validate_token(const std::string& token_header) {
 		verifier.verify(decoded);
 		return true;
 
-	}
-	catch (jwt::token_verification_exception&) {
+	} catch (jwt::token_verification_exception&) {
 		return false;
-	}
-	catch (nlohmann::json::exception&) {
+	} catch (nlohmann::json::exception&) {
 		return false;
-	}
-	catch (std::invalid_argument&) {
+	} catch (std::invalid_argument&) {
 		return false;
-	}
-	catch (std::runtime_error&) {
+	} catch (std::runtime_error&) {
 		return false;
 	}
 }
@@ -87,8 +83,7 @@ bool Auth::create_user(const std::string& usr, const std::string& pwd) {
 	// Move Dynamo implementation to its own file
 	if (DynamoDB::new_item_dynamo("users", "user_id", id, j.dump())) {
 		return true;
-	}
-	else {
+	} else {
 		return false;
 	}
 }
@@ -114,13 +109,11 @@ bool Auth::validate_user(const std::string& usr, const std::string& pwd) {
 
 		if (valid_usr && valid_pwd) {
 			return true;
-		}
-		else {
+		} else {
 			return false;
 		}
-	}
-	catch (const nlohmann::json::exception& ex) {
+	} catch (const nlohmann::json::exception& ex) {
 		std::cout << "user validation failed with: " << ex.what() << "\n";
-		return false;		
+		return false;
 	}
 }

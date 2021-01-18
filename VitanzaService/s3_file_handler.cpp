@@ -35,8 +35,7 @@ bool S3::put_object_s3(const std::string& filename, std::stringstream& image_dat
 
 	if (outcome.IsSuccess()) {
 		return true;
-	}
-	else {
+	} else {
 		std::cout << "Error: PutObject: " <<
 			outcome.GetError().GetMessage() << std::endl;
 		return false;
@@ -69,8 +68,7 @@ bool S3::get_object_s3(const std::string& filename, std::stringstream& stream) {
 
 		stream << file.rdbuf();
 		return true;
-	}
-	else {
+	} else {
 		const auto& err = get_object_outcome.GetError();
 		std::cout << "Error: GetObject: " <<
 			err.GetExceptionName() << ": " << err.GetMessage() << std::endl;
@@ -103,8 +101,7 @@ bool S3::delete_object_s3(const std::string& filename) {
 		std::cout << "Error: DeleteObject: " <<
 			err.GetExceptionName() << ": " << err.GetMessage() << std::endl;
 		return false;
-	}
-	else {
+	} else {
 		return true;
 	}
 }
