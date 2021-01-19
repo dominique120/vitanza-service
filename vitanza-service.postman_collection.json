@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d4d98aa0-7783-4677-b2de-aee02cc42a94",
+		"_postman_id": "8fc40107-9518-498c-99cb-f871c0046c90",
 		"name": "vitanza-service",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -136,7 +136,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "    {\r\n        \"District\": \"Mirafloes\",\r\n        \"FirstName\": \"Jose Maria\",\r\n        \"LastNames\": \"Aguilar Perez\",\r\n        \"PrimaryAddress\": \"Av. Benavides #4821\",\r\n        \"PrimaryPhone\": \"93205148\"\r\n    }",
+							"raw": "{\r\n  \"ClientId_uuid\": \"4653662f-c1e0-45e2-a98b-99a2805f128b\",\r\n  \"Delivered\": false,\r\n  \"OrderDetails\": [\r\n    {\r\n      \"Product\": \"1kg bag of aluminum sulfate\",\r\n      \"Quantity\": 2,\r\n      \"OrderId_uuid\": \"cadc9933-91ad-433f-befb-c8449e70a192\",\r\n      \"OrderDetailId_uuid\": \"8ba8638e-5f64-4519-88f2-568f8ac3fe2a\"\r\n    },\r\n    {\r\n      \"Product\": \"1kg bag of aluminum sulfate\",\r\n      \"Quantity\": 10,\r\n      \"OrderId_uuid\": \"cadc9933-91ad-433f-befb-c8449e70a192\",\r\n      \"OrderDetailId_uuid\": \"8ba8638e-5f64-4519-88f2-568f8ac3fe2a\"\r\n    },\r\n    {\r\n      \"Product\": \"1kg bag of aluminum sulfate\",\r\n      \"Quantity\": 5,\r\n      \"OrderId_uuid\": \"cadc9933-91ad-433f-befb-c8449e70a192\",\r\n      \"OrderDetailId_uuid\": \"8ba8638e-5f64-4519-88f2-568f8ac3fe2a\"\r\n    }\r\n  ],\r\n  \"Paid\": false,\r\n  \"DatePlaced\": \"2020-05-15\",\r\n  \"id\": \"d7bc62dd-a453-4217-9fd2-bc2a33a688ce\",\r\n  \"Client\": {\r\n    \"Intrest\": \"Filters\",\r\n    \"PrimaryAddress\": \"Calle Los Olmos #192\",\r\n    \"Active\": true,\r\n    \"ClientId_uuid\": \"506bfb6a-7d3f-4ff7-bdf2-f9e841d218e8\",\r\n    \"PrimaryPhone\": \"951753258\",\r\n    \"FirstName\": \"Juan\",\r\n    \"LastNames\": \"Perez Sanchaz\",\r\n    \"District\": \"La Molina\"\r\n  },\r\n  \"Notes\": \"Will come to pick up notes notes notes\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -144,7 +144,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://{{ip}}:{{port}}/vts/api/v1/customers/506bfb6a-7d3f-4ff7-bdf2-f9e841d218e8",
+							"raw": "http://{{ip}}:{{port}}/vts/api/v1/customers?id=4653662f-c1e0-45e2-a98b-99a2805f128b",
 							"protocol": "http",
 							"host": [
 								"{{ip}}"
@@ -154,8 +154,13 @@
 								"vts",
 								"api",
 								"v1",
-								"customers",
-								"506bfb6a-7d3f-4ff7-bdf2-f9e841d218e8"
+								"customers"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "4653662f-c1e0-45e2-a98b-99a2805f128b"
+								}
 							]
 						}
 					},
@@ -205,8 +210,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "orders",
@@ -353,8 +357,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "products",
@@ -432,8 +435,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "auth",
@@ -513,8 +515,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "users",
@@ -530,8 +531,598 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
+		},
+		{
+			"name": "AccessPatters",
+			"item": [
+				{
+					"name": "AP1",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{ip}}:{{port}}/vts/api/v2/client?status=ACTIVE",
+							"protocol": "http",
+							"host": [
+								"{{ip}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"vts",
+								"api",
+								"v2",
+								"client"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "ACTIVE"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AP2",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{ip}}:{{port}}/vts/api/v2/client?id=CLI|a7vxc",
+							"protocol": "http",
+							"host": [
+								"{{ip}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"vts",
+								"api",
+								"v2",
+								"client"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "CLI|a7vxc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AP3",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{ip}}:{{port}}/test/order?clientid=CLI|a7vxc",
+							"protocol": "http",
+							"host": [
+								"{{ip}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"test",
+								"order"
+							],
+							"query": [
+								{
+									"key": "clientid",
+									"value": "CLI|a7vxc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AP4",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{ip}}:{{port}}/test/filter?clientid=CLI|a7vxc",
+							"protocol": "http",
+							"host": [
+								"{{ip}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"test",
+								"filter"
+							],
+							"query": [
+								{
+									"key": "clientid",
+									"value": "CLI|a7vxc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AP5",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{ip}}:{{port}}/vts/api/v2/order?status=P_PAY",
+							"protocol": "http",
+							"host": [
+								"{{ip}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"vts",
+								"api",
+								"v2",
+								"order"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "P_PAY"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AP6",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{ip}}:{{port}}/test/filter?clientid=CLI|a7vxc&filterid=FLI|sd654f",
+							"protocol": "http",
+							"host": [
+								"{{ip}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"test",
+								"filter"
+							],
+							"query": [
+								{
+									"key": "clientid",
+									"value": "CLI|a7vxc"
+								},
+								{
+									"key": "filterid",
+									"value": "FLI|sd654f"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AP7",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{ip}}:{{port}}/test/order?clientid=CLI|a7vxc&orderid=ORD|d51a9",
+							"protocol": "http",
+							"host": [
+								"{{ip}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"test",
+								"order"
+							],
+							"query": [
+								{
+									"key": "clientid",
+									"value": "CLI|a7vxc"
+								},
+								{
+									"key": "orderid",
+									"value": "ORD|d51a9"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AP8",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{ip}}:{{port}}/test/orderdetails?orderid=ORD|d51a9",
+							"protocol": "http",
+							"host": [
+								"{{ip}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"test",
+								"orderdetails"
+							],
+							"query": [
+								{
+									"key": "orderid",
+									"value": "ORD|d51a9"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AP9",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{ip}}:{{port}}/test/product?category=Filter&productid=PRO|9dsf1",
+							"protocol": "http",
+							"host": [
+								"{{ip}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"test",
+								"product"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "Filter"
+								},
+								{
+									"key": "productid",
+									"value": "PRO|9dsf1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AP10",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{ip}}:{{port}}/test/product?category=Filter",
+							"protocol": "http",
+							"host": [
+								"{{ip}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"test",
+								"product"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "Filter"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AP11",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{ip}}:{{port}}/test/note?status=RESOLVED",
+							"protocol": "http",
+							"host": [
+								"{{ip}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"test",
+								"note"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "RESOLVED"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AP12",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{ip}}:{{port}}/test/filterchange?filterid=FLI|sd654f",
+							"protocol": "http",
+							"host": [
+								"{{ip}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"test",
+								"filterchange"
+							],
+							"query": [
+								{
+									"key": "filterid",
+									"value": "FLI|sd654f"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AP13",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{ip}}:{{port}}/test/filterchange?status=UPCOMING&start=11/12/2010&end=12/12/2030",
+							"protocol": "http",
+							"host": [
+								"{{ip}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"test",
+								"filterchange"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "UPCOMING"
+								},
+								{
+									"key": "start",
+									"value": "11/12/2010"
+								},
+								{
+									"key": "end",
+									"value": "12/12/2030"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "v2_client",
+			"item": [
+				{
+					"name": "insert",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "   {\r\n        \"Address1\": \"Calle 5 # 109 \",\r\n        \"Email\": \"email@gmail.com\",\r\n        \"GSI1PK\": \"Juan Perez\",\r\n        \"GSI1SK\": \"La Molina\",\r\n        \"GSI2PK\": \"ACTIVE\",\r\n        \"PK\": \"CLI|a7vefc\",\r\n        \"Phone1\": \"951875215\",\r\n        \"Phone2\": \"4156251\",\r\n        \"SK\": \"CLI|a7vefc\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{ip}}:{{port}}/vts/api/v2/client",
+							"protocol": "http",
+							"host": [
+								"{{ip}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"vts",
+								"api",
+								"v2",
+								"client"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "v2_order",
+			"item": [
+				{
+					"name": "insert",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n        \"GSI1PK\": \"ORD|d51a9567\",\r\n        \"GSI1SK\": \"12/12/2020\",\r\n        \"GSI2PK\": \"P_PAY\",\r\n        \"PK\": \"CLI|a7vxc\",\r\n        \"PayInfo\": \"BBVA\",\r\n        \"SK\": \"ORD|d51a9567\",\r\n        \"Total\": \"225.22\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{ip}}:{{port}}/vts/api/v2/order",
+							"protocol": "http",
+							"host": [
+								"{{ip}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"vts",
+								"api",
+								"v2",
+								"order"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		},
 		{
 			"name": "healthcheck",
@@ -593,6 +1184,5 @@
 			},
 			"response": []
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }
