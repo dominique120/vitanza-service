@@ -58,6 +58,21 @@ void RequestHandlers::set_client_handlers(httplib::Server& svr) {
 			return;
 		}
 
+		nlohmann::json body;
+
+		try {
+			body = nlohmann::json::parse(req.body);
+		} catch (const nlohmann::json::exception& ex) {
+			res.status = 400;
+			res.body = ex.what();
+			return;
+		}
+
+		if (Client::new_client(body)) {
+			res.status = 200;
+		} else {
+			res.status = 400;
+		}
 
 		});
 }
@@ -98,6 +113,32 @@ void RequestHandlers::set_product_handlers(httplib::Server& svr) {
 		} else {
 			res.status = 400;
 		}
+		});
+
+	svr.Post((g_config.API_BASE_URL_V2() + "/product").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		set_response_headers(res);
+
+		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+			res.status = 403;
+			return;
+		}
+
+		nlohmann::json body;
+
+		try {
+			body = nlohmann::json::parse(req.body);
+		} catch (const nlohmann::json::exception& ex) {
+			res.status = 400;
+			res.body = ex.what();
+			return;
+		}
+
+		if (Product::new_product(body)) {
+			res.status = 200;
+		} else {
+			res.status = 400;
+		}
+
 		});
 }
 
@@ -152,6 +193,32 @@ void RequestHandlers::set_order_handlers(httplib::Server& svr) {
 			res.status = 400;
 		}
 		});
+
+	svr.Post((g_config.API_BASE_URL_V2() + "/order").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		set_response_headers(res);
+
+		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+			res.status = 403;
+			return;
+		}
+
+		nlohmann::json body;
+
+		try {
+			body = nlohmann::json::parse(req.body);
+		} catch (const nlohmann::json::exception& ex) {
+			res.status = 400;
+			res.body = ex.what();
+			return;
+		}
+
+		if (Order::new_order(body)) {
+			res.status = 200;
+		} else {
+			res.status = 400;
+		}
+
+		});
 }
 
 void RequestHandlers::set_order_detail_handlers(httplib::Server& svr) {
@@ -177,6 +244,32 @@ void RequestHandlers::set_order_detail_handlers(httplib::Server& svr) {
 		} else {
 			res.status = 400;
 		}
+		});
+
+	svr.Post((g_config.API_BASE_URL_V2() + "/orderdetail").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		set_response_headers(res);
+
+		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+			res.status = 403;
+			return;
+		}
+
+		nlohmann::json body;
+
+		try {
+			body = nlohmann::json::parse(req.body);
+		} catch (const nlohmann::json::exception& ex) {
+			res.status = 400;
+			res.body = ex.what();
+			return;
+		}
+
+		if (OrderDetail::new_order_detail(body)) {
+			res.status = 200;
+		} else {
+			res.status = 400;
+		}
+
 		});
 }
 
@@ -218,6 +311,32 @@ void RequestHandlers::set_filter_installation_handlers(httplib::Server& svr) {
 			res.status = 400;
 		}
 		});
+
+	svr.Post((g_config.API_BASE_URL_V2() + "/filter").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		set_response_headers(res);
+
+		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+			res.status = 403;
+			return;
+		}
+
+		nlohmann::json body;
+
+		try {
+			body = nlohmann::json::parse(req.body);
+		} catch (const nlohmann::json::exception& ex) {
+			res.status = 400;
+			res.body = ex.what();
+			return;
+		}
+
+		if (FilterInstallation::new_filter_installation(body)) {
+			res.status = 200;
+		} else {
+			res.status = 400;
+		}
+
+		});
 }
 
 void RequestHandlers::set_filter_change_handlers(httplib::Server& svr) {
@@ -258,6 +377,32 @@ void RequestHandlers::set_filter_change_handlers(httplib::Server& svr) {
 			res.status = 400;
 		}
 		});
+
+	svr.Post((g_config.API_BASE_URL_V2() + "/filterchange").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		set_response_headers(res);
+
+		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+			res.status = 403;
+			return;
+		}
+
+		nlohmann::json body;
+
+		try {
+			body = nlohmann::json::parse(req.body);
+		} catch (const nlohmann::json::exception& ex) {
+			res.status = 400;
+			res.body = ex.what();
+			return;
+		}
+
+		if (FilterChange::new_filter_change(body)) {
+			res.status = 200;
+		} else {
+			res.status = 400;
+		}
+
+		});
 }
 
 void RequestHandlers::set_note_handlers(httplib::Server& svr) {
@@ -285,6 +430,32 @@ void RequestHandlers::set_note_handlers(httplib::Server& svr) {
 		} else {
 			res.status = 400;
 		}
+		});
+
+	svr.Post((g_config.API_BASE_URL_V2() + "/note").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		set_response_headers(res);
+
+		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+			res.status = 403;
+			return;
+		}
+
+		nlohmann::json body;
+
+		try {
+			body = nlohmann::json::parse(req.body);
+		} catch (const nlohmann::json::exception& ex) {
+			res.status = 400;
+			res.body = ex.what();
+			return;
+		}
+
+		if (Note::new_note(body)) {
+			res.status = 200;
+		} else {
+			res.status = 400;
+		}
+
 		});
 
 }

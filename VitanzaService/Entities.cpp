@@ -15,7 +15,7 @@ void Client::get_client(const std::string& client_id, nlohmann::json& result_out
 }
 
 bool Client::new_client(const nlohmann::json& request) {
-	return false;
+	return DynamoDB::put_item(request, "Vitanza");
 }
 
 bool Client::update_client(const nlohmann::json& request) {
@@ -50,7 +50,7 @@ void Order::get_order(const std::string& client_id, const std::string& order_id,
 }
 
 bool Order::new_order(const nlohmann::json& request) {
-	return false;
+	return DynamoDB::put_item(request, "Vitanza");
 }
 
 bool Order::close_order(const std::string& clientid, const std::string& orderid) {
@@ -84,7 +84,7 @@ void FilterInstallation::get_filter_installation(const std::string& client_id, c
 }
 
 bool FilterInstallation::new_filter_installation(const nlohmann::json& request) {
-	return false;
+	return DynamoDB::put_item(request, "Vitanza");
 }
 
 bool FilterInstallation::update_filter_installation(const nlohmann::json& request) {
@@ -106,7 +106,7 @@ void OrderDetail::get_order_details_by_order(const std::string& order_id, nlohma
 }
 
 bool OrderDetail::new_order_detail(const nlohmann::json& request) {
-	return false;
+	return DynamoDB::put_item(request, "Vitanza");
 }
 
 bool OrderDetail::remove_order_detail(const std::string& orderid, const std::string& orderdetailid) {
@@ -135,7 +135,7 @@ void Product::get_current_stock(const std::string& category, nlohmann::json& res
 }
 
 bool Product::new_product(const nlohmann::json& request) {
-	return false;
+	return DynamoDB::put_item(request, "Vitanza");
 }
 
 bool Product::update_product(const nlohmann::json& request) {
@@ -156,7 +156,7 @@ void Note::get_notes_by_status(const std::string& status, nlohmann::json& result
 }
 
 bool Note::new_note(const nlohmann::json& request) {
-	return false;
+	return DynamoDB::put_item(request, "Vitanza");
 }
 
 bool Note::resolve_note(const std::string& clientid, const std::string& noteid, const std::string& status) {
@@ -183,7 +183,7 @@ void FilterChange::get_changes_by_status_dates(const std::string& status, const 
 }
 
 bool FilterChange::new_filter_change(const nlohmann::json& request) {
-	return false;
+	return DynamoDB::put_item(request, "Vitanza");
 }
 
 bool FilterChange::update_filter_change_status(const std::string& filterid, const std::string& filterchange, const std::string& status) {

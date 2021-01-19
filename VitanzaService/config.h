@@ -33,7 +33,13 @@ public:
 private:
 	std::map<std::string, std::string> configuration_table;
 	std::string operator [] (const std::string& config_name) {
-		return this->configuration_table.at(config_name);
+		try {
+			return this->configuration_table.at(config_name);
+		} catch (const std::out_of_range& ex) {
+			std::cout << ex.what() << "\n";
+			std::cout << "Could not find key name:" << config_name << "\n";
+			return "";
+		}
 	}
 };
 
