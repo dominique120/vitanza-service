@@ -10,22 +10,27 @@ void Client::query_clients_by_status(const std::string& status, nlohmann::json& 
 
 void Client::get_client(const std::string& client_id, nlohmann::json& result_out) {
 	// PK is CLI|uuid
-	const Aws::String PK = client_id.c_str();
-	DynamoDB::get_item_composite("Vitanza", "PK", PK, "SK", PK, result_out);
+	DynamoDB::CompositePK pk;
+	pk.pk_name = "PK";
+	pk.pk_value = client_id;
+	pk.sk_name = "SK";
+	pk.sk_value = client_id;
+
+	DynamoDB::get_item_composite("Vitanza", pk, result_out);
 }
 
 bool Client::new_client(const nlohmann::json& request) {
 	return DynamoDB::put_item(request, "Vitanza");
 }
 
-bool Client::update_client(const nlohmann::json& request) {
-	return false;
+bool Client::update_client(const std::string& client_id, const nlohmann::json& request) {
+	DynamoDB::CompositePK pk;
+	pk.pk_name = "PK";
+	pk.pk_value = client_id;
+	pk.sk_name = "SK";
+	pk.sk_value = client_id;
+	return DynamoDB::update_item_composite(request, "Vitanza", pk);
 }
-
-bool Client::change_client_status(const std::string& clientid, const std::string& status) {
-	return false;
-}
-
 
 void Order::query_orders_by_client(const std::string& client_id, nlohmann::json& result_out) {
 	// PK is CLI|uuid, SK starts with ORD
@@ -44,24 +49,19 @@ void Order::query_orders_by_status(const std::string& status, nlohmann::json& re
 
 void Order::get_order(const std::string& client_id, const std::string& order_id, nlohmann::json& result_out) {
 	// GSI1PK is ORD|uuid
-	const Aws::String PK = client_id.c_str();
-	const Aws::String SK = order_id.c_str();
-	DynamoDB::get_item_composite("Vitanza", "PK", PK, "SK", SK, result_out);
+	DynamoDB::CompositePK pk;
+	pk.pk_name = "PK";
+	pk.pk_value = client_id;
+	pk.sk_name = "SK";
+	pk.sk_value = order_id;
+	DynamoDB::get_item_composite("Vitanza", pk, result_out);
 }
 
 bool Order::new_order(const nlohmann::json& request) {
 	return DynamoDB::put_item(request, "Vitanza");
 }
 
-bool Order::close_order(const std::string& clientid, const std::string& orderid) {
-	return false;
-}
-
-bool Order::delete_order(const std::string& clientid, const std::string& orderid) {
-	return false;
-}
-
-bool Order::update_order(const nlohmann::json& request) {
+bool Order::update_order(const std::string& client_id, const std::string& order_id, const nlohmann::json& request) {
 	return false;
 }
 
@@ -77,10 +77,12 @@ void FilterInstallation::query_filter_installations_by_client(const std::string&
 
 void FilterInstallation::get_filter_installation(const std::string& client_id, const std::string& filter_install_id, nlohmann::json& result_out) {
 	// PK is CLI|uuid, SK is FLI|uuid
-	const Aws::String PK = client_id.c_str();
-	const Aws::String SK = filter_install_id.c_str();
-	std::cout << "PK = " << PK << " SK = " << SK << "\n";
-	DynamoDB::get_item_composite("Vitanza", "PK", PK, "SK", SK, result_out);
+	DynamoDB::CompositePK pk;
+	pk.pk_name = "PK";
+	pk.pk_value = client_id;
+	pk.sk_name = "SK";
+	pk.sk_value = filter_install_id;
+	DynamoDB::get_item_composite("Vitanza", pk, result_out);
 }
 
 bool FilterInstallation::new_filter_installation(const nlohmann::json& request) {
@@ -88,10 +90,6 @@ bool FilterInstallation::new_filter_installation(const nlohmann::json& request) 
 }
 
 bool FilterInstallation::update_filter_installation(const nlohmann::json& request) {
-	return false;
-}
-
-bool FilterInstallation::change_filter_installation_status(const std::string& clientid, const std::string& filterid, const std::string& status) {
 	return false;
 }
 
@@ -113,17 +111,16 @@ bool OrderDetail::remove_order_detail(const std::string& orderid, const std::str
 	return false;
 }
 
-bool OrderDetail::update_order_detail(const nlohmann::json& request) {
-	return false;
-}
-
 
 
 void Product::get_product(const std::string& category, const std::string& product_id, nlohmann::json& result_out) {
 	// PK is PRD|uuid
-	const Aws::String PK = product_id.c_str();
-	const Aws::String SK = category.c_str();
-	DynamoDB::get_item_composite("Vitanza", "PK", PK, "SK", SK, result_out);
+	DynamoDB::CompositePK pk;
+	pk.pk_name = "PK";
+	pk.pk_value = product_id;
+	pk.sk_name = "SK";
+	pk.sk_value = category;
+	DynamoDB::get_item_composite("Vitanza", pk, result_out);
 }
 
 void Product::get_current_stock(const std::string& category, nlohmann::json& result_out) {
@@ -142,10 +139,6 @@ bool Product::update_product(const nlohmann::json& request) {
 	return false;
 }
 
-bool Product::delete_product(const std::string& category, const std::string& product_id) {
-	return false;
-}
-
 
 
 void Note::get_notes_by_status(const std::string& status, nlohmann::json& result_out) {
@@ -159,9 +152,11 @@ bool Note::new_note(const nlohmann::json& request) {
 	return DynamoDB::put_item(request, "Vitanza");
 }
 
-bool Note::resolve_note(const std::string& clientid, const std::string& noteid, const std::string& status) {
+bool Note::update_note(const std::string& clientid, const std::string& noteid, const nlohmann::json& data) {
 	return false;
 }
+
+
 
 
 void FilterChange::get_changes_by_installation(const std::string& filter_install_id, nlohmann::json& result_out) {
@@ -186,6 +181,8 @@ bool FilterChange::new_filter_change(const nlohmann::json& request) {
 	return DynamoDB::put_item(request, "Vitanza");
 }
 
-bool FilterChange::update_filter_change_status(const std::string& filterid, const std::string& filterchange, const std::string& status) {
+bool FilterChange::update_filter_change(const std::string& filterid, const std::string& filterchange, const std::string& status) {
 	return false;
 }
+
+

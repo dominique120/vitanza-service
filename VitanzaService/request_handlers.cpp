@@ -1,6 +1,9 @@
+/*
+ * Copyright Dominique Verellen. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0.
+ */
 #include "vtspch.h"
 #include "request_handlers.h"
-
 
 extern ConfigurationManager g_config;
 
@@ -74,6 +77,33 @@ void RequestHandlers::set_client_handlers(httplib::Server& svr) {
 			res.status = 400;
 		}
 
+		});
+
+
+	svr.Put((g_config.API_BASE_URL_V2() + "/client").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		set_response_headers(res);
+
+		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+			res.status = 403;
+			return;
+		}
+
+		nlohmann::json body;
+
+		try {
+			body = nlohmann::json::parse(req.body);
+		} catch (const nlohmann::json::exception& ex) {
+			res.status = 400;
+			res.body = ex.what();
+			return;
+		}
+		if (req.has_param("status")) {
+			if (Client::update_client(req.get_param_value("id") ,body)) {
+				res.status = 200;
+			} else {
+				res.status = 400;
+			}
+		}
 		});
 }
 

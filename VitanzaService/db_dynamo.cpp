@@ -117,6 +117,7 @@ bool DynamoDB::put_item(const nlohmann::json& request, const std::string& table)
 	return true;
 }
 
+
 nlohmann::json DynamoDB::parse_type(Aws::DynamoDB::Model::AttributeValue attr) {
 	if (attr.GetType() == Aws::DynamoDB::Model::ValueType::STRING) {
 		return attr.GetS();
@@ -188,7 +189,7 @@ void DynamoDB::get_item_dynamo(const Aws::String& table_name, const Aws::String&
 	}
 }
 
-void DynamoDB::get_item_composite(const Aws::String& table_name, const Aws::String& pk, const Aws::String& pk_value, const Aws::String& sk, const Aws::String& sk_value, nlohmann::json& result_out) {
+void DynamoDB::get_item_composite(const Aws::String& table_name, const CompositePK& primary_key, nlohmann::json& result_out) {
 	/* Config */
 	Aws::Auth::AWSCredentials credentials;
 	Aws::Client::ClientConfiguration client_config;
@@ -205,13 +206,13 @@ void DynamoDB::get_item_composite(const Aws::String& table_name, const Aws::Stri
 
 
 	// Setup the composite key for the GetItemRequest
-	Aws::DynamoDB::Model::AttributeValue primary_key;
-	primary_key.SetS(pk_value);
-	req.AddKey(pk, primary_key);
+	Aws::DynamoDB::Model::AttributeValue pk;
+	pk.SetS(primary_key.pk_value);
+	req.AddKey(primary_key.pk_name, pk);
 
-	Aws::DynamoDB::Model::AttributeValue sort_key;
-	sort_key.SetS(sk_value);
-	req.AddKey(sk, sort_key);
+	Aws::DynamoDB::Model::AttributeValue sk;
+	sk.SetS(primary_key.sk_value);
+	req.AddKey(primary_key.sk_name, sk);
 
 
 	// Retrieve the item's fields and values
@@ -258,6 +259,44 @@ bool DynamoDB::update_item_dynamo(const Aws::String& table_name, const Aws::Stri
 
 	// Update the item
 	const Aws::DynamoDB::Model::UpdateItemOutcome& result = dynamo_client.UpdateItem(request);
+	if (!result.IsSuccess()) {
+		std::cout << result.GetError().GetMessage() << std::endl;
+		return false;
+	}
+
+	return true;
+}
+
+bool DynamoDB::update_item_composite(const nlohmann::json& request, const std::string& table, const CompositePK& primary_key) {
+	Aws::Auth::AWSCredentials credentials;
+	Aws::Client::ClientConfiguration client_config;
+	DynamoDB::client_config(credentials, client_config);
+	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
+	const Aws::String endpoint(g_config.AWS_DYNAMODB_ENDPOINT().c_str());
+	dynamo_client.OverrideEndpoint(endpoint);
+
+
+	// Define TableName argument
+	Aws::DynamoDB::Model::UpdateItemRequest uir;
+	uir.SetTableName(table.c_str());
+
+	// Setup the composite key 
+	Aws::DynamoDB::Model::AttributeValue pk;
+	pk.SetS(primary_key.pk_value);
+	uir.AddKey(primary_key.pk_name, pk);
+
+	Aws::DynamoDB::Model::AttributeValue sk;
+	sk.SetS(primary_key.sk_value);
+	uir.AddKey(primary_key.sk_name, sk);
+
+	// set expression for SET
+	uir.SetUpdateExpression(build_operation_expression(request, "SET"));
+
+	// Construct attribute value argument
+	uir.SetExpressionAttributeValues(build_operation_values(request));
+
+	// Update the item
+	const Aws::DynamoDB::Model::UpdateItemOutcome& result = dynamo_client.UpdateItem(uir);
 	if (!result.IsSuccess()) {
 		std::cout << result.GetError().GetMessage() << std::endl;
 		return false;

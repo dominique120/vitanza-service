@@ -19,8 +19,10 @@ public:
 
 	// Aditional db interactions:
 	static bool new_client(const nlohmann::json& request);
-	static bool update_client(const nlohmann::json& request);
-	static bool change_client_status(const std::string& clientid, const std::string& status);
+	static bool update_client(const std::string& client_id, const nlohmann::json& request);
+
+	// Simple update request with the new status, no need for a new function
+	//static bool change_client_status(const std::string& clientid, const std::string& status);
 };
 
 class Order {
@@ -36,9 +38,11 @@ public:
 
 	// Aditional db interactions:
 	static bool new_order(const nlohmann::json& request);
-	static bool close_order(const std::string& clientid, const std::string& orderid);
-	static bool delete_order(const std::string& clientid, const std::string& orderid);
-	static bool update_order(const nlohmann::json& request);
+	static bool update_order(const std::string& client_id, const std::string& order_id, const nlohmann::json& request);
+
+	// Use simple update
+	//static bool close_order(const std::string& clientid, const std::string& orderid);
+	//static bool delete_order(const std::string& clientid, const std::string& orderid);
 };
 
 class OrderDetail {
@@ -49,7 +53,6 @@ public:
 	// Aditional db interactions:
 	static bool new_order_detail(const nlohmann::json& request);
 	static bool remove_order_detail(const std::string& orderid, const std::string& orderdetailid);
-	static bool update_order_detail(const nlohmann::json& request);
 };
 
 class FilterInstallation {
@@ -63,7 +66,9 @@ public:
 	// Aditional db interactions:
 	static bool new_filter_installation(const nlohmann::json& request);
 	static bool update_filter_installation(const nlohmann::json& request);
-	static bool change_filter_installation_status(const std::string& clientid, const std::string& filterid, const std::string& status);
+	
+	// Simple update
+	// static bool change_filter_installation_status(const std::string& clientid, const std::string& filterid, const std::string& status);
 };
 
 class FilterChange {
@@ -76,7 +81,7 @@ public:
 
 	// Aditional db interactions:
 	static bool new_filter_change(const nlohmann::json& request);
-	static bool update_filter_change_status(const std::string& filterid, const std::string& filterchange, const std::string& status);
+	static bool update_filter_change(const std::string& filterid, const std::string& filterchange, const std::string& status);
 };
 
 class Product {
@@ -90,7 +95,9 @@ public:
 	// Aditional db interactions:
 	static bool new_product(const nlohmann::json& request);
 	static bool update_product(const nlohmann::json& request);
-	static bool delete_product(const std::string& category, const std::string& product_id);
+	
+	// add status field to products
+	//static bool delete_product(const std::string& category, const std::string& product_id);
 };
 
 class Note {
@@ -100,7 +107,8 @@ public:
 
 	// Aditional db interactions:
 	static bool new_note(const nlohmann::json& request);
-	static bool resolve_note(const std::string& clientid, const std::string& noteid, const std::string& status);
+	static bool update_note(const std::string& clientid, const std::string& noteid, const nlohmann::json& data);
+	
 };
 
 
