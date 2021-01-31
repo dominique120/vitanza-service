@@ -22,7 +22,7 @@ public:
 	static bool update_client(const std::string& client_id, const nlohmann::json& request);
 
 	// Simple update request with the new status, no need for a new function
-	//static bool change_client_status(const std::string& clientid, const std::string& status);
+	// static bool change_client_status(const std::string& clientid, const std::string& status);
 };
 
 class Order {
@@ -41,8 +41,8 @@ public:
 	static bool update_order(const std::string& client_id, const std::string& order_id, const nlohmann::json& request);
 
 	// Use simple update
-	//static bool close_order(const std::string& clientid, const std::string& orderid);
-	//static bool delete_order(const std::string& clientid, const std::string& orderid);
+	// static bool close_order(const std::string& clientid, const std::string& orderid);
+	// static bool delete_order(const std::string& clientid, const std::string& orderid);
 };
 
 class OrderDetail {
@@ -65,7 +65,7 @@ public:
 
 	// Aditional db interactions:
 	static bool new_filter_installation(const nlohmann::json& request);
-	static bool update_filter_installation(const nlohmann::json& request);
+	static bool update_filter_installation(const std::string& client_id, const std::string& filter_install_id, const nlohmann::json& request);
 	
 	// Simple update
 	// static bool change_filter_installation_status(const std::string& clientid, const std::string& filterid, const std::string& status);
@@ -94,7 +94,7 @@ public:
 
 	// Aditional db interactions:
 	static bool new_product(const nlohmann::json& request);
-	static bool update_product(const nlohmann::json& request);
+	static bool update_product(const std::string& productid, const std::string& type, const nlohmann::json& request);
 	
 	// add status field to products
 	//static bool delete_product(const std::string& category, const std::string& product_id);

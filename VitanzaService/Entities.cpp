@@ -62,10 +62,13 @@ bool Order::new_order(const nlohmann::json& request) {
 }
 
 bool Order::update_order(const std::string& client_id, const std::string& order_id, const nlohmann::json& request) {
-	return false;
+	DynamoDB::CompositePK pk;
+	pk.pk_name = "PK";
+	pk.pk_value = client_id;
+	pk.sk_name = "SK";
+	pk.sk_value = order_id;
+	return DynamoDB::update_item_composite(request, "Vitanza", pk);
 }
-
-
 
 void FilterInstallation::query_filter_installations_by_client(const std::string& client_id, nlohmann::json& result_out) {
 	// PK is CLI|uuid, SK starts with FLI
@@ -89,11 +92,14 @@ bool FilterInstallation::new_filter_installation(const nlohmann::json& request) 
 	return DynamoDB::put_item(request, "Vitanza");
 }
 
-bool FilterInstallation::update_filter_installation(const nlohmann::json& request) {
-	return false;
+bool FilterInstallation::update_filter_installation(const std::string& client_id, const std::string& filter_install_id, const nlohmann::json& request) {
+	DynamoDB::CompositePK pk;
+	pk.pk_name = "PK";
+	pk.pk_value = client_id;
+	pk.sk_name = "SK";
+	pk.sk_value = filter_install_id;
+	return DynamoDB::update_item_composite(request, "Vitanza", pk);
 }
-
-
 
 void OrderDetail::get_order_details_by_order(const std::string& order_id, nlohmann::json& result_out) {
 	// PK is ORD|uuid, SK is starts with ODD
@@ -108,10 +114,13 @@ bool OrderDetail::new_order_detail(const nlohmann::json& request) {
 }
 
 bool OrderDetail::remove_order_detail(const std::string& orderid, const std::string& orderdetailid) {
-	return false;
+	DynamoDB::CompositePK pk;
+	pk.pk_name = "PK";
+	pk.pk_value = orderid;
+	pk.sk_name = "SK";
+	pk.sk_value = orderdetailid;
+	return DynamoDB::delete_item_composite("Vitanza", pk);
 }
-
-
 
 void Product::get_product(const std::string& category, const std::string& product_id, nlohmann::json& result_out) {
 	// PK is PRD|uuid
@@ -135,11 +144,14 @@ bool Product::new_product(const nlohmann::json& request) {
 	return DynamoDB::put_item(request, "Vitanza");
 }
 
-bool Product::update_product(const nlohmann::json& request) {
-	return false;
+bool Product::update_product(const std::string& productid, const std::string& type, const nlohmann::json& request) {
+	DynamoDB::CompositePK pk;
+	pk.pk_name = "PK";
+	pk.pk_value = productid;
+	pk.sk_name = "SK";
+	pk.sk_value = type;
+	return DynamoDB::update_item_composite(request, "Vitanza", pk);
 }
-
-
 
 void Note::get_notes_by_status(const std::string& status, nlohmann::json& result_out) {
 	// GSI1 PK = OPEN
@@ -153,11 +165,13 @@ bool Note::new_note(const nlohmann::json& request) {
 }
 
 bool Note::update_note(const std::string& clientid, const std::string& noteid, const nlohmann::json& data) {
-	return false;
+	DynamoDB::CompositePK pk;
+	pk.pk_name = "PK";
+	pk.pk_value = clientid;
+	pk.sk_name = "SK";
+	pk.sk_value = noteid;
+	return DynamoDB::update_item_composite(data, "Vitanza", pk);
 }
-
-
-
 
 void FilterChange::get_changes_by_installation(const std::string& filter_install_id, nlohmann::json& result_out) {
 	// PK = FLI|uid, SK begins with FLC
@@ -182,7 +196,12 @@ bool FilterChange::new_filter_change(const nlohmann::json& request) {
 }
 
 bool FilterChange::update_filter_change(const std::string& filterid, const std::string& filterchange, const std::string& status) {
-	return false;
+	DynamoDB::CompositePK pk;
+	pk.pk_name = "PK";
+	pk.pk_value = filterid;
+	pk.sk_name = "SK";
+	pk.sk_value = filterchange;
+	return DynamoDB::update_item_composite(status, "Vitanza", pk);
 }
 
 

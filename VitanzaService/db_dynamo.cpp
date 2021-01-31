@@ -305,6 +305,38 @@ bool DynamoDB::update_item_composite(const nlohmann::json& request, const std::s
 	return true;
 }
 
+bool DynamoDB::delete_item_composite(const Aws::String& table_name, const CompositePK& primary_key) {
+	Aws::Auth::AWSCredentials credentials;
+	Aws::Client::ClientConfiguration client_config;
+	DynamoDB::client_config(credentials, client_config);
+	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
+	const Aws::String endpoint(g_config.AWS_DYNAMODB_ENDPOINT().c_str());
+	dynamo_client.OverrideEndpoint(endpoint);
+
+
+	Aws::DynamoDB::Model::DeleteItemRequest req;
+
+	// Setup the composite key 
+	Aws::DynamoDB::Model::AttributeValue pk;
+	pk.SetS(primary_key.pk_value);
+	req.AddKey(primary_key.pk_name, pk);
+
+	Aws::DynamoDB::Model::AttributeValue sk;
+	sk.SetS(primary_key.sk_value);
+	req.AddKey(primary_key.sk_name, sk);
+
+	// Set table name
+	req.SetTableName(table_name);
+
+	const Aws::DynamoDB::Model::DeleteItemOutcome& result = dynamo_client.DeleteItem(req);
+	if (result.IsSuccess()) {
+		return true;
+	} else {
+		std::cout << "Failed to delete item: " << result.GetError().GetMessage();
+		return false;
+	}
+}
+
 bool DynamoDB::new_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, const std::string& request_body) {
 	Aws::Auth::AWSCredentials credentials;
 	Aws::Client::ClientConfiguration client_config;

@@ -44,9 +44,9 @@ public:
 	static void query_with_expression(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& expression, const nlohmann::json& expression_values, nlohmann::json& result_out);
 	
 	static void get_item_composite(const Aws::String& table_name, const CompositePK& primary_key, nlohmann::json& result_out);
-
 	static bool put_item(const nlohmann::json& request, const std::string& table);
 	static bool update_item_composite(const nlohmann::json& request, const std::string& table, const CompositePK& primary_key);
+	static bool delete_item_composite(const Aws::String& table_name, const CompositePK& primary_key);
 
 
 private:

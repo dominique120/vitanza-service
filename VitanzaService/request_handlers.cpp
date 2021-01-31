@@ -97,7 +97,7 @@ void RequestHandlers::set_client_handlers(httplib::Server& svr) {
 			res.body = ex.what();
 			return;
 		}
-		if (req.has_param("status")) {
+		if (req.has_param("id")) {
 			if (Client::update_client(req.get_param_value("id") ,body)) {
 				res.status = 200;
 			} else {
@@ -169,6 +169,32 @@ void RequestHandlers::set_product_handlers(httplib::Server& svr) {
 			res.status = 400;
 		}
 
+		});
+
+	svr.Put((g_config.API_BASE_URL_V2() + "/product").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		set_response_headers(res);
+
+		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+			res.status = 403;
+			return;
+		}
+
+		nlohmann::json body;
+
+		try {
+			body = nlohmann::json::parse(req.body);
+		} catch (const nlohmann::json::exception& ex) {
+			res.status = 400;
+			res.body = ex.what();
+			return;
+		}
+		if (req.has_param("productid") && req.has_param("type")) {
+			if (Order::update_order(req.get_param_value("productid"), req.get_param_value("type"), body)) {
+				res.status = 200;
+			} else {
+				res.status = 400;
+			}
+		}
 		});
 }
 
@@ -249,6 +275,33 @@ void RequestHandlers::set_order_handlers(httplib::Server& svr) {
 		}
 
 		});
+
+
+	svr.Put((g_config.API_BASE_URL_V2() + "/order").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		set_response_headers(res);
+
+		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+			res.status = 403;
+			return;
+		}
+
+		nlohmann::json body;
+
+		try {
+			body = nlohmann::json::parse(req.body);
+		} catch (const nlohmann::json::exception& ex) {
+			res.status = 400;
+			res.body = ex.what();
+			return;
+		}
+		if (req.has_param("clientid") && req.has_param("orderid")) {
+			if (Order::update_order(req.get_param_value("clientid"), req.get_param_value("orderid"), body)) {
+				res.status = 200;
+			} else {
+				res.status = 400;
+			}
+		}
+		});
 }
 
 void RequestHandlers::set_order_detail_handlers(httplib::Server& svr) {
@@ -298,6 +351,33 @@ void RequestHandlers::set_order_detail_handlers(httplib::Server& svr) {
 			res.status = 200;
 		} else {
 			res.status = 400;
+		}
+
+		});
+
+	svr.Delete((g_config.API_BASE_URL_V2() + "/orderdetail").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		set_response_headers(res);
+
+		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+			res.status = 403;
+			return;
+		}
+
+		nlohmann::json body;
+
+		try {
+			body = nlohmann::json::parse(req.body);
+		} catch (const nlohmann::json::exception& ex) {
+			res.status = 400;
+			res.body = ex.what();
+			return;
+		}
+		if (req.has_param("orderid") && req.has_param("orderdetailid")) {
+			if (OrderDetail::remove_order_detail(req.get_param_value("orderid"), req.get_param_value("orderdetailid"))) {
+				res.status = 200;
+			} else {
+				res.status = 400;
+			}
 		}
 
 		});
@@ -367,6 +447,33 @@ void RequestHandlers::set_filter_installation_handlers(httplib::Server& svr) {
 		}
 
 		});
+
+
+	svr.Put((g_config.API_BASE_URL_V2() + "/filter").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		set_response_headers(res);
+
+		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+			res.status = 403;
+			return;
+		}
+
+		nlohmann::json body;
+
+		try {
+			body = nlohmann::json::parse(req.body);
+		} catch (const nlohmann::json::exception& ex) {
+			res.status = 400;
+			res.body = ex.what();
+			return;
+		}
+		if (req.has_param("clientid") && req.has_param("filterid")) {
+			if (FilterInstallation::update_filter_installation(req.get_param_value("clientid"), req.get_param_value("filterid"), body)) {
+				res.status = 200;
+			} else {
+				res.status = 400;
+			}
+		}
+		});
 }
 
 void RequestHandlers::set_filter_change_handlers(httplib::Server& svr) {
@@ -433,6 +540,32 @@ void RequestHandlers::set_filter_change_handlers(httplib::Server& svr) {
 		}
 
 		});
+
+	svr.Put((g_config.API_BASE_URL_V2() + "/filter").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		set_response_headers(res);
+
+		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+			res.status = 403;
+			return;
+		}
+
+		nlohmann::json body;
+
+		try {
+			body = nlohmann::json::parse(req.body);
+		} catch (const nlohmann::json::exception& ex) {
+			res.status = 400;
+			res.body = ex.what();
+			return;
+		}
+		if (req.has_param("filterid") && req.has_param("filterchangeid")) {
+			if (FilterChange::update_filter_change(req.get_param_value("filterid"), req.get_param_value("filterchangeid"), body)) {
+				res.status = 200;
+			} else {
+				res.status = 400;
+			}
+		}
+		});
 }
 
 void RequestHandlers::set_note_handlers(httplib::Server& svr) {
@@ -486,6 +619,32 @@ void RequestHandlers::set_note_handlers(httplib::Server& svr) {
 			res.status = 400;
 		}
 
+		});
+
+	svr.Put((g_config.API_BASE_URL_V2() + "/note").c_str(), [](const httplib::Request& req, httplib::Response& res) {
+		set_response_headers(res);
+
+		if (!Auth::validate_token(req.get_header_value("Authorization"))) {
+			res.status = 403;
+			return;
+		}
+
+		nlohmann::json body;
+
+		try {
+			body = nlohmann::json::parse(req.body);
+		} catch (const nlohmann::json::exception& ex) {
+			res.status = 400;
+			res.body = ex.what();
+			return;
+		}
+		if (req.has_param("clientid") && req.has_param("noteid")) {
+			if (Note::update_note(req.get_param_value("clientid"), req.get_param_value("noteid"), body)) {
+				res.status = 200;
+			} else {
+				res.status = 400;
+			}
+		}
 		});
 
 }
