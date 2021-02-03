@@ -537,7 +537,7 @@
 			"name": "AccessPatters",
 			"item": [
 				{
-					"name": "AP1",
+					"name": "AP1 - Get Clients by Status",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -575,7 +575,7 @@
 					"response": []
 				},
 				{
-					"name": "AP2",
+					"name": "AP2 - Get Client by Id",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -613,7 +613,7 @@
 					"response": []
 				},
 				{
-					"name": "AP3",
+					"name": "AP3 - Get Orders by Client",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -628,14 +628,16 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://{{ip}}:{{port}}/test/order?clientid=CLI|a7vxc",
+							"raw": "http://{{ip}}:{{port}}/vts/api/v2/order?clientid=CLI|a7vxc",
 							"protocol": "http",
 							"host": [
 								"{{ip}}"
 							],
 							"port": "{{port}}",
 							"path": [
-								"test",
+								"vts",
+								"api",
+								"v2",
 								"order"
 							],
 							"query": [
@@ -649,7 +651,7 @@
 					"response": []
 				},
 				{
-					"name": "AP4",
+					"name": "AP4 - Get Filter Installations by Client Id",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -664,14 +666,16 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://{{ip}}:{{port}}/test/filter?clientid=CLI|a7vxc",
+							"raw": "http://{{ip}}:{{port}}/vts/api/v2/filter?clientid=CLI|a7vxc",
 							"protocol": "http",
 							"host": [
 								"{{ip}}"
 							],
 							"port": "{{port}}",
 							"path": [
-								"test",
+								"vts",
+								"api",
+								"v2",
 								"filter"
 							],
 							"query": [
@@ -685,7 +689,7 @@
 					"response": []
 				},
 				{
-					"name": "AP5",
+					"name": "AP5 - Get Orders by Status",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -723,7 +727,7 @@
 					"response": []
 				},
 				{
-					"name": "AP6",
+					"name": "AP6 - Get Filter Installation by Client Id and Filter Install Id",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -738,14 +742,16 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://{{ip}}:{{port}}/test/filter?clientid=CLI|a7vxc&filterid=FLI|sd654f",
+							"raw": "http://{{ip}}:{{port}}/vts/api/v2/filter?clientid=CLI|a7vxc&filterid=FLI|sd654f",
 							"protocol": "http",
 							"host": [
 								"{{ip}}"
 							],
 							"port": "{{port}}",
 							"path": [
-								"test",
+								"vts",
+								"api",
+								"v2",
 								"filter"
 							],
 							"query": [
@@ -763,7 +769,7 @@
 					"response": []
 				},
 				{
-					"name": "AP7",
+					"name": "AP7 - Get Order by Client Id and Order Id",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -778,14 +784,16 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://{{ip}}:{{port}}/test/order?clientid=CLI|a7vxc&orderid=ORD|d51a9",
+							"raw": "http://{{ip}}:{{port}}/vts/api/v2/order?clientid=CLI|a7vxc&orderid=ORD|d51a9",
 							"protocol": "http",
 							"host": [
 								"{{ip}}"
 							],
 							"port": "{{port}}",
 							"path": [
-								"test",
+								"vts",
+								"api",
+								"v2",
 								"order"
 							],
 							"query": [
@@ -803,7 +811,7 @@
 					"response": []
 				},
 				{
-					"name": "AP8",
+					"name": "AP8 - Get Order Details by Order Id",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -818,15 +826,17 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://{{ip}}:{{port}}/test/orderdetails?orderid=ORD|d51a9",
+							"raw": "http://{{ip}}:{{port}}/vts/api/v2/orderdetail?orderid=ORD|d51a9",
 							"protocol": "http",
 							"host": [
 								"{{ip}}"
 							],
 							"port": "{{port}}",
 							"path": [
-								"test",
-								"orderdetails"
+								"vts",
+								"api",
+								"v2",
+								"orderdetail"
 							],
 							"query": [
 								{
@@ -839,7 +849,7 @@
 					"response": []
 				},
 				{
-					"name": "AP9",
+					"name": "AP9 - Get Product by Product Id and Category",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -854,14 +864,16 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://{{ip}}:{{port}}/test/product?category=Filter&productid=PRO|9dsf1",
+							"raw": "http://{{ip}}:{{port}}/vts/api/v2/product?category=Filter&productid=PRO|9dsf1",
 							"protocol": "http",
 							"host": [
 								"{{ip}}"
 							],
 							"port": "{{port}}",
 							"path": [
-								"test",
+								"vts",
+								"api",
+								"v2",
 								"product"
 							],
 							"query": [
@@ -879,7 +891,7 @@
 					"response": []
 				},
 				{
-					"name": "AP10",
+					"name": "AP10 - Get Products by Category",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -894,14 +906,16 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://{{ip}}:{{port}}/test/product?category=Filter",
+							"raw": "http://{{ip}}:{{port}}/vts/api/v2/product?category=Filter",
 							"protocol": "http",
 							"host": [
 								"{{ip}}"
 							],
 							"port": "{{port}}",
 							"path": [
-								"test",
+								"vts",
+								"api",
+								"v2",
 								"product"
 							],
 							"query": [
@@ -915,7 +929,7 @@
 					"response": []
 				},
 				{
-					"name": "AP11",
+					"name": "AP11 - Get Notes by Status",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -930,14 +944,16 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://{{ip}}:{{port}}/test/note?status=RESOLVED",
+							"raw": "http://{{ip}}:{{port}}/vts/api/v2/note?status=RESOLVED",
 							"protocol": "http",
 							"host": [
 								"{{ip}}"
 							],
 							"port": "{{port}}",
 							"path": [
-								"test",
+								"vts",
+								"api",
+								"v2",
 								"note"
 							],
 							"query": [
@@ -951,7 +967,7 @@
 					"response": []
 				},
 				{
-					"name": "AP12",
+					"name": "AP12 - Get Filter Change by Installation Id",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -966,14 +982,16 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://{{ip}}:{{port}}/test/filterchange?filterid=FLI|sd654f",
+							"raw": "http://{{ip}}:{{port}}/vts/api/v2/filterchange?filterid=FLI|sd654f",
 							"protocol": "http",
 							"host": [
 								"{{ip}}"
 							],
 							"port": "{{port}}",
 							"path": [
-								"test",
+								"vts",
+								"api",
+								"v2",
 								"filterchange"
 							],
 							"query": [
@@ -987,7 +1005,7 @@
 					"response": []
 				},
 				{
-					"name": "AP13",
+					"name": "AP13 - Get Filter Changes in Date Range and Status",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -1002,14 +1020,16 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://{{ip}}:{{port}}/test/filterchange?status=UPCOMING&start=11/12/2010&end=12/12/2030",
+							"raw": "http://{{ip}}:{{port}}/vts/api/v2/filterchange?status=UPCOMING&start=11/12/2010&end=12/12/2030",
 							"protocol": "http",
 							"host": [
 								"{{ip}}"
 							],
 							"port": "{{port}}",
 							"path": [
-								"test",
+								"vts",
+								"api",
+								"v2",
 								"filterchange"
 							],
 							"query": [
