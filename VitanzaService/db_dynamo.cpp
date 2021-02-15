@@ -117,7 +117,6 @@ bool DynamoDB::put_item(const nlohmann::json& request, const std::string& table)
 	return true;
 }
 
-
 nlohmann::json DynamoDB::parse_type(Aws::DynamoDB::Model::AttributeValue attr) {
 	if (attr.GetType() == Aws::DynamoDB::Model::ValueType::STRING) {
 		return attr.GetS();
@@ -162,33 +161,6 @@ void DynamoDB::parse_collection(const Aws::Vector<Aws::Map<Aws::String, Aws::Dyn
 	}
 }
 
-void DynamoDB::get_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, nlohmann::json& result_out) {
-	/* Config */
-	Aws::Auth::AWSCredentials credentials;
-	Aws::Client::ClientConfiguration client_config;
-	DynamoDB::client_config(credentials, client_config);
-	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
-	const Aws::String endpoint(g_config.AWS_DYNAMODB_ENDPOINT().c_str());
-	dynamo_client.OverrideEndpoint(endpoint);
-	/* Config */
-
-	Aws::DynamoDB::Model::GetItemRequest req;
-
-	// Set up the request
-	req.SetTableName(table_name); // table name
-	Aws::DynamoDB::Model::AttributeValue hash_key;
-	hash_key.SetS(key_value);//primary key value to look for
-	req.AddKey(key_name, hash_key); //primary key column name
-
-	// Retrieve the item's fields and values
-	const Aws::DynamoDB::Model::GetItemOutcome& result = dynamo_client.GetItem(req);
-	if (result.IsSuccess()) {
-		parse_object(result.GetResult().GetItem(), result_out);
-	} else {
-		std::cout << "Failed to get item: " << result.GetError().GetMessage() << std::endl;
-	}
-}
-
 void DynamoDB::get_item_composite(const Aws::String& table_name, const CompositePK& primary_key, nlohmann::json& result_out) {
 	/* Config */
 	Aws::Auth::AWSCredentials credentials;
@@ -222,49 +194,6 @@ void DynamoDB::get_item_composite(const Aws::String& table_name, const Composite
 	} else {
 		std::cout << "Failed to get item: " << result.GetError().GetMessage() << std::endl;
 	}
-}
-
-bool DynamoDB::update_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, const std::string& request_body) {
-	Aws::Auth::AWSCredentials credentials;
-	Aws::Client::ClientConfiguration client_config;
-
-	DynamoDB::client_config(credentials, client_config);
-
-	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
-
-	const Aws::String endpoint(g_config.AWS_DYNAMODB_ENDPOINT().c_str());
-	dynamo_client.OverrideEndpoint(endpoint);
-
-	// Define TableName argument
-	Aws::DynamoDB::Model::UpdateItemRequest request;
-	request.SetTableName(table_name);
-
-	// Define KeyName argument
-	Aws::DynamoDB::Model::AttributeValue attrib_value;
-	attrib_value.SetS(key_value);
-	request.AddKey(key_name, attrib_value);
-	nlohmann::json j;
-	try {
-		j = nlohmann::json::parse(request_body);
-		j.erase(key_name.c_str());
-	} catch (nlohmann::json::exception) {
-		return false;
-	}
-
-	// set expression for SET
-	request.SetUpdateExpression(build_operation_expression(j, "SET"));
-
-	// Construct attribute value argument
-	request.SetExpressionAttributeValues(build_operation_values(j));
-
-	// Update the item
-	const Aws::DynamoDB::Model::UpdateItemOutcome& result = dynamo_client.UpdateItem(request);
-	if (!result.IsSuccess()) {
-		std::cout << result.GetError().GetMessage() << std::endl;
-		return false;
-	}
-
-	return true;
 }
 
 bool DynamoDB::update_item_composite(const nlohmann::json& request, const std::string& table, const CompositePK& primary_key) {
@@ -373,33 +302,6 @@ bool DynamoDB::new_item_dynamo(const Aws::String& table_name, const Aws::String&
 	return true;
 }
 
-bool DynamoDB::delete_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value) {
-	Aws::Auth::AWSCredentials credentials;
-	Aws::Client::ClientConfiguration client_config;
-
-	DynamoDB::client_config(credentials, client_config);
-
-	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
-
-	const Aws::String endpoint(g_config.AWS_DYNAMODB_ENDPOINT().c_str());
-	dynamo_client.OverrideEndpoint(endpoint);
-
-	Aws::DynamoDB::Model::DeleteItemRequest req;
-
-	Aws::DynamoDB::Model::AttributeValue hash_key;
-	hash_key.SetS(key_value);
-	req.AddKey(key_name, hash_key);
-	req.SetTableName(table_name);
-
-	const Aws::DynamoDB::Model::DeleteItemOutcome& result = dynamo_client.DeleteItem(req);
-	if (result.IsSuccess()) {
-		return true;
-	} else {
-		std::cout << "Failed to delete item: " << result.GetError().GetMessage();
-		return false;
-	}
-}
-
 void DynamoDB::query_with_expression(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& expression, const nlohmann::json& expression_values, nlohmann::json& result_out) {
 	Aws::Auth::AWSCredentials credentials;
 	Aws::Client::ClientConfiguration client_config;
@@ -457,82 +359,6 @@ void DynamoDB::query_index(const Aws::String& table_name, const Aws::String& par
 
 	// run the query
 	const Aws::DynamoDB::Model::QueryOutcome& result = dynamo_client.Query(query_request);
-	if (!result.IsSuccess()) {
-		std::cout << result.GetError().GetMessage() << std::endl;
-	}
-
-	DynamoDB::parse_collection(result.GetResult().GetItems(), result_out);
-}
-
-void DynamoDB::scan_table_items_dynamo(const Aws::String& table_name, nlohmann::json& result_out) {
-	Aws::Auth::AWSCredentials credentials;
-	Aws::Client::ClientConfiguration client_config;
-
-	DynamoDB::client_config(credentials, client_config);
-
-	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
-
-	const Aws::String endpoint(g_config.AWS_DYNAMODB_ENDPOINT().c_str());
-	dynamo_client.OverrideEndpoint(endpoint);
-
-	Aws::DynamoDB::Model::ScanRequest scan_request;
-	scan_request.SetTableName(table_name);
-
-	// run the query
-	const Aws::DynamoDB::Model::ScanOutcome& result = dynamo_client.Scan(scan_request);
-	if (!result.IsSuccess()) {
-		std::cout << result.GetError().GetMessage() << std::endl;
-	}
-
-	DynamoDB::parse_collection(result.GetResult().GetItems(), result_out);
-}
-
-// Currently only tests for equality
-void DynamoDB::scan_table_items_filer_dynamo(const Aws::String& table_name, const std::map<std::string, std::string>& conditions_and_values, nlohmann::json& result_out) {
-	Aws::Auth::AWSCredentials credentials;
-	Aws::Client::ClientConfiguration client_config;
-
-	DynamoDB::client_config(credentials, client_config);
-
-	Aws::DynamoDB::DynamoDBClient dynamo_client(credentials, client_config);
-
-	const Aws::String endpoint(g_config.AWS_DYNAMODB_ENDPOINT().c_str());
-	dynamo_client.OverrideEndpoint(endpoint);
-
-	Aws::DynamoDB::Model::ScanRequest scan_request;
-	scan_request.SetTableName(table_name);
-
-	// build expression
-	Aws::OStringStream ss;
-	size_t counter = 0;
-	for (const auto& i : conditions_and_values) {
-		ss << i.first << " = :" << i.first;
-		++counter;
-		if (counter != conditions_and_values.size()) {
-			ss << " or ";
-		}
-	}
-	//std::cout << ss.str() << std::endl;
-
-	// Construct the expression argument
-	Aws::String scan_expression(ss.str());
-	scan_request.SetFilterExpression(scan_expression);
-
-	// Construct attribute value argument
-	Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue> expression_attribute_values;
-
-	// TODO: Need to filter for the type of the conditional to use
-	for (const auto& i : conditions_and_values) {
-		Aws::DynamoDB::Model::AttributeValue attribute_updated_value;
-		attribute_updated_value.SetN(i.second.c_str());//need to pass here the value to be updated
-		Aws::OStringStream ostr;
-		ostr << ":" << i.first.c_str();
-		expression_attribute_values[ostr.str()] = attribute_updated_value;
-	}
-	scan_request.SetExpressionAttributeValues(expression_attribute_values);
-
-	// run the scan
-	const Aws::DynamoDB::Model::ScanOutcome& result = dynamo_client.Scan(scan_request);
 	if (!result.IsSuccess()) {
 		std::cout << result.GetError().GetMessage() << std::endl;
 	}

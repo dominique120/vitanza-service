@@ -17,10 +17,6 @@
 #include "Auth.h"
 #include "auth_wrapper.h"
 
-#include "client_wrapper.h"
-#include "chemical_order_wrapper.h"
-#include "chemical_orderDetail_wrapper.h"
-#include "chemical_product_wrapper.h"
 #include "file_wrapper.h"
 
 #include "Entities.h"
@@ -34,7 +30,6 @@
 #include "request_handlers.h"
 
 int main(int argc, char* argv[]);
-void register_handlers(httplib::Server& svr);
 void register_handlers_v2(httplib::Server& svr);
 
 #endif

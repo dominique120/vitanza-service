@@ -33,21 +33,18 @@ public:
 		Aws::String sk_name;
 		Aws::String sk_value;
 	};
-
-	static void get_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, nlohmann::json& result_out);
-	static bool update_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, const std::string& request_body);
-	static bool new_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, const std::string& request_body);
-	static bool delete_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value);
-	static void scan_table_items_dynamo(const Aws::String& table_name, nlohmann::json& result_out);
-	static void scan_table_items_filer_dynamo(const Aws::String& table_name, const std::map<std::string, std::string>& conditions_and_values, nlohmann::json& result_out);
-	static void query_index(const Aws::String& table_name, const Aws::String& partition_key, const Aws::String& match, nlohmann::json& result_out);
-	static void query_with_expression(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& expression, const nlohmann::json& expression_values, nlohmann::json& result_out);
 	
+	// called in create_user
+	static bool new_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, const std::string& request_body);
+		
+	// called in validate_user
+	static void query_index(const Aws::String& table_name, const Aws::String& partition_key, const Aws::String& match, nlohmann::json& result_out);
+
+	static void query_with_expression(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& expression, const nlohmann::json& expression_values, nlohmann::json& result_out);
 	static void get_item_composite(const Aws::String& table_name, const CompositePK& primary_key, nlohmann::json& result_out);
 	static bool put_item(const nlohmann::json& request, const std::string& table);
 	static bool update_item_composite(const nlohmann::json& request, const std::string& table, const CompositePK& primary_key);
 	static bool delete_item_composite(const Aws::String& table_name, const CompositePK& primary_key);
-
 
 private:
 	static void client_config(Aws::Auth::AWSCredentials& aws_credentials, Aws::Client::ClientConfiguration& client_config);

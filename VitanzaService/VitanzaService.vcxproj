@@ -97,17 +97,13 @@
   <ItemGroup>
     <ClCompile Include="Auth.cpp" />
     <ClCompile Include="auth_wrapper.cpp" />
-    <ClCompile Include="client_wrapper.cpp" />
     <ClCompile Include="config.cpp" />
     <ClCompile Include="db_dynamo.cpp" />
     <ClCompile Include="Entities.cpp" />
     <ClCompile Include="file_wrapper.cpp" />
     <ClCompile Include="local_file_handler.cpp" />
     <ClCompile Include="logger.cpp" />
-    <ClCompile Include="chemical_orderDetail_wrapper.cpp" />
-    <ClCompile Include="chemical_order_wrapper.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="chemical_product_wrapper.cpp" />
     <ClCompile Include="request_handlers.cpp" />
     <ClCompile Include="s3_file_handler.cpp" />
     <ClCompile Include="util.cpp" />
@@ -116,7 +112,6 @@
   <ItemGroup>
     <ClInclude Include="Auth.h" />
     <ClInclude Include="auth_wrapper.h" />
-    <ClInclude Include="client_wrapper.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="db_dynamo.h" />
     <ClInclude Include="Entities.h" />
@@ -124,9 +119,6 @@
     <ClInclude Include="local_file_handler.h" />
     <ClInclude Include="logger.h" />
     <ClInclude Include="main.h" />
-    <ClInclude Include="chemical_orderDetail_wrapper.h" />
-    <ClInclude Include="chemical_order_wrapper.h" />
-    <ClInclude Include="chemical_product_wrapper.h" />
     <ClInclude Include="request_handlers.h" />
     <ClInclude Include="s3_file_handler.h" />
     <ClInclude Include="util.h" />
