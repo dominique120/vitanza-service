@@ -81,7 +81,7 @@ bool Auth::create_user(const std::string& usr, const std::string& pwd) {
 	j["password"] = hashed_pwd;
 
 	// Move Dynamo implementation to its own file
-	if (DynamoDB::new_item_dynamo("users", "user_id", id, j.dump())) {
+	if (DynamoDB::new_item_dynamo(DynamoDB::make_default_client(), "users", "user_id", id, j.dump())) {
 		return true;
 	} else {
 		return false;
@@ -92,7 +92,7 @@ bool Auth::validate_user(const std::string& usr, const std::string& pwd) {
 	const std::string hashed_pwd = Auth::hash_password(pwd, usr);
 	nlohmann::json j;
 
-	DynamoDB::query_index("users", "username", usr.c_str(), j);
+	DynamoDB::query_index(DynamoDB::make_default_client(), "users", "username", usr.c_str(), j);
 
 	std::map<std::string, std::string> user = j[0];
 

@@ -161,7 +161,7 @@ void DynamoDB::parse_collection(const Aws::Vector<Aws::Map<Aws::String, Aws::Dyn
 
 
 // basic operations
-bool DynamoDB::put_item(const nlohmann::json& request, const std::string& table) {
+bool DynamoDB::put_item(std::unique_ptr<Aws::DynamoDB::DynamoDBClient> client, const nlohmann::json& request, const std::string& table) {
 	Aws::DynamoDB::Model::PutItemRequest pir;
 	pir.SetTableName(table.c_str());
 
@@ -172,7 +172,7 @@ bool DynamoDB::put_item(const nlohmann::json& request, const std::string& table)
 		pir.AddItem(element.key().c_str(), attribute_value);
 	}
 
-	const Aws::DynamoDB::Model::PutItemOutcome outcome = DynamoDB::make_default_client()->PutItem(pir);
+	const Aws::DynamoDB::Model::PutItemOutcome outcome = client->PutItem(pir);
 	if (!outcome.IsSuccess()) {
 		std::cout << outcome.GetError().GetMessage() << std::endl;
 		return false;
@@ -180,7 +180,7 @@ bool DynamoDB::put_item(const nlohmann::json& request, const std::string& table)
 	return true;
 }
 
-void DynamoDB::get_item_composite(const Aws::String& table_name, const CompositePK& primary_key, nlohmann::json& result_out) {
+void DynamoDB::get_item_composite(std::unique_ptr<Aws::DynamoDB::DynamoDBClient> client, const Aws::String& table_name, const CompositePK& primary_key, nlohmann::json& result_out) {
 	Aws::DynamoDB::Model::GetItemRequest req;
 
 	// Set up the request
@@ -196,7 +196,7 @@ void DynamoDB::get_item_composite(const Aws::String& table_name, const Composite
 	req.AddKey(primary_key.sk_name, sk);
 
 	// Retrieve the item's fields and values
-	const Aws::DynamoDB::Model::GetItemOutcome& result = DynamoDB::make_default_client()->GetItem(req);
+	const Aws::DynamoDB::Model::GetItemOutcome& result = client->GetItem(req);
 	if (result.IsSuccess()) {
 		parse_object(result.GetResult().GetItem(), result_out);
 	} else {
@@ -204,7 +204,7 @@ void DynamoDB::get_item_composite(const Aws::String& table_name, const Composite
 	}
 }
 
-bool DynamoDB::update_item_composite(const nlohmann::json& request, const std::string& table, const CompositePK& primary_key) {
+bool DynamoDB::update_item_composite(std::unique_ptr<Aws::DynamoDB::DynamoDBClient> client, const nlohmann::json& request, const std::string& table, const CompositePK& primary_key) {
 	// Define TableName argument
 	Aws::DynamoDB::Model::UpdateItemRequest uir;
 	uir.SetTableName(table.c_str());
@@ -225,7 +225,7 @@ bool DynamoDB::update_item_composite(const nlohmann::json& request, const std::s
 	uir.SetExpressionAttributeValues(build_operation_values(request));
 
 	// Update the item
-	const Aws::DynamoDB::Model::UpdateItemOutcome& result = DynamoDB::make_default_client()->UpdateItem(uir);
+	const Aws::DynamoDB::Model::UpdateItemOutcome& result = client->UpdateItem(uir);
 	if (!result.IsSuccess()) {
 		std::cout << result.GetError().GetMessage() << std::endl;
 		return false;
@@ -234,7 +234,7 @@ bool DynamoDB::update_item_composite(const nlohmann::json& request, const std::s
 	return true;
 }
 
-bool DynamoDB::delete_item_composite(const Aws::String& table_name, const CompositePK& primary_key) {
+bool DynamoDB::delete_item_composite(std::unique_ptr<Aws::DynamoDB::DynamoDBClient> client, const Aws::String& table_name, const CompositePK& primary_key) {
 	Aws::DynamoDB::Model::DeleteItemRequest req;
 
 	// Setup the composite key 
@@ -249,7 +249,7 @@ bool DynamoDB::delete_item_composite(const Aws::String& table_name, const Compos
 	// Set table name
 	req.SetTableName(table_name);
 
-	const Aws::DynamoDB::Model::DeleteItemOutcome& result = DynamoDB::make_default_client()->DeleteItem(req);
+	const Aws::DynamoDB::Model::DeleteItemOutcome& result = client->DeleteItem(req);
 	if (result.IsSuccess()) {
 		return true;
 	} else {
@@ -258,7 +258,7 @@ bool DynamoDB::delete_item_composite(const Aws::String& table_name, const Compos
 	}
 }
 
-bool DynamoDB::new_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, const std::string& request_body) {
+bool DynamoDB::new_item_dynamo(std::unique_ptr<Aws::DynamoDB::DynamoDBClient> client, const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, const std::string& request_body) {
 	nlohmann::json item = nlohmann::json::parse(request_body);
 
 	Aws::DynamoDB::Model::PutItemRequest pir;
@@ -276,7 +276,7 @@ bool DynamoDB::new_item_dynamo(const Aws::String& table_name, const Aws::String&
 	attribute_value.SetS(key_value);
 	pir.AddItem(key_name, attribute_value);
 
-	const Aws::DynamoDB::Model::PutItemOutcome result = DynamoDB::make_default_client()->PutItem(pir);
+	const Aws::DynamoDB::Model::PutItemOutcome result = client->PutItem(pir);
 	if (!result.IsSuccess()) {
 		std::cout << result.GetError().GetMessage() << std::endl;
 		return false;
@@ -286,7 +286,7 @@ bool DynamoDB::new_item_dynamo(const Aws::String& table_name, const Aws::String&
 
 
 // queries
-void DynamoDB::query_with_expression(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& expression, const nlohmann::json& expression_values, nlohmann::json& result_out) {
+void DynamoDB::query_with_expression(std::unique_ptr<Aws::DynamoDB::DynamoDBClient> client, const Aws::String& table_name, const Aws::String& key_name, const Aws::String& expression, const nlohmann::json& expression_values, nlohmann::json& result_out) {
 	Aws::DynamoDB::Model::QueryRequest query_request;
 	query_request.SetTableName(table_name);
 	if (!key_name.empty()) {
@@ -297,7 +297,7 @@ void DynamoDB::query_with_expression(const Aws::String& table_name, const Aws::S
 	query_request.SetExpressionAttributeValues(build_operation_values(expression_values));
 
 	// run the query
-	const Aws::DynamoDB::Model::QueryOutcome& result = DynamoDB::make_default_client()->Query(query_request);
+	const Aws::DynamoDB::Model::QueryOutcome& result = client->Query(query_request);
 	if (!result.IsSuccess()) {
 		std::cout << result.GetError().GetMessage() << std::endl;
 	}
@@ -305,7 +305,7 @@ void DynamoDB::query_with_expression(const Aws::String& table_name, const Aws::S
 	DynamoDB::parse_collection(result.GetResult().GetItems(), result_out);
 }
 
-void DynamoDB::query_index(const Aws::String& table_name, const Aws::String& partition_key, const Aws::String& match, nlohmann::json& result_out) {
+void DynamoDB::query_index(std::unique_ptr<Aws::DynamoDB::DynamoDBClient> client, const Aws::String& table_name, const Aws::String& partition_key, const Aws::String& match, nlohmann::json& result_out) {
 	const Aws::String query_expression(partition_key + " = :" + partition_key);
 
 	// Construct attribute value argument
@@ -322,7 +322,7 @@ void DynamoDB::query_index(const Aws::String& table_name, const Aws::String& par
 	query_request.SetExpressionAttributeValues(expression_attribute_values);
 
 	// run the query
-	const Aws::DynamoDB::Model::QueryOutcome& result = DynamoDB::make_default_client()->Query(query_request);
+	const Aws::DynamoDB::Model::QueryOutcome& result = client->Query(query_request);
 	if (!result.IsSuccess()) {
 		std::cout << result.GetError().GetMessage() << std::endl;
 	}

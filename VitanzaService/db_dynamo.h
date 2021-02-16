@@ -35,16 +35,18 @@ public:
 	};
 	
 	// called in create_user
-	static bool new_item_dynamo(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, const std::string& request_body);
+	static bool new_item_dynamo(std::unique_ptr<Aws::DynamoDB::DynamoDBClient> client, const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, const std::string& request_body);
 		
 	// called in validate_user
-	static void query_index(const Aws::String& table_name, const Aws::String& partition_key, const Aws::String& match, nlohmann::json& result_out);
+	static void query_index(std::unique_ptr<Aws::DynamoDB::DynamoDBClient> client, const Aws::String& table_name, const Aws::String& partition_key, const Aws::String& match, nlohmann::json& result_out);
 
-	static void query_with_expression(const Aws::String& table_name, const Aws::String& key_name, const Aws::String& expression, const nlohmann::json& expression_values, nlohmann::json& result_out);
-	static void get_item_composite(const Aws::String& table_name, const CompositePK& primary_key, nlohmann::json& result_out);
-	static bool put_item(const nlohmann::json& request, const std::string& table);
-	static bool update_item_composite(const nlohmann::json& request, const std::string& table, const CompositePK& primary_key);
-	static bool delete_item_composite(const Aws::String& table_name, const CompositePK& primary_key);
+	static void query_with_expression(std::unique_ptr<Aws::DynamoDB::DynamoDBClient> client, const Aws::String& table_name, const Aws::String& key_name, const Aws::String& expression, const nlohmann::json& expression_values, nlohmann::json& result_out);
+	static void get_item_composite(std::unique_ptr<Aws::DynamoDB::DynamoDBClient> client, const Aws::String& table_name, const CompositePK& primary_key, nlohmann::json& result_out);
+	static bool put_item(std::unique_ptr<Aws::DynamoDB::DynamoDBClient> client, const nlohmann::json& request, const std::string& table);
+	static bool update_item_composite(std::unique_ptr<Aws::DynamoDB::DynamoDBClient> client, const nlohmann::json& request, const std::string& table, const CompositePK& primary_key);
+	static bool delete_item_composite(std::unique_ptr<Aws::DynamoDB::DynamoDBClient> client, const Aws::String& table_name, const CompositePK& primary_key);
+
+	static std::unique_ptr<Aws::DynamoDB::DynamoDBClient> make_default_client();
 
 private:
 	static void client_config(Aws::Auth::AWSCredentials& aws_credentials, Aws::Client::ClientConfiguration& client_config);
@@ -55,6 +57,5 @@ private:
 	static void compose_object(Aws::DynamoDB::Model::AttributeValue& attr, const nlohmann::json& json);
 	static Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue> build_operation_values(const nlohmann::json& json);
 	static Aws::String build_operation_expression(const nlohmann::json& json, const std::string& operation);
-	static std::unique_ptr<Aws::DynamoDB::DynamoDBClient> make_client();
 };
 #endif
