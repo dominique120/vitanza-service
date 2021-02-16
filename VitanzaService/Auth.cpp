@@ -96,9 +96,11 @@ bool Auth::validate_user(const std::string& usr, const std::string& pwd) {
 
 	std::map<std::string, std::string> user = j[0];
 
-	bool valid_usr = false;
-	bool valid_pwd = false;
+
 	try {
+		bool valid_usr = false;
+		bool valid_pwd = false;
+		
 		if (user.at("username") == usr) {
 			valid_usr = true;
 		}

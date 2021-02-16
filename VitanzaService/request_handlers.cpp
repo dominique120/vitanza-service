@@ -189,7 +189,7 @@ void RequestHandlers::set_product_handlers(httplib::Server& svr) {
 			return;
 		}
 		if (req.has_param("productid") && req.has_param("type")) {
-			if (Order::update_order(req.get_param_value("productid"), req.get_param_value("type"), body)) {
+			if (Product::update_product(req.get_param_value("productid"), req.get_param_value("type"), body)) {
 				res.status = 200;
 			} else {
 				res.status = 400;
