@@ -55,6 +55,6 @@ private:
 	static void compose_object(Aws::DynamoDB::Model::AttributeValue& attr, const nlohmann::json& json);
 	static Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue> build_operation_values(const nlohmann::json& json);
 	static Aws::String build_operation_expression(const nlohmann::json& json, const std::string& operation);
-
+	static std::unique_ptr<Aws::DynamoDB::DynamoDBClient> make_client();
 };
 #endif
