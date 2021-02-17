@@ -25,7 +25,6 @@
 #include <aws/core/VersionConfig.h>
 
 #include "s3_file_handler.h"
-#include "db_dynamo.h"
 
 #include "request_handlers.h"
 

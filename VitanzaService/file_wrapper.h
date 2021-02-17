@@ -1,3 +1,7 @@
+/*
+ * Copyright Dominique Verellen. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0.
+ */
 #pragma once
 #ifndef FILE_WRAPPER_H
 #define FILE_WRAPPER_H

@@ -7,7 +7,7 @@
 #ifndef ENTITIES_H
 #define ENTITIES_H
 
-#include "db_dynamo.h"
+#include "util.h"
 
 class Client {
 public:

@@ -23,4 +23,6 @@
 
 #include <nlohmann/json.hpp>
 
+#include "al-dynamodb.h"
+
 #include "aws/core/utils/UUID.h"

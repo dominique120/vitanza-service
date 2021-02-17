@@ -1,5 +1,11 @@
+/*
+ * Copyright Dominique Verellen. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0.
+ */
+
 #include "vtspch.h"
 #include "local_file_handler.h"
+
 #if defined(FS_LOCAL)
 extern ConfigurationManager g_config;
 

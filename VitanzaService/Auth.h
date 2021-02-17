@@ -12,7 +12,7 @@
 
 #include "config.h"
 
-#include "db_dynamo.h"
+#include "util.h"
 
 class Auth {
 public:

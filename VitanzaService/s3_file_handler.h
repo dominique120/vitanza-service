@@ -1,3 +1,7 @@
+/*
+ * Copyright Dominique Verellen. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0.
+ */
 #pragma once
 #ifndef S3_FILE_HANDLER_H
 #define S3_FILE_HANDLER_H

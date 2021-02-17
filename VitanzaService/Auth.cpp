@@ -82,7 +82,7 @@ bool Auth::create_user(const std::string& usr, const std::string& pwd) {
 	j["user_id"] = id;
 
 	// Move Dynamo implementation to its own file	
-	if (DynamoDB::put_item(DynamoDB::make_default_client(), j, "users")) {
+	if (alddb::DynamoDB::put_item(alddb::DynamoDB::make_default_client(), j, "users")) {
 		return true;
 	} else {
 		return false;
@@ -98,7 +98,7 @@ bool Auth::validate_user(const std::string& usr, const std::string& pwd) {
 	values["username"] = usr;
 	values["password"] = pwd;
 	
-	DynamoDB::query_with_expression(DynamoDB::make_default_client(), "users", "username", "username = :username", values, result);
+	alddb::DynamoDB::query_with_expression(alddb::DynamoDB::make_default_client(), "users", "username", "username = :username", values, result);
 
 	std::map<std::string, std::string> user = result[0];
 

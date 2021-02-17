@@ -1,3 +1,7 @@
+/*
+ * Copyright Dominique Verellen. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0.
+ */
 #pragma once
 #ifndef LOCAL_FILE_HANDLER_H
 #define LOCAL_FILE_HANDLER_H
