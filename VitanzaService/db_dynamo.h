@@ -33,10 +33,7 @@ public:
 		Aws::String sk_name;
 		Aws::String sk_value;
 	};
-	
-	// called in create_user
-	static bool new_item_dynamo(std::unique_ptr<Aws::DynamoDB::DynamoDBClient> client, const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, const std::string& request_body);
-		
+			
 	// called in validate_user
 	static void query_index(std::unique_ptr<Aws::DynamoDB::DynamoDBClient> client, const Aws::String& table_name, const Aws::String& partition_key, const Aws::String& match, nlohmann::json& result_out);
 

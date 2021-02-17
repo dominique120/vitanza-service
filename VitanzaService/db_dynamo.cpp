@@ -258,32 +258,6 @@ bool DynamoDB::delete_item_composite(std::unique_ptr<Aws::DynamoDB::DynamoDBClie
 	}
 }
 
-bool DynamoDB::new_item_dynamo(std::unique_ptr<Aws::DynamoDB::DynamoDBClient> client, const Aws::String& table_name, const Aws::String& key_name, const Aws::String& key_value, const std::string& request_body) {
-	nlohmann::json item = nlohmann::json::parse(request_body);
-
-	Aws::DynamoDB::Model::PutItemRequest pir;
-	pir.SetTableName(table_name);
-
-	// Add body
-	for (const auto& element : item.items()) {
-		Aws::DynamoDB::Model::AttributeValue attribute_value;
-		compose_type(attribute_value, element);
-		pir.AddItem(element.key().c_str(), attribute_value);
-	}
-
-	// Add key
-	Aws::DynamoDB::Model::AttributeValue attribute_value;
-	attribute_value.SetS(key_value);
-	pir.AddItem(key_name, attribute_value);
-
-	const Aws::DynamoDB::Model::PutItemOutcome result = client->PutItem(pir);
-	if (!result.IsSuccess()) {
-		std::cout << result.GetError().GetMessage() << std::endl;
-		return false;
-	}
-	return true;
-}
-
 
 // queries
 void DynamoDB::query_with_expression(std::unique_ptr<Aws::DynamoDB::DynamoDBClient> client, const Aws::String& table_name, const Aws::String& key_name, const Aws::String& expression, const nlohmann::json& expression_values, nlohmann::json& result_out) {
@@ -295,31 +269,6 @@ void DynamoDB::query_with_expression(std::unique_ptr<Aws::DynamoDB::DynamoDBClie
 
 	query_request.SetKeyConditionExpression(expression);
 	query_request.SetExpressionAttributeValues(build_operation_values(expression_values));
-
-	// run the query
-	const Aws::DynamoDB::Model::QueryOutcome& result = client->Query(query_request);
-	if (!result.IsSuccess()) {
-		std::cout << result.GetError().GetMessage() << std::endl;
-	}
-
-	DynamoDB::parse_collection(result.GetResult().GetItems(), result_out);
-}
-
-void DynamoDB::query_index(std::unique_ptr<Aws::DynamoDB::DynamoDBClient> client, const Aws::String& table_name, const Aws::String& partition_key, const Aws::String& match, nlohmann::json& result_out) {
-	const Aws::String query_expression(partition_key + " = :" + partition_key);
-
-	// Construct attribute value argument
-	Aws::Map<Aws::String, Aws::DynamoDB::Model::AttributeValue> expression_attribute_values;
-	Aws::DynamoDB::Model::AttributeValue attribute_query_value;
-	attribute_query_value.SetS(match.c_str());
-	expression_attribute_values[":" + partition_key] = attribute_query_value;
-
-	Aws::DynamoDB::Model::QueryRequest query_request;
-	query_request.SetTableName(table_name);
-	query_request.SetIndexName(partition_key);
-
-	query_request.SetKeyConditionExpression(query_expression);
-	query_request.SetExpressionAttributeValues(expression_attribute_values);
 
 	// run the query
 	const Aws::DynamoDB::Model::QueryOutcome& result = client->Query(query_request);
