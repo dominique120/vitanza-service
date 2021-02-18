@@ -21,8 +21,7 @@ int main(int argc, char* argv[]) {
 
 
 	std::cout << "Initializing - Loading Configuration." << std::endl;
-	g_config.load(argc, argv);
-
+	g_config.load(argc, argv);	
 
 
 #if defined(FS_S3)
