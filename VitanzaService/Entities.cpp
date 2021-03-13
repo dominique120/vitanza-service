@@ -14,10 +14,7 @@ void Client::query_clients_by_status(const std::string& status, nlohmann::json& 
 
 void Client::get_client(const std::string& client_id, nlohmann::json& result_out) {
 	// PK is CLI|uuid
-	alddb::DynamoDB::PrimaryKey pk;
-	pk.add_key_string("PK", client_id.c_str());
-	pk.add_key_string("SK", client_id.c_str());
-
+	alddb::DynamoDB::PrimaryKey pk("PK", client_id, "SK", client_id);
 	alddb::DynamoDB::get_item(Util::ddb_vts_cli(), "Vitanza", pk, result_out);
 }
 
@@ -26,9 +23,7 @@ bool Client::new_client(const nlohmann::json& request) {
 }
 
 bool Client::update_client(const std::string& client_id, const nlohmann::json& request) {
-	alddb::DynamoDB::PrimaryKey pk;
-	pk.add_key_string("PK", client_id.c_str());
-	pk.add_key_string("SK", client_id.c_str());
+	alddb::DynamoDB::PrimaryKey pk("PK", client_id, "SK", client_id);
 	return alddb::DynamoDB::update_item(Util::ddb_vts_cli(), request, "Vitanza", pk);
 }
 
@@ -49,9 +44,7 @@ void Order::query_orders_by_status(const std::string& status, nlohmann::json& re
 
 void Order::get_order(const std::string& client_id, const std::string& order_id, nlohmann::json& result_out) {
 	// GSI1PK is ORD|uuid
-	alddb::DynamoDB::PrimaryKey pk;
-	pk.add_key_string("PK", client_id.c_str());
-	pk.add_key_string("SK", order_id.c_str());
+	alddb::DynamoDB::PrimaryKey pk("PK", client_id, "SK", order_id);
 	alddb::DynamoDB::get_item(Util::ddb_vts_cli(), "Vitanza", pk, result_out);
 }
 
@@ -60,9 +53,7 @@ bool Order::new_order(const nlohmann::json& request) {
 }
 
 bool Order::update_order(const std::string& client_id, const std::string& order_id, const nlohmann::json& request) {
-	alddb::DynamoDB::PrimaryKey pk;
-	pk.add_key_string("PK", client_id.c_str());
-	pk.add_key_string("SK", order_id.c_str());
+	alddb::DynamoDB::PrimaryKey pk("PK", client_id, "SK", order_id);
 	return alddb::DynamoDB::update_item(Util::ddb_vts_cli(), request, "Vitanza", pk);
 }
 
@@ -76,9 +67,7 @@ void FilterInstallation::query_filter_installations_by_client(const std::string&
 
 void FilterInstallation::get_filter_installation(const std::string& client_id, const std::string& filter_install_id, nlohmann::json& result_out) {
 	// PK is CLI|uuid, SK is FLI|uuid
-	alddb::DynamoDB::PrimaryKey pk;
-	pk.add_key_string("PK", client_id.c_str());
-	pk.add_key_string("SK", filter_install_id.c_str());
+	alddb::DynamoDB::PrimaryKey pk("PK", client_id, "SK", filter_install_id);
 	alddb::DynamoDB::get_item(Util::ddb_vts_cli(), "Vitanza", pk, result_out);
 }
 
@@ -87,9 +76,7 @@ bool FilterInstallation::new_filter_installation(const nlohmann::json& request) 
 }
 
 bool FilterInstallation::update_filter_installation(const std::string& client_id, const std::string& filter_install_id, const nlohmann::json& request) {
-	alddb::DynamoDB::PrimaryKey pk;
-	pk.add_key_string("PK", client_id.c_str());
-	pk.add_key_string("SK", filter_install_id.c_str());
+	alddb::DynamoDB::PrimaryKey pk("PK", client_id, "SK", filter_install_id);
 	return alddb::DynamoDB::update_item(Util::ddb_vts_cli(), request, "Vitanza", pk);
 }
 
@@ -106,17 +93,13 @@ bool OrderDetail::new_order_detail(const nlohmann::json& request) {
 }
 
 bool OrderDetail::remove_order_detail(const std::string& orderid, const std::string& orderdetailid) {
-	alddb::DynamoDB::PrimaryKey pk;
-	pk.add_key_string("PK", orderid.c_str());
-	pk.add_key_string("SK", orderdetailid.c_str());
+	alddb::DynamoDB::PrimaryKey pk("PK", orderid, "SK", orderdetailid);
 	return alddb::DynamoDB::delete_item(Util::ddb_vts_cli(), "Vitanza", pk);
 }
 
 void Product::get_product(const std::string& category, const std::string& product_id, nlohmann::json& result_out) {
 	// PK is PRD|uuid
-	alddb::DynamoDB::PrimaryKey pk;
-	pk.add_key_string("PK", product_id.c_str());
-	pk.add_key_string("SK", category.c_str());
+	alddb::DynamoDB::PrimaryKey pk("PK", product_id, "SK", category);
 	alddb::DynamoDB::get_item(Util::ddb_vts_cli(), "Vitanza", pk, result_out);
 }
 
@@ -133,9 +116,7 @@ bool Product::new_product(const nlohmann::json& request) {
 }
 
 bool Product::update_product(const std::string& productid, const std::string& type, const nlohmann::json& request) {
-	alddb::DynamoDB::PrimaryKey pk;
-	pk.add_key_string("PK", productid.c_str());
-	pk.add_key_string("SK", type.c_str());
+	alddb::DynamoDB::PrimaryKey pk("PK", productid, "SK", type);
 	return alddb::DynamoDB::update_item(Util::ddb_vts_cli(), request, "Vitanza", pk);
 }
 
@@ -151,9 +132,7 @@ bool Note::new_note(const nlohmann::json& request) {
 }
 
 bool Note::update_note(const std::string& clientid, const std::string& noteid, const nlohmann::json& data) {
-	alddb::DynamoDB::PrimaryKey pk;
-	pk.add_key_string("PK", clientid.c_str());
-	pk.add_key_string("SK", noteid.c_str());
+	alddb::DynamoDB::PrimaryKey pk("PK", clientid, "SK", noteid);
 	return alddb::DynamoDB::update_item(Util::ddb_vts_cli(), data, "Vitanza", pk);
 }
 
@@ -180,9 +159,7 @@ bool FilterChange::new_filter_change(const nlohmann::json& request) {
 }
 
 bool FilterChange::update_filter_change(const std::string& filterid, const std::string& filterchange, const std::string& status) {
-	alddb::DynamoDB::PrimaryKey pk;
-	pk.add_key_string("PK", filterid.c_str());
-	pk.add_key_string("SK", filterchange.c_str());
+	alddb::DynamoDB::PrimaryKey pk("PK", filterid, "SK", filterchange);
 	return alddb::DynamoDB::update_item(Util::ddb_vts_cli(), status, "Vitanza", pk);
 }
 
