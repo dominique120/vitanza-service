@@ -3,7 +3,7 @@
   "ModelMetadata": {
     "Author": "Dominique Verellen",
     "DateCreated": "Jan 12, 2021, 08:52 PM",
-    "DateLastModified": "Jan 17, 2021, 07:35 PM",
+    "DateLastModified": "May 18, 2021, 01:05 AM",
     "Description": "Single table schema for Vitanza Service",
     "AWSService": "Amazon DynamoDB",
     "Version": "2.0"
@@ -272,6 +272,9 @@
             "S": "Filter"
           },
           "GSI1PK": {
+            "S": "Filter"
+          },
+          "GSI1SK": {
             "S": "PRO|9dsf1"
           },
           "Notes": {
